@@ -1,0 +1,11 @@
+{
+  "/Users/tarunraghav/.gemini/antigravity/scratch/karen/KarenApp/Sources/App/KarenApp.swift" : {
+    "abi-baseline-json" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/KarenApp.abi.json",
+    "const-values" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/KarenApp-primary.swiftconstvalues",
+    "dependencies" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/KarenApp-primary.d",
+    "diagnostics" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/KarenApp-primary.dia",
+    "swiftdoc" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/KarenApp.swiftdoc",
+    "swiftmodule" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/KarenApp.swiftmodule",
+    "swiftsourceinfo" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/KarenApp.swiftsourceinfo"
+  }
+}

@@ -1,0 +1,873 @@
+[
+  {
+    "isFramework" : true,
+    "moduleName" : "AVFAudio",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/AVFAudio-3BYX7SZLEWD0B.swiftmodule"
+  },
+  {
+    "isFramework" : false,
+    "moduleName" : "AVFoundation",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/AVFoundation-UQHG8VGHRWO1.swiftmodule"
+  },
+  {
+    "isFramework" : false,
+    "moduleName" : "Accelerate",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/Accelerate-2HJG9RLLTW5MN.swiftmodule"
+  },
+  {
+    "isFramework" : true,
+    "moduleName" : "Accessibility",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/Accessibility-1ZDKXEWOK0XHI.swiftmodule"
+  },
+  {
+    "isFramework" : true,
+    "moduleName" : "AppKit",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/AppKit-1BOK6Y0ALG5RU.swiftmodule"
+  },
+  {
+    "isFramework" : true,
+    "moduleName" : "AudioToolbox",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/AudioToolbox-2EMJN5ERT82MA.swiftmodule"
+  },
+  {
+    "isFramework" : true,
+    "moduleName" : "ColorSync",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/ColorSync-3C2K6GO8TVYAT.swiftmodule"
+  },
+  {
+    "isFramework" : true,
+    "moduleName" : "Combine",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/Combine-1HIMB7YWIQOSI.swiftmodule"
+  },
+  {
+    "isFramework" : false,
+    "moduleName" : "Compression",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/Compression-2VDHKPN8M5WIB.swiftmodule"
+  },
+  {
+    "isFramework" : false,
+    "moduleName" : "CoreAudio",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/CoreAudio-5TF0N2VKP2SI.swiftmodule"
+  },
+  {
+    "isFramework" : true,
+    "moduleName" : "CoreData",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/CoreData-2WMA8FOZKCQ7Y.swiftmodule"
+  },
+  {
+    "isFramework" : false,
+    "moduleName" : "CoreFoundation",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/CoreFoundation-3CTSCD65B6N0Y.swiftmodule"
+  },
+  {
+    "isFramework" : true,
+    "moduleName" : "CoreGraphics",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/CoreGraphics-UZEAID4BIVHD.swiftmodule"
+  },
+  {
+    "isFramework" : false,
+    "moduleName" : "CoreImage",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/CoreImage-39HAPE2416RQL.swiftmodule"
+  },
+  {
+    "isFramework" : false,
+    "moduleName" : "CoreMIDI",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/CoreMIDI-VSBDH129WH1H.swiftmodule"
+  },
+  {
+    "isFramework" : true,
+    "moduleName" : "CoreML",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/CoreML-1MTLHZZ524JCW.swiftmodule"
+  },
+  {
+    "isFramework" : true,
+    "moduleName" : "CoreMedia",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/CoreMedia-W3DSL2WGI0V0.swiftmodule"
+  },
+  {
+    "isFramework" : true,
+    "moduleName" : "CoreText",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/CoreText-27ATX6ND9ZKXG.swiftmodule"
+  },
+  {
+    "isFramework" : true,
+    "moduleName" : "CoreTransferable",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/CoreTransferable-1RBJXCV0GW6WK.swiftmodule"
+  },
+  {
+    "isFramework" : true,
+    "moduleName" : "CoreVideo",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/CoreVideo-3N8MVFCYFJULH.swiftmodule"
+  },
+  {
+    "isFramework" : false,
+    "moduleName" : "Darwin",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/Darwin-3GHVB8T9E7YEA.swiftmodule"
+  },
+  {
+    "isFramework" : true,
+    "moduleName" : "DataDetection",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/DataDetection-366G31GDKB5SV.swiftmodule"
+  },
+  {
+    "isFramework" : true,
+    "moduleName" : "DeveloperToolsSupport",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/DeveloperToolsSupport-14QBS3PA7ELT0.swiftmodule"
+  },
+  {
+    "isFramework" : false,
+    "moduleName" : "Dispatch",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/Dispatch-11Z9WU8D8FDIN.swiftmodule"
+  },
+  {
+    "isFramework" : false,
+    "moduleName" : "Distributed",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/Distributed-1AGFB1HK4E76A.swiftmodule"
+  },
+  {
+    "isFramework" : true,
+    "moduleName" : "Foundation",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/Foundation-RIXMZRASH31S.swiftmodule"
+  },
+  {
+    "isFramework" : false,
+    "moduleName" : "IOKit",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/IOKit-2ISB11CZZAHS7.swiftmodule"
+  },
+  {
+    "isFramework" : true,
+    "moduleName" : "ImageIO",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/ImageIO-1BEB9KXMOXLQV.swiftmodule"
+  },
+  {
+    "isFramework" : true,
+    "moduleName" : "MediaToolbox",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/MediaToolbox-349MI1TCE9JJF.swiftmodule"
+  },
+  {
+    "isFramework" : false,
+    "moduleName" : "Metal",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/Metal-238T9CZ9LRY82.swiftmodule"
+  },
+  {
+    "isFramework" : false,
+    "moduleName" : "MetalKit",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/MetalKit-33HMEBJ571CG.swiftmodule"
+  },
+  {
+    "isFramework" : false,
+    "moduleName" : "ModelIO",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/ModelIO-1GH05F5E9K6WU.swiftmodule"
+  },
+  {
+    "isFramework" : true,
+    "moduleName" : "Network",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/Network-1A27SLMU30KUA.swiftmodule"
+  },
+  {
+    "isFramework" : false,
+    "moduleName" : "OSLog",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/OSLog-3HL6L2UHC2MLM.swiftmodule"
+  },
+  {
+    "isFramework" : false,
+    "moduleName" : "ObjectiveC",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/ObjectiveC-ZWAUN8LE5XG3.swiftmodule"
+  },
+  {
+    "isFramework" : false,
+    "moduleName" : "Observation",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/Observation-373FUNMEM3HW.swiftmodule"
+  },
+  {
+    "isFramework" : false,
+    "moduleName" : "QuartzCore",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/QuartzCore-RWYZ8HCQCU42.swiftmodule"
+  },
+  {
+    "isFramework" : false,
+    "moduleName" : "Spatial",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/Spatial-2H3S7RSCP72IK.swiftmodule"
+  },
+  {
+    "isFramework" : true,
+    "moduleName" : "Speech",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/Speech-3MZT8A10ZKRUN.swiftmodule"
+  },
+  {
+    "isFramework" : false,
+    "moduleName" : "Swift",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/Swift-2CLV7RGU997AX.swiftmodule"
+  },
+  {
+    "isFramework" : false,
+    "moduleName" : "SwiftOnoneSupport",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/SwiftOnoneSupport-37E695TLB0FSA.swiftmodule"
+  },
+  {
+    "isFramework" : true,
+    "moduleName" : "SwiftUI",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/SwiftUI-1PKZSRRXW0YHS.swiftmodule"
+  },
+  {
+    "isFramework" : true,
+    "moduleName" : "SwiftUICore",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/SwiftUICore-I31TSZHISEL7.swiftmodule"
+  },
+  {
+    "isFramework" : true,
+    "moduleName" : "Symbols",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/Symbols-2TAHKZFXV13C5.swiftmodule"
+  },
+  {
+    "isFramework" : false,
+    "moduleName" : "Synchronization",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/Synchronization-EQZM52JVZJQI.swiftmodule"
+  },
+  {
+    "isFramework" : false,
+    "moduleName" : "System",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/System-V7XCOE4SHU7O.swiftmodule"
+  },
+  {
+    "isFramework" : false,
+    "moduleName" : "UniformTypeIdentifiers",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/UniformTypeIdentifiers-S72CQR5IA5AI.swiftmodule"
+  },
+  {
+    "isFramework" : true,
+    "moduleName" : "VideoToolbox",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/VideoToolbox-3RPDBX5XTKD8H.swiftmodule"
+  },
+  {
+    "isFramework" : true,
+    "moduleName" : "Vision",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/Vision-1J0I60ONDAEYE.swiftmodule"
+  },
+  {
+    "isFramework" : false,
+    "moduleName" : "XPC",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/XPC-W5UI0L7V611H.swiftmodule"
+  },
+  {
+    "isFramework" : false,
+    "moduleName" : "_Builtin_float",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/_Builtin_float-1UPTNX43VR04M.swiftmodule"
+  },
+  {
+    "isFramework" : false,
+    "moduleName" : "_Concurrency",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/_Concurrency-1FQM8KFJP0E7L.swiftmodule"
+  },
+  {
+    "isFramework" : false,
+    "moduleName" : "_DarwinFoundation1",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/_DarwinFoundation1-1SAQ372EDGRCV.swiftmodule"
+  },
+  {
+    "isFramework" : false,
+    "moduleName" : "_DarwinFoundation2",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/_DarwinFoundation2-H1IBKYD24XCX.swiftmodule"
+  },
+  {
+    "isFramework" : false,
+    "moduleName" : "_DarwinFoundation3",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/_DarwinFoundation3-2RPYQSGIGXG59.swiftmodule"
+  },
+  {
+    "isFramework" : false,
+    "moduleName" : "_StringProcessing",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/_StringProcessing-2NPLAV740SDAP.swiftmodule"
+  },
+  {
+    "isFramework" : false,
+    "moduleName" : "os",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/os-54319TCZ574I.swiftmodule"
+  },
+  {
+    "isFramework" : false,
+    "moduleName" : "simd",
+    "modulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/simd-3BWCGCDDRGXU6.swiftmodule"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/AVFAudio.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/AVFAudio-7X991A64MYI6Y1ZJSGDBEUQXO.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "AVFAudio"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/AVFoundation.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/AVFoundation-75Y2SL2BTO0JMF6P8QBIPC0SO.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "AVFoundation"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/Accelerate.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/Accelerate-8UXSFHUFSELM8MELXRCBNRIXQ.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "Accelerate"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/Accessibility.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/Accessibility-AV41N1G8O9CFL1XA2CG7ZXV59.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "Accessibility"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/AppKit.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/AppKit-CPKGTGEYZF7HHHS7BUO9VS8KS.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "AppKit"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/ApplicationServices.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/ApplicationServices-8H9M37THA9DGI57OJ1E61G796.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "ApplicationServices"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/AudioToolbox.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/AudioToolbox-4G48P9MCSNL3VPZTVV43KMB25.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "AudioToolbox"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/CFNetwork.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/CFNetwork-1B6L3EMGKNSJA92ZN0L3SXRLB.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "CFNetwork"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/usr\/include\/cups.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/CUPS-9Q4GGB9YSORNCEJWOVECXZCOX.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "CUPS"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/Carbon.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/Carbon-DA5MJVKROBHKDIJQ827NKUHMD.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "Carbon"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/ColorSync.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/ColorSync-1FTRPME3VNOEGMB2I7XUYNNP3.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "ColorSync"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/usr\/include\/compression.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/Compression-8B5BRV6AX9P8LBYQBTEOZT5KM.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "Compression"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/CoreAudio.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/CoreAudio-AXNMEOOH2DLPI1QKZ3UWNM9KU.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "CoreAudio"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/CoreAudioTypes.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/CoreAudioTypes-7BVKMPTQHFMZP9FIVNEI5OXUJ.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "CoreAudioTypes"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/CoreData.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/CoreData-DIBR5EH1Z9SH2QF8514SUVBSF.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "CoreData"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/CoreFoundation.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/CoreFoundation-DOGLR8SEFFG812ISCDSQWQMXN.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "CoreFoundation"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/CoreGraphics.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/CoreGraphics-3A5NOB8NASR43BHXRRFUVJRQ5.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "CoreGraphics"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/CoreImage.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/CoreImage-B91Q4KFVYEH8N566BW5UWMAUD.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "CoreImage"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/CoreMIDI.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/CoreMIDI-2K39SWWP1GE1V38TRK0UY0QV0.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "CoreMIDI"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/CoreML.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/CoreML-EAAI76U7UJYAQLVONJQH2A55O.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "CoreML"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/CoreMedia.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/CoreMedia-29OK7FKBB7V3IE7M92P5Y5937.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "CoreMedia"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/CoreServices.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/CoreServices-CMHTTPUS34QRWSQ52STGF2YZZ.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "CoreServices"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/CoreText.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/CoreText-BJN8U8SZB0JIMVQ1362V0F59H.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "CoreText"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/CoreTransferable.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/CoreTransferable-1V3MNDN0B31FON8CCG86U0J31.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "CoreTransferable"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/CoreVideo.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/CoreVideo-DLVK24T8P51MNWZPQO51B1CJO.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "CoreVideo"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/usr\/include\/Darwin.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/Darwin-8XMS5R1X3PZZBUJN2KADD1BEN.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "Darwin"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/DataDetection.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/DataDetection-7SFG6URTSMQX0DPY4VTQJZBWM.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "DataDetection"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/DeveloperToolsSupport.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/DeveloperToolsSupport-4L3XAYUC42VK9S0VRQ5ALKGD1.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "DeveloperToolsSupport"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/DiskArbitration.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/DiskArbitration-1JU062LY8PS30F8XT7LE34THU.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "DiskArbitration"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/usr\/include\/dispatch.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/Dispatch-BFJI2J4WUFVHTMK4V4F960R7S.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "Dispatch"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/Foundation.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/Foundation-5HC5603MQQX8NU958D4UGFELE.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "Foundation"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/IOKit.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/IOKit-75YK1ZVR1PD5GQKY0W834ZJ66.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "IOKit"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/IOSurface.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/IOSurface-B0E37YSJW4E0WWM2I3FVZYGLH.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "IOSurface"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/ImageIO.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/ImageIO-5XIGQ89989TC1Y332TKN74P4K.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "ImageIO"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/usr\/include\/DarwinBasic.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/MachO-4XR3PQRPLGTLL8DCBMZCMOZ6Z.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "MachO"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/MediaToolbox.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/MediaToolbox-F0OAEGOTAQ5OLD3Z1M359SWTH.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "MediaToolbox"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/Metal.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/Metal-C229J67FEF8ET2Y704G4U77EO.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "Metal"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/MetalKit.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/MetalKit-2SIN82TPPIOHVBLG6XJ4XLGYS.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "MetalKit"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/ModelIO.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/ModelIO-48U0BC3W4S3HPY5S2HEY5OMOD.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "ModelIO"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/Network.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/Network-63TSAJ9L10KHMQK71VZAJ8RCV.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "Network"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/OSLog.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/OSLog-9W8SQA94XRKLZVWJ3PAJCIIU4.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "OSLog"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/usr\/include\/ObjectiveC.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/ObjectiveC-7V7XL027JSYGNC679MNV9SCBJ.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "ObjectiveC"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/OpenGL.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/OpenGL-E7WIGBMPUS9GB07T4TN415WBH.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "OpenGL"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/QuartzCore.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/QuartzCore-5ELU0D8N2XXBALLLL0KMOXB4Z.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "QuartzCore"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/usr\/include\/SQLite3.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/SQLite3-4XZ6VPW1W3QK89D6DW2DISQ9A.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "SQLite3"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/Security.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/Security-88QJ3MQHEXEBLS8OPZ2CHXVQ9.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "Security"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/usr\/include\/Spatial\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/Spatial-ORZSW50O2490XL8WYGVWOOLL.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "Spatial"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/Speech.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/Speech-2YJJOHPACN39B3EOOBQ8LVKF8.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "Speech"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/usr\/lib\/swift\/shims\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/SwiftShims-1GZ4EYO2I6GP6BH9YD2SHP3E3.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "SwiftShims"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/SwiftUI.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/SwiftUI-DCX55LNO6VRJFSNJJFEUSOA8H.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "SwiftUI"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/SwiftUICore.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/SwiftUICore-6FTCU69Y44CS5WDPZSXL37AEQ.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "SwiftUICore"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/Symbols.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/Symbols-AHNA76QM6U7F208JKDAOKXR6R.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "Symbols"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/UniformTypeIdentifiers.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/UniformTypeIdentifiers-3BW2ZWUBYZEAWG1G8ZRJWAOSA.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "UniformTypeIdentifiers"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/VideoToolbox.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/VideoToolbox-93BMXUIJFFY2X940YHTT70QCA.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "VideoToolbox"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/System\/Library\/Frameworks\/Vision.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/Vision-56PB4JKP2UCRLLTMU774PM63I.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "Vision"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/usr\/include\/xpc.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/XPC-1VJZDIF7NVLMKXSUZHP09VYNK.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "XPC"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/usr\/include\/DarwinFoundation1.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/_AvailabilityInternal-BUYHL83N5VC75XF6OBX9XCAD2.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "_AvailabilityInternal"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/usr\/lib\/clang\/21\/include\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/_Builtin_float-1SBDWNM4BMESHFB84BI7XXUL3.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "_Builtin_float"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/usr\/lib\/clang\/21\/include\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/_Builtin_intrinsics-4J50MRR8R1AZJECER79SGPBKR.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "_Builtin_intrinsics"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/usr\/lib\/clang\/21\/include\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/_Builtin_inttypes-65TGA6VKS2FK0DQSHSH3P0G8Y.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "_Builtin_inttypes"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/usr\/lib\/clang\/21\/include\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/_Builtin_limits-DJW5N5MTFZK5U84UR0347JO77.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "_Builtin_limits"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/usr\/lib\/clang\/21\/include\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/_Builtin_stdarg-97HKGH021SZNGQJB6W7LDG33F.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "_Builtin_stdarg"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/usr\/lib\/clang\/21\/include\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/_Builtin_stdatomic-DVH7CYRBX8GHBVJLK9WX97EPK.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "_Builtin_stdatomic"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/usr\/lib\/clang\/21\/include\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/_Builtin_stdbool-63VC4H0TG3UL37LF4JMY7TTRD.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "_Builtin_stdbool"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/usr\/lib\/clang\/21\/include\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/_Builtin_stddef-DRKTBJBNWZSPWWJHGCGU15XBD.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "_Builtin_stddef"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/usr\/lib\/clang\/21\/include\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/_Builtin_stdint-94IMH8NT4NBS6BI8N3J2EEEPX.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "_Builtin_stdint"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/usr\/lib\/clang\/21\/include\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/_Builtin_tgmath-1G82QPVLPDW7YX3E2HO8G5TQ2.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "_Builtin_tgmath"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/usr\/include\/DarwinFoundation1.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/_DarwinFoundation1-5XK30N20X1TDF2DIK33S14OB0.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "_DarwinFoundation1"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/usr\/include\/DarwinFoundation2.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/_DarwinFoundation2-23I1PK58O6RHHDYLKQBEYMM72.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "_DarwinFoundation2"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/usr\/include\/DarwinFoundation3.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/_DarwinFoundation3-5EAUJM2S37C3S91ASKEH9VHI7.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "_DarwinFoundation3"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/usr\/lib\/swift\/shims\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/_SwiftConcurrencyShims-CFQY3D9STQ1KGLRMLAFUTQ7L8.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "_SwiftConcurrencyShims"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/usr\/include\/dnssd.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/dnssd-AC2H28HX25TQJDB53G2TEDFG4.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "dnssd"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/usr\/include\/launch.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/launch-CZISYFLBO04G3E8EDYLLCC1DJ.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "launch"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/usr\/include\/libDER\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/libDER-4C3CLQMJWTVJXFGQW2ZFW900L.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "libDER"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/usr\/include\/libkern.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/libkern-EYG9YBMGM8EP1O9CTOYCZXU9U.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "libkern"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/usr\/include\/os.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/os-A0UXXC4IK5MU5033YTUMKYV8D.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "os"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/usr\/include\/os.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/os_object-D8LCEC8TRF4A3F9DSFXGK0STT.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "os_object"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/usr\/include\/os.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/os_workgroup-2821EIF7IZP8SP9P4CSYQBBFW.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "os_workgroup"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/usr\/lib\/clang\/21\/include\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/ptrauth-CUYCZ2F65HN5ECYPCWE50FZT1.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "ptrauth"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/usr\/lib\/clang\/21\/include\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/ptrcheck-E75BPJ9NKX05UWJKZ713VUWO7.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "ptrcheck"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/usr\/include\/simd\/module.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/simd-2MCOFUNDVH39VXFR3ZOYPI9CG.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "simd"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/usr\/include\/c_standard_library.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/string_h-BDB12AL5IIG6RRQ7A1CRNMGK1.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "string_h"
+  },
+  {
+    "clangModuleMapPath" : "\/Library\/Developer\/CommandLineTools\/SDKs\/MacOSX27.0.sdk\/usr\/include\/DarwinFoundation2.modulemap",
+    "clangModulePath" : "\/Users\/tarunraghav\/.gemini\/antigravity\/scratch\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/sys_types-C16SS1BLR2XT43L71G9WWH1KM.pcm",
+    "isBridgingHeaderDependency" : false,
+    "isFramework" : false,
+    "moduleName" : "sys_types"
+  }
+]

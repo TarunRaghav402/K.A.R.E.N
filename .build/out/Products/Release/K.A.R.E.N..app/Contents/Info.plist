@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleExecutable</key>
+    <string>KarenApp</string>
+    <key>CFBundleIdentifier</key>
+    <string>com.karen.assistant</string>
+    <key>CFBundleName</key>
+    <string>K.A.R.E.N.</string>
+    <key>CFBundleDisplayName</key>
+    <string>K.A.R.E.N.</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleIconFile</key>
+    <string>KarenIcon</string>
+    <key>LSMinimumSystemVersion</key>
+    <string>15.0</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>K.A.R.E.N. uses the microphone for speech recognition and wake-word listening.</string>
+    <key>NSSpeechRecognitionUsageDescription</key>
+    <string>K.A.R.E.N. converts your speech to text on this Mac so it can respond to your requests.</string>
+    <key>NSCameraUsageDescription</key>
+    <string>K.A.R.E.N. uses the camera only when gesture control is enabled.</string>
+    <key>NSHighResolutionCapable</key>
+    <true/>
+</dict>
+</plist>

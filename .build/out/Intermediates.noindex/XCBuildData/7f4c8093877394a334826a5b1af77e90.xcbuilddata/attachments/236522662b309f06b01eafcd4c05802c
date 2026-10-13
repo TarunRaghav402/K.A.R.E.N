@@ -1,0 +1,76 @@
+{
+  "" : {
+    "const-values" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/KarenApp-primary.swiftconstvalues",
+    "dependencies" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/KarenApp-primary.d",
+    "diagnostics" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/KarenApp-primary.dia",
+    "emit-module-dependencies" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/KarenApp-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/KarenApp-primary-emit-module.dia",
+    "pch" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/KarenApp-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/KarenApp-primary.swiftdeps"
+  },
+  "/Users/tarunraghav/.gemini/antigravity/scratch/karen/KarenApp/Sources/App/KarenApp.swift" : {
+    "index-unit-output-path" : "/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/KarenApp.o",
+    "llvm-bc" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/KarenApp.bc",
+    "object" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/KarenApp.o"
+  },
+  "/Users/tarunraghav/.gemini/antigravity/scratch/karen/KarenApp/Sources/App/KarenCore.swift" : {
+    "index-unit-output-path" : "/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/KarenCore.o",
+    "llvm-bc" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/KarenCore.bc",
+    "object" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/KarenCore.o"
+  },
+  "/Users/tarunraghav/.gemini/antigravity/scratch/karen/KarenApp/Sources/App/KarenTheme.swift" : {
+    "index-unit-output-path" : "/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/KarenTheme.o",
+    "llvm-bc" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/KarenTheme.bc",
+    "object" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/KarenTheme.o"
+  },
+  "/Users/tarunraghav/.gemini/antigravity/scratch/karen/KarenApp/Sources/Gestures/GestureProcessor.swift" : {
+    "index-unit-output-path" : "/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/GestureProcessor.o",
+    "llvm-bc" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/GestureProcessor.bc",
+    "object" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/GestureProcessor.o"
+  },
+  "/Users/tarunraghav/.gemini/antigravity/scratch/karen/KarenApp/Sources/Metal/OrbCanvasView.swift" : {
+    "index-unit-output-path" : "/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/OrbCanvasView.o",
+    "llvm-bc" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/OrbCanvasView.bc",
+    "object" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/OrbCanvasView.o"
+  },
+  "/Users/tarunraghav/.gemini/antigravity/scratch/karen/KarenApp/Sources/Metal/OrbRenderer.swift" : {
+    "index-unit-output-path" : "/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/OrbRenderer.o",
+    "llvm-bc" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/OrbRenderer.bc",
+    "object" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/OrbRenderer.o"
+  },
+  "/Users/tarunraghav/.gemini/antigravity/scratch/karen/KarenApp/Sources/Metal/OrbView.swift" : {
+    "index-unit-output-path" : "/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/OrbView.o",
+    "llvm-bc" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/OrbView.bc",
+    "object" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/OrbView.o"
+  },
+  "/Users/tarunraghav/.gemini/antigravity/scratch/karen/KarenApp/Sources/Sidecar/SidecarBridge.swift" : {
+    "index-unit-output-path" : "/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/SidecarBridge.o",
+    "llvm-bc" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/SidecarBridge.bc",
+    "object" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/SidecarBridge.o"
+  },
+  "/Users/tarunraghav/.gemini/antigravity/scratch/karen/KarenApp/Sources/Speech/SpeechEngine.swift" : {
+    "index-unit-output-path" : "/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/SpeechEngine.o",
+    "llvm-bc" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/SpeechEngine.bc",
+    "object" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/SpeechEngine.o"
+  },
+  "/Users/tarunraghav/.gemini/antigravity/scratch/karen/KarenApp/Sources/Speech/WakeWordDetector.swift" : {
+    "index-unit-output-path" : "/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/WakeWordDetector.o",
+    "llvm-bc" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/WakeWordDetector.bc",
+    "object" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/WakeWordDetector.o"
+  },
+  "/Users/tarunraghav/.gemini/antigravity/scratch/karen/KarenApp/Sources/Views/ContentView.swift" : {
+    "index-unit-output-path" : "/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/ContentView.o",
+    "llvm-bc" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/ContentView.bc",
+    "object" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/ContentView.o"
+  },
+  "/Users/tarunraghav/.gemini/antigravity/scratch/karen/KarenApp/Sources/Views/MenuBarContent.swift" : {
+    "index-unit-output-path" : "/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/MenuBarContent.o",
+    "llvm-bc" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/MenuBarContent.bc",
+    "object" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/MenuBarContent.o"
+  },
+  "/Users/tarunraghav/.gemini/antigravity/scratch/karen/KarenApp/Sources/Views/SettingsView.swift" : {
+    "index-unit-output-path" : "/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/SettingsView.o",
+    "llvm-bc" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/SettingsView.bc",
+    "object" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/SettingsView.o"
+  }
+}

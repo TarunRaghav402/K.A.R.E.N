@@ -1,0 +1,17 @@
+pyproject.toml
+karen_sidecar/__init__.py
+karen_sidecar/__main__.py
+karen_sidecar/llm.py
+karen_sidecar/memory.py
+karen_sidecar/protocol.py
+karen_sidecar/router.py
+karen_sidecar/server.py
+karen_sidecar.egg-info/PKG-INFO
+karen_sidecar.egg-info/SOURCES.txt
+karen_sidecar.egg-info/dependency_links.txt
+karen_sidecar.egg-info/requires.txt
+karen_sidecar.egg-info/top_level.txt
+tests/test_gesture_math.py
+tests/test_llm_router.py
+tests/test_memory.py
+tests/test_protocol.py
