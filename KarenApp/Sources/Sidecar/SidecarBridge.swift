@@ -41,13 +41,22 @@ final class SidecarBridge: NSObject {
     // MARK: - Sidecar process lifecycle
 
     private func launchSidecar() {
-        // Resolve path: repo root / sidecar
-        let repoRoot = findRepoRoot()
+        guard let repoRoot = findRepoRoot() else {
+            onError?("", "K.A.R.E.N. couldn't find its project folder. Run it from scripts/run.sh in the Karen folder.")
+            print("[SidecarBridge] Project root not found; sidecar was not launched")
+            return
+        }
         let sidecarPath = repoRoot + "/sidecar"
         let venvPython = sidecarPath + "/.venv/bin/python3"
         let systemPython = "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3"
 
-        let python = FileManager.default.fileExists(atPath: venvPython) ? venvPython : systemPython
+        let python = FileManager.default.isExecutableFile(atPath: venvPython) ? venvPython : systemPython
+        guard FileManager.default.isExecutableFile(atPath: python),
+              FileManager.default.fileExists(atPath: sidecarPath + "/karen_sidecar/__main__.py") else {
+            onError?("", "K.A.R.E.N.'s Python 3.13 voice service is missing from the selected project folder.")
+            print("[SidecarBridge] Python sidecar runtime or package is missing at \(sidecarPath)")
+            return
+        }
 
         let proc = Process()
         proc.executableURL = URL(fileURLWithPath: python)
@@ -75,20 +84,35 @@ final class SidecarBridge: NSObject {
             print("[SidecarBridge] Sidecar PID: \(proc.processIdentifier)")
         } catch {
             print("[SidecarBridge] Failed to launch sidecar: \(error)")
+            onError?("", "K.A.R.E.N.'s voice service couldn't start: \(error.localizedDescription)")
         }
     }
 
-    private func findRepoRoot() -> String {
-        // Walk up from Bundle path to find the karen repo root (contains Package.swift)
+    private func findRepoRoot() -> String? {
+        // The installed app lives in ~/Applications, so its bundle is no longer
+        // inside the checkout. The launcher records the active checkout in Info.plist.
+        if let configuredRoot = Bundle.main.object(forInfoDictionaryKey: "KARENProjectRoot") as? String,
+           isKarenProjectRoot(configuredRoot) {
+            return configuredRoot
+        }
+
+        // This also supports running from the build bundle within the checkout.
         var url = URL(fileURLWithPath: Bundle.main.bundlePath)
         for _ in 0..<10 {
-            if FileManager.default.fileExists(atPath: url.appendingPathComponent("Package.swift").path) {
+            if isKarenProjectRoot(url.path) {
                 return url.path
             }
             url.deleteLastPathComponent()
         }
-        // Fallback: use the scratch directory
-        return NSHomeDirectory() + "/.gemini/antigravity/scratch/karen"
+
+        // Last-known default project location for older bundles.
+        let volumeProject = NSHomeDirectory() + "/VolumeE/Karen"
+        return isKarenProjectRoot(volumeProject) ? volumeProject : nil
+    }
+
+    private func isKarenProjectRoot(_ path: String) -> Bool {
+        FileManager.default.fileExists(atPath: path + "/Package.swift") &&
+        FileManager.default.fileExists(atPath: path + "/sidecar/karen_sidecar/__main__.py")
     }
 
     // MARK: - WebSocket

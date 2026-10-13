@@ -1,15 +1,15 @@
 [
   {
     "contents" : {
-      "guid" : "Workspace:/Users/tarunraghav/.gemini/antigravity/scratch/karen",
+      "guid" : "Workspace:/Users/tarunraghav/VolumeE/karen",
       "name" : "KarenApp",
-      "path" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen",
+      "path" : "/Users/tarunraghav/VolumeE/karen",
       "projects" : [
-        "0bfd3a95a06f2a220588e285e1866d1a87af422f692348a62dedfcfe57c7e4ab",
-        "7df7369093f48aa4fcdf6f284809bdb09a3b55a0447897c02bae334efb352d46"
+        "fd2c20c56a0534f342b08a4a775520816f6d0738a52872f9f8490e8bcd01e7c2",
+        "6d2a9936f273362733a843946e5748268587ff4d060e21cd260a5869e236f1e6"
       ]
     },
-    "signature" : "f72af331575ab064df8ec0bc9861c78442a1c199e1fad457cdb854bedcba721d",
+    "signature" : "b118c920307585630e37d5532422d2241cebe5267b28d235a52261d8c1caf7b2",
     "type" : "workspace"
   },
   {
@@ -304,8 +304,8 @@
               }
             ],
             "guid" : "PACKAGE:karen::MAINGROUP::REF_2",
-            "name" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/KarenApp/Sources",
-            "path" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/KarenApp/Sources",
+            "name" : "/Users/tarunraghav/VolumeE/karen/KarenApp/Sources",
+            "path" : "/Users/tarunraghav/VolumeE/karen/KarenApp/Sources",
             "sourceTree" : "<absolute>",
             "type" : "group"
           },
@@ -417,8 +417,8 @@
               }
             ],
             "guid" : "PACKAGE:karen::MAINGROUP::REF_3",
-            "name" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/KarenApp/Sources",
-            "path" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/KarenApp/Sources",
+            "name" : "/Users/tarunraghav/VolumeE/karen/KarenApp/Sources",
+            "path" : "/Users/tarunraghav/VolumeE/karen/KarenApp/Sources",
             "sourceTree" : "<absolute>",
             "type" : "group"
           }
@@ -430,8 +430,8 @@
         "type" : "group"
       },
       "guid" : "PACKAGE:karen",
-      "path" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/Package.swift",
-      "projectDirectory" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen",
+      "path" : "/Users/tarunraghav/VolumeE/karen/Package.swift",
+      "projectDirectory" : "/Users/tarunraghav/VolumeE/karen",
       "projectIsPackage" : "true",
       "projectName" : "KarenApp",
       "targets" : [
@@ -440,7 +440,7 @@
         "fe858477e041715c2b03a13e21fdcc1fb98360e0b31a3f5febaa84a6f61be51d"
       ]
     },
-    "signature" : "0bfd3a95a06f2a220588e285e1866d1a87af422f692348a62dedfcfe57c7e4ab",
+    "signature" : "fd2c20c56a0534f342b08a4a775520816f6d0738a52872f9f8490e8bcd01e7c2",
     "type" : "project"
   },
   {
@@ -1082,8 +1082,8 @@
         "type" : "group"
       },
       "guid" : "AGGREGATE",
-      "path" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/Package.swift",
-      "projectDirectory" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen",
+      "path" : "/Users/tarunraghav/VolumeE/karen/Package.swift",
+      "projectDirectory" : "/Users/tarunraghav/VolumeE/karen",
       "projectIsPackage" : "true",
       "projectName" : "Aggregate",
       "targets" : [
@@ -1091,7 +1091,7 @@
         "b5c870bf7a2b01eb78992f2acea7d7ae97ff70cd3863fa8b4ac5c3ff320aaa1f"
       ]
     },
-    "signature" : "7df7369093f48aa4fcdf6f284809bdb09a3b55a0447897c02bae334efb352d46",
+    "signature" : "6d2a9936f273362733a843946e5748268587ff4d060e21cd260a5869e236f1e6",
     "type" : "project"
   },
   {

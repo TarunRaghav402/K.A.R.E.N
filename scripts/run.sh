@@ -54,6 +54,8 @@ cat > "$APP_CONTENTS/Info.plist" <<'PLIST'
     <string>K.A.R.E.N.</string>
     <key>CFBundleDisplayName</key>
     <string>K.A.R.E.N.</string>
+    <key>KARENProjectRoot</key>
+    <string>__KAREN_PROJECT_ROOT__</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleIconFile</key>
@@ -71,6 +73,8 @@ cat > "$APP_CONTENTS/Info.plist" <<'PLIST'
 </dict>
 </plist>
 PLIST
+
+/usr/bin/plutil -replace KARENProjectRoot -string "$REPO_ROOT" "$APP_CONTENTS/Info.plist"
 
 # Keep a stable designated requirement so macOS TCC permissions survive app
 # rebuilds. Without this, ad-hoc signatures are identified by changing cdhashes
