@@ -7,6 +7,7 @@ import simd
 // Uses VNDetectHumanHandPoseRequest to track up to 2 hands from the camera.
 // Gesture mapping:
 //   Spread two index fingertips apart       → zoom (two hands)
+//   Twist the line between two index tips   → rotate (two hands)
 //   Open/close thumb and index finger       → zoom (one hand)
 //   Hold a pinch and move the hand           → move the orb
 //   Move an open palm                        → rotate the orb
@@ -27,6 +28,9 @@ final class GestureProcessor: NSObject {
     private var smoothedPalmCenter: CGPoint?
     private var prevPinchCenter: CGPoint?
     private var smoothedPinchCenter: CGPoint?
+    private var previousTwoHandAngle: CGFloat?
+    private var closedFistFrameCount = 0
+    private var fistReleaseFrameCount = 0
 
     init(core: KarenCore) {
         self.core = core
@@ -46,7 +50,7 @@ final class GestureProcessor: NSObject {
 
     @MainActor private func setupCamera() {
         let s = AVCaptureSession()
-        s.sessionPreset = .medium
+        s.sessionPreset = .high
 
         guard let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front)
                         ?? AVCaptureDevice.default(for: .video) else {
@@ -59,6 +63,7 @@ final class GestureProcessor: NSObject {
             if s.canAddInput(input) { s.addInput(input) }
 
             let output = AVCaptureVideoDataOutput()
+            output.alwaysDiscardsLateVideoFrames = true
             output.setSampleBufferDelegate(self, queue: queue)
             if s.canAddOutput(output) { s.addOutput(output) }
 
@@ -90,12 +95,20 @@ final class GestureProcessor: NSObject {
 
         guard let observations = request.results, !observations.isEmpty else {
             Task { @MainActor [weak self] in
+                if let self, self.closedFistFrameCount > 0 {
+                    self.fistReleaseFrameCount += 1
+                    if self.fistReleaseFrameCount >= 3 {
+                        self.closedFistFrameCount = 0
+                        self.fistReleaseFrameCount = 0
+                    }
+                }
                 self?.prevIndexSpan = nil
                 self?.smoothedIndexSpan = nil
                 self?.prevPalmCenter = nil
                 self?.smoothedPalmCenter = nil
                 self?.prevPinchCenter = nil
                 self?.smoothedPinchCenter = nil
+                self?.previousTwoHandAngle = nil
             }
             return
         }
@@ -107,13 +120,33 @@ final class GestureProcessor: NSObject {
 
     @MainActor
     private func dispatchGestures(observations: [VNHumanHandPoseObservation]) {
+        let closedFistDetected = observations.contains(where: isClosedFist)
+        if closedFistDetected {
+            closedFistFrameCount = min(closedFistFrameCount + 1, 2)
+            fistReleaseFrameCount = 0
+        } else if closedFistFrameCount > 0 {
+            // Hold the stop state briefly across Vision pose jitter.
+            fistReleaseFrameCount += 1
+            if fistReleaseFrameCount >= 3 {
+                closedFistFrameCount = 0
+                fistReleaseFrameCount = 0
+            }
+        }
+        if closedFistFrameCount > 0 {
+            // Fist pauses gesture input; opening the hand restores the existing gestures.
+            clearGestureHistory()
+            return
+        }
+
         // Two-hand zoom: spread the index fingertips apart to zoom in and
         // bring them together to zoom out.
         let indexTips = observations.compactMap { point(.indexTip, in: $0) }
+            .sorted { $0.x < $1.x }
         if observations.count >= 2, indexTips.count == 2 {
-            handleIndexPinch(indexTips[0], indexTips[1])
+            handleTwoHandGesture(indexTips[0], indexTips[1])
             return
         }
+        previousTwoHandAngle = nil
 
         if observations.count == 1,
            let thumb = point(.thumbTip, in: observations[0]),
@@ -177,7 +210,28 @@ final class GestureProcessor: NSObject {
     }
 
     private func isOpenPalm(_ observation: VNHumanHandPoseObservation) -> Bool {
-        guard let wrist = point(.wrist, in: observation) else { return false }
+        fingerExtensionCounts(in: observation).extended >= 3
+    }
+
+    private func isClosedFist(_ observation: VNHumanHandPoseObservation) -> Bool {
+        let counts = fingerExtensionCounts(in: observation)
+        guard counts.visible >= 2, counts.extended <= 1,
+              let wrist = point(.wrist, in: observation),
+              let palm = point(.middleMCP, in: observation),
+              let index = point(.indexTip, in: observation),
+              let middle = point(.middleTip, in: observation),
+              let ring = point(.ringTip, in: observation) ?? point(.littleTip, in: observation) else { return false }
+        let palmLength = distance(wrist, palm)
+        guard palmLength > 0.001 else { return false }
+        // Curled fingertips cluster near the palm. This works across more
+        // camera angles and does not depend on thumb visibility.
+        let curled = [index, middle, ring].filter { distance($0, wrist) < palmLength * 1.35 }
+        return curled.count >= 2
+    }
+
+    private func fingerExtensionCounts(in observation: VNHumanHandPoseObservation)
+        -> (visible: Int, extended: Int) {
+        guard let wrist = point(.wrist, in: observation) else { return (0, 0) }
         let fingerJoints: [(VNHumanHandPoseObservation.JointName,
                             VNHumanHandPoseObservation.JointName)] = [
             (.indexTip, .indexPIP),
@@ -185,16 +239,32 @@ final class GestureProcessor: NSObject {
             (.ringTip, .ringPIP),
             (.littleTip, .littlePIP),
         ]
-        let extendedCount = fingerJoints.reduce(into: 0) { count, joints in
+        var visible = 0
+        var extended = 0
+        for joints in fingerJoints {
             guard let tip = point(joints.0, in: observation),
-                  let pip = point(joints.1, in: observation) else { return }
-            if distance(wrist, tip) > distance(wrist, pip) * 1.12 { count += 1 }
+                  let pip = point(joints.1, in: observation) else { continue }
+            visible += 1
+            if distance(wrist, tip) > distance(wrist, pip) * 1.12 { extended += 1 }
         }
-        return extendedCount >= 3
+        return (visible, extended)
     }
 
     @MainActor
-    private func handleIndexPinch(_ first: CGPoint, _ second: CGPoint) {
+    private func handleTwoHandGesture(_ first: CGPoint, _ second: CGPoint) {
+        let angle = atan2(second.y - first.y, second.x - first.x)
+        if let previousAngle = previousTwoHandAngle {
+            // Two fingertips form an undirected axis, so treat angles half a
+            // turn apart as equivalent. This prevents a detector ordering
+            // swap from snapping the orb backward as hands cross.
+            var delta = angle - previousAngle
+            if delta > .pi / 2 { delta -= .pi }
+            if delta < -.pi / 2 { delta += .pi }
+            if abs(delta) > 0.003 {
+                core?.applyRotation(yaw: Float(delta) * 2.6, pitch: 0)
+            }
+        }
+        previousTwoHandAngle = angle
         handleSpanZoom(Float(distance(first, second)))
         prevPalmCenter = nil
         smoothedPalmCenter = nil
@@ -209,7 +279,7 @@ final class GestureProcessor: NSObject {
 
     @MainActor
     private func handleSpanZoom(_ measuredSpan: Float) {
-        let span = smoothedIndexSpan.map { $0 + (measuredSpan - $0) * 0.42 } ?? measuredSpan
+        let span = smoothedIndexSpan.map { $0 + (measuredSpan - $0) * 0.52 } ?? measuredSpan
         defer {
             prevIndexSpan = span
             smoothedIndexSpan = span
@@ -217,7 +287,7 @@ final class GestureProcessor: NSObject {
         guard let previous = prevIndexSpan, previous > 0.001 else { return }
 
         let rawFactor = span / previous
-        guard abs(rawFactor - 1) > 0.0012 else { return }
+        guard abs(rawFactor - 1) > 0.0007 else { return }
         let stableFactor = min(max(rawFactor, 0.90), 1.10)
         core?.applyZoom(pow(stableFactor, 1.45))
     }
@@ -234,8 +304,8 @@ final class GestureProcessor: NSObject {
         guard let previous = prevPinchCenter else { return }
         let dx = smoothed.x - previous.x
         let dy = smoothed.y - previous.y
-        guard abs(dx) > 0.00035 || abs(dy) > 0.00035 else { return }
-        core?.applyTranslation(dx: -Float(dx) * 4.4, dy: Float(dy) * 4.4)
+        guard abs(dx) > 0.0005 || abs(dy) > 0.0005 else { return }
+        core?.applyTranslation(dx: -Float(dx) * 5.2, dy: Float(dy) * 5.2)
     }
 
     @MainActor
@@ -247,8 +317,8 @@ final class GestureProcessor: NSObject {
         guard let previous = prevPalmCenter else { return }
         let dx = smoothed.x - previous.x
         let dy = smoothed.y - previous.y
-        guard abs(dx) > 0.00035 || abs(dy) > 0.00035 else { return }
-        core?.applyRotation(yaw: -Float(dx) * 6.0, pitch: Float(dy) * 6.0)
+        guard abs(dx) > 0.00045 || abs(dy) > 0.00045 else { return }
+        core?.applyRotation(yaw: -Float(dx) * 12.0, pitch: Float(dy) * 12.0)
         prevPinchCenter = nil
         smoothedPinchCenter = nil
     }
@@ -262,6 +332,15 @@ final class GestureProcessor: NSObject {
     private func clearZoomTracking() {
         prevIndexSpan = nil
         smoothedIndexSpan = nil
+    }
+
+    private func clearGestureHistory() {
+        clearZoomTracking()
+        prevPalmCenter = nil
+        smoothedPalmCenter = nil
+        prevPinchCenter = nil
+        smoothedPinchCenter = nil
+        previousTwoHandAngle = nil
     }
 }
 

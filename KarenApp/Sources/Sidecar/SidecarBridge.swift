@@ -41,29 +41,48 @@ final class SidecarBridge: NSObject {
     // MARK: - Sidecar process lifecycle
 
     private func launchSidecar() {
-        guard let repoRoot = findRepoRoot() else {
-            onError?("", "K.A.R.E.N. couldn't find its project folder. Run it from scripts/run.sh in the Karen folder.")
-            print("[SidecarBridge] Project root not found; sidecar was not launched")
-            return
-        }
-        let sidecarPath = repoRoot + "/sidecar"
-        let venvPython = sidecarPath + "/.venv/bin/python3"
-        let systemPython = "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3"
+        let resources = Bundle.main.resourceURL ?? URL(fileURLWithPath: Bundle.main.bundlePath)
+        let packagedSidecar = resources.appendingPathComponent("KarenSidecar").path
+        let isPackaged = FileManager.default.isExecutableFile(atPath: packagedSidecar)
 
-        let python = FileManager.default.isExecutableFile(atPath: venvPython) ? venvPython : systemPython
-        guard FileManager.default.isExecutableFile(atPath: python),
-              FileManager.default.fileExists(atPath: sidecarPath + "/karen_sidecar/__main__.py") else {
-            onError?("", "K.A.R.E.N.'s Python 3.13 voice service is missing from the selected project folder.")
-            print("[SidecarBridge] Python sidecar runtime or package is missing at \(sidecarPath)")
-            return
+        let executable: String
+        let arguments: [String]
+        let workingDirectory: URL
+        if isPackaged {
+            // GitHub releases contain a frozen Python sidecar, so users do not
+            // need Python, a checkout, or a virtual environment installed.
+            executable = packagedSidecar
+            arguments = []
+            workingDirectory = resources
+        } else {
+            guard let repoRoot = findRepoRoot() else {
+                onError?("", "K.A.R.E.N. couldn't find its project folder. Run it from scripts/run.sh in the Karen folder.")
+                print("[SidecarBridge] Project root not found; sidecar was not launched")
+                return
+            }
+            let sidecarPath = repoRoot + "/sidecar"
+            let venvPython = sidecarPath + "/.venv/bin/python3"
+            let systemPython = "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3"
+            let python = FileManager.default.isExecutableFile(atPath: venvPython) ? venvPython : systemPython
+            guard FileManager.default.isExecutableFile(atPath: python),
+                  FileManager.default.fileExists(atPath: sidecarPath + "/karen_sidecar/__main__.py") else {
+                onError?("", "K.A.R.E.N.'s Python 3.13 voice service is missing from the selected project folder.")
+                print("[SidecarBridge] Python sidecar runtime or package is missing at \(sidecarPath)")
+                return
+            }
+            executable = python
+            arguments = ["-m", "karen_sidecar"]
+            workingDirectory = URL(fileURLWithPath: sidecarPath)
         }
 
         let proc = Process()
-        proc.executableURL = URL(fileURLWithPath: python)
-        proc.arguments = ["-m", "karen_sidecar"]
-        proc.currentDirectoryURL = URL(fileURLWithPath: sidecarPath)
+        proc.executableURL = URL(fileURLWithPath: executable)
+        proc.arguments = arguments
+        proc.currentDirectoryURL = workingDirectory
         var environment = ProcessInfo.processInfo.environment
-        environment["PYTHONPATH"] = sidecarPath
+        if !isPackaged, let repoRoot = findRepoRoot() {
+            environment["PYTHONPATH"] = repoRoot + "/sidecar"
+        }
         if environment["KAREN_LLM_PROVIDER"] == nil {
             environment["KAREN_LLM_PROVIDER"] = "mock"
         }

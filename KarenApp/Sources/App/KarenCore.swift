@@ -66,6 +66,9 @@ final class KarenCore: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     private var zoomTarget: Float = 1.0
     private var zoomAnimationTask: Task<Void, Never>?
+    private var rotationTargetYaw: Float = 0
+    private var rotationTargetPitch: Float = 0
+    private var rotationAnimationTask: Task<Void, Never>?
     private var isLocalSpeechActive = false
     private var continuousConversation = false
     private var conversationGeneration = 0
@@ -103,8 +106,20 @@ final class KarenCore: ObservableObject {
         }
         sidecarBridge?.onStateChange = { [weak self] state in
             Task { @MainActor in
-                guard self?.isLocalSpeechActive != true else { return }
-                self?.orbState = OrbState(rawValue: state) ?? .idle
+                guard let self, !self.isLocalSpeechActive else { return }
+                // Speech and idle events from the sidecar can arrive while
+                // AVSpeechSynthesizer is starting. The app owns those phases;
+                // only let the sidecar announce request processing/errors.
+                switch OrbState(rawValue: state) {
+                case .processing where !self.isListening:
+                    self.orbState = .processing
+                case .error:
+                    self.orbState = .error
+                case .permission:
+                    self.orbState = .permission
+                default:
+                    break
+                }
             }
         }
         sidecarBridge?.onError = { [weak self] _, msg in
@@ -385,8 +400,41 @@ final class KarenCore: ObservableObject {
     }
 
     func applyRotation(yaw: Float, pitch: Float) {
-        orbYaw   += yaw
-        orbPitch += pitch
+        guard yaw.isFinite, pitch.isFinite else { return }
+        rotationTargetYaw = Self.wrappedAngle(rotationTargetYaw + yaw)
+        rotationTargetPitch = Self.wrappedAngle(rotationTargetPitch + pitch)
+        guard rotationAnimationTask == nil else { return }
+
+        rotationAnimationTask = Task { @MainActor [weak self] in
+            guard let self else { return }
+            while !Task.isCancelled {
+                let yawDelta = Self.shortestAngle(from: self.orbYaw, to: self.rotationTargetYaw)
+                let pitchDelta = Self.shortestAngle(from: self.orbPitch, to: self.rotationTargetPitch)
+                if abs(yawDelta) < 0.0004 && abs(pitchDelta) < 0.0004 {
+                    self.orbYaw = self.rotationTargetYaw
+                    self.orbPitch = self.rotationTargetPitch
+                    break
+                }
+                // Ease toward the latest hand/trackpad input at display-frame pace.
+                self.orbYaw = Self.wrappedAngle(self.orbYaw + yawDelta * 0.38)
+                self.orbPitch = Self.wrappedAngle(self.orbPitch + pitchDelta * 0.38)
+                try? await Task.sleep(nanoseconds: 16_000_000)
+            }
+            self.rotationAnimationTask = nil
+        }
+    }
+
+    private static func wrappedAngle(_ angle: Float) -> Float {
+        let fullTurn = 2 * Float.pi
+        let wrapped = angle.truncatingRemainder(dividingBy: fullTurn)
+        return wrapped < 0 ? wrapped + fullTurn : wrapped
+    }
+
+    private static func shortestAngle(from current: Float, to target: Float) -> Float {
+        var delta = (target - current).truncatingRemainder(dividingBy: 2 * Float.pi)
+        if delta > Float.pi { delta -= 2 * Float.pi }
+        if delta < -Float.pi { delta += 2 * Float.pi }
+        return delta
     }
 
     func applyTranslation(dx: Float, dy: Float) {
@@ -396,6 +444,10 @@ final class KarenCore: ObservableObject {
 
     func resetOrb() {
         zoomTarget = 1.0
+        zoomAnimationTask?.cancel()
+        zoomAnimationTask = nil
+        rotationTargetYaw = 0
+        rotationTargetPitch = 0
         orbZoom = 1.0; orbYaw = 0; orbPitch = 0; orbOffsetX = 0; orbOffsetY = 0
     }
 }

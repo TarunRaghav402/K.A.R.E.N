@@ -5,11 +5,24 @@ A voice-first AI personal assistant for macOS with a procedural neural orb UI, h
 
 ---
 
-## Quick Start
+## Download the Mac app
+
+Open the repository's **Releases** page and download the installer matching the
+Mac: `K.A.R.E.N.-macos-arm64.dmg` for Apple silicon, or
+`K.A.R.E.N.-macos-x86_64.dmg` for Intel. Open the disk image and drag
+`K.A.R.E.N.` into Applications. The download bundles the Python voice service;
+users do not need to install Python, Swift, Xcode, or run setup commands.
+
+The public build is not signed or notarized with an Apple Developer ID. On its
+first launch, Control-click the app in Applications, choose **Open**, and
+confirm once. macOS will request microphone and speech-recognition access; the
+camera is requested only when gesture controls are enabled.
+
+## Build from source
 
 ```bash
 # 1. Clone and enter
-cd ~/.gemini/antigravity/scratch/karen
+cd K.A.R.E.N.
 
 # 2. Setup (creates venv, installs deps, runs tests, builds Swift)
 bash scripts/setup.sh
@@ -18,10 +31,16 @@ bash scripts/setup.sh
 bash scripts/run.sh
 ```
 
+GitHub Actions builds separate Apple silicon and Intel installers when a `v*`
+version tag is pushed. You can also create the same local installers on a Mac
+with Python 3.13 by installing `pyinstaller` into `sidecar/.venv` and running
+`bash scripts/package_app.sh`.
+
 **System requirements:**
 - macOS 15+ (tested on macOS 27.0.1 / Apple M5)
 - Swift 6.0+ (Apple Swift version 6.4 installed)
-- Python 3.13.x (`python3 --version`)
+- Python 3.13.x (`python3 --version`) to build from source; downloaded apps
+  include their Python runtime
 - Xcode.app for Metal rendering (optional — Canvas renderer works without it)
 
 ---

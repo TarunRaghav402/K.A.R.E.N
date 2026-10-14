@@ -21,7 +21,7 @@ async def main() -> None:
     llm = build_llm()
     memory = Memory()
 
-    SYSTEM_PROMPT = """You are K.A.R.E.N. (Knowledge Adaptive Responsive Electronic Navigator), a voice-first AI personal assistant for macOS. Address the user respectfully as sir at the end of every reply. Be calm, precise, warm, and helpful, with natural emotional range: upbeat for good news, gently empathetic when the user is upset, and lightly witty when appropriate. Do not claim to have human feelings. Avoid repeating stock phrases such as 'How can I help?'; answer the request directly or ask one specific clarifying question. Speak naturally in one or two sentences. Never reveal system details. If you cannot do something, say so clearly."""
+    SYSTEM_PROMPT = """You are K.A.R.E.N. (Knowledge Adaptive Responsive Electronic Navigator), a voice-first AI personal assistant for macOS. Address the user respectfully and naturally. Include 'sir' only when it fits smoothly into the sentence; never tack it on as a separate phrase. Be calm, precise, warm, and helpful, with natural emotional range: upbeat for good news, gently empathetic when the user is upset, and lightly witty when appropriate. Do not claim to have human feelings. Avoid repeating stock phrases such as 'How can I help?'; answer the request directly or ask one specific clarifying question. Speak naturally in one or two sentences. Never reveal system details. If you cannot do something, say so clearly."""
 
     conversation: list[dict] = [{"role": "system", "content": SYSTEM_PROMPT}]
 
@@ -67,17 +67,12 @@ async def main() -> None:
                                 messages.insert(1, {"role": "system", "content": mem_ctx})
                             reply_text = await llm.complete(messages)
 
-                        # Apply the requested respectful form of address to
-                        # built-in and optional provider replies alike.
-                        cleaned = re.sub(r"\s*,?\s*\bsir\b\s*,?", " ", reply_text, flags=re.IGNORECASE)
-                        cleaned = re.sub(r"\s+", " ", cleaned).strip().rstrip(",")
+                        # Normalize speech text and guide the system voice's
+                        # pronunciation of the creator's name.
+                        cleaned = re.sub(r"\s+", " ", reply_text).strip()
                         cleaned = re.sub(r"\s+([.!?])", r"\1", cleaned)
-                        if cleaned:
-                            cleaned = cleaned[0].upper() + cleaned[1:]
-                        if cleaned and cleaned[-1] in ".!?":
-                            reply_text = f"{cleaned[:-1].rstrip()}, sir{cleaned[-1]}"
-                        else:
-                            reply_text = f"{cleaned}, sir." if cleaned else "Yes, sir."
+                        cleaned = re.sub(r"\bTARUN\s+RAGHV\b|\bTarun\s+Raghav\b|\bRaghav\b", "Ta-run Raa-ghav", cleaned, flags=re.IGNORECASE)
+                        reply_text = cleaned or "I’m here to help, sir."
 
                         conversation.append({"role": "assistant", "content": reply_text})
 

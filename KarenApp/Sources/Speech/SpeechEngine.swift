@@ -14,6 +14,8 @@ final class SpeechEngine: NSObject {
     private var isListening = false
     private var silenceTask: DispatchWorkItem?
     private var latestTranscript = ""
+    // Allow natural pauses so the recognizer is less likely to submit a
+    // partial phrase before the user finishes speaking.
     private let silenceTimeout: TimeInterval = 1.0
 
     override init() {
@@ -77,7 +79,14 @@ final class SpeechEngine: NSObject {
                         }
                     }
                 }
-                if let _ = err { self.stopListening() }
+                if let err {
+                    print("[SpeechEngine] Recognition ended: \(err.localizedDescription)")
+                    DispatchQueue.main.async {
+                        let transcript = self.latestTranscript
+                        self.stopListening()
+                        if !transcript.isEmpty { self.onResult?(transcript, true) }
+                    }
+                }
             }
         } catch {
             print("[SpeechEngine] Failed to start: \(error)")
@@ -123,7 +132,7 @@ final class TTSEngine: NSObject, AVSpeechSynthesizerDelegate {
     private let synth = AVSpeechSynthesizer()
     var voiceId: String = ""
     var rate:    Float  = 0.50
-    var pitch:   Float  = 1.05
+    var pitch:   Float  = 0.92
     var onFinish: (() -> Void)?
     private var activeUtterance: AVSpeechUtterance?
     private var speechContinuation: CheckedContinuation<Void, Never>?
@@ -156,10 +165,16 @@ final class TTSEngine: NSObject, AVSpeechSynthesizerDelegate {
     }
 
     private func makeUtterance(_ text: String) -> AVSpeechUtterance {
-        let utterance = AVSpeechUtterance(string: text)
+        // Keep the displayed reply spelled normally, while speaking the
+        // creator's name phonetically so English voices don't say “R A G H”.
+        let spokenText = text
+            .replacingOccurrences(of: "TARUN RAGHV", with: "Ta-run Raa-ghav", options: .caseInsensitive)
+            .replacingOccurrences(of: "Tarun Raghav", with: "Ta-run Raa-ghav", options: .caseInsensitive)
+        let utterance = AVSpeechUtterance(string: spokenText)
         utterance.voice = voiceId.isEmpty ? AVSpeechSynthesisVoice(language: "en-US")
                                           : AVSpeechSynthesisVoice(identifier: voiceId)
         utterance.rate = rate
+        utterance.volume = 1.0
         utterance.pitchMultiplier = pitch
         return utterance
     }

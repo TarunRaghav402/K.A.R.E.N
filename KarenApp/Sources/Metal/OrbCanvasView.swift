@@ -98,7 +98,7 @@ private func drawStars(ctx: GraphicsContext, size: CGSize, t: Double, state: Orb
     )
 
     // Point-source flare: a crisp star core, soft bloom, and fine light rays.
-    let pulse = 0.92 + 0.08 * sin(t * 0.7)
+    let pulse = 1.0
     let halo = CGFloat(11 * pulse)
     ctx.fill(Path(ellipseIn: CGRect(x: lightSource.x - halo, y: lightSource.y - halo,
                                     width: halo * 2, height: halo * 2)),
@@ -114,7 +114,7 @@ private func drawStars(ctx: GraphicsContext, size: CGSize, t: Double, state: Orb
     ctx.stroke(flare, with: .color(Color.white.opacity(0.48)), lineWidth: 0.65)
 
     // Dense fine stars; the diagonal galactic band has a richer star field.
-    let gridX = 112, gridY = 76
+    let gridX = 84, gridY = 56
     for ix in 0..<gridX {
         for iy in 0..<gridY {
             let h = fhash(Float(ix) * 443.9 + Float(iy) * 441.4 + 17.0)
@@ -123,12 +123,10 @@ private func drawStars(ctx: GraphicsContext, size: CGSize, t: Double, state: Orb
             let bandDistance = abs(yUnit - (0.93 - xUnit * 0.81))
             let inGalaxy = bandDistance < 0.20
             guard h > (inGalaxy ? 0.91 : 0.975) else { continue }
-            let drift = t * 0.00075 * (0.35 + Double(h))
-            let x = ((Double(ix) + Double(fhash(Float(ix) * 7.3 + Float(iy))) + drift).truncatingRemainder(dividingBy: Double(gridX))) / Double(gridX) * size.width
+            let x = (Double(ix) + Double(fhash(Float(ix) * 7.3 + Float(iy)))) / Double(gridX) * size.width
             let y = (Double(iy) + Double(fhash(Float(iy) * 13.1 + Float(ix)))) / Double(gridY) * size.height
-            let twinkle = 0.55 + 0.45 * sin(t * Double(2.0 + h * 3.0) + Double(h) * 6.28)
-            let r = CGFloat((inGalaxy ? 0.85 : 0.65) * twinkle)
-            let alpha = CGFloat((inGalaxy ? 0.24 : 0.15) * twinkle)
+            let r = CGFloat(inGalaxy ? 0.78 : 0.58)
+            let alpha = CGFloat(inGalaxy ? 0.22 : 0.14)
             ctx.fill(Path(ellipseIn: CGRect(x: x-r, y: y-r, width: r*2, height: r*2)),
                      with: .color(Color(red: inGalaxy ? 0.82 : 0.72,
                                          green: inGalaxy ? 0.88 : 0.80,
@@ -150,9 +148,9 @@ private func drawCoreGlow(ctx: GraphicsContext, size: CGSize, t: Double, speed: 
     let cy = size.height / 2 - CGFloat(offsetY) * centerOffset
     var intensity: CGFloat = 0.55
     if state == .processing {
-        intensity *= CGFloat(1.0 + 0.30 * sin(t * 6.0 * speed))
+        intensity *= CGFloat(0.97 + 0.03 * sin(t * 0.55 * speed))
     } else if state == .error {
-        intensity *= CGFloat(0.4 + 0.35 * (sin(t * 9.0) > 0 ? 1.0 : 0.0))
+        intensity *= CGFloat(0.78 + 0.04 * sin(t * 0.45))
     }
     let approach = smoothZoomProgress(zoom, startsAt: 1.15, endsAt: 7.5)
     let accent = KarenTheme.accentRGB(for: state)
@@ -242,33 +240,33 @@ private func drawFilamentShells(ctx: GraphicsContext, size: CGSize, t: Double, s
 
         // State-based radius modulation
         var r = shellR
-        let breathe = sin(t * 0.8 * speed) * 0.028
-        let noiseOff = Double(fnoise(Float(sin(theta)*cos(phi)), Float(sin(phi)), Float(cos(theta)) + Float(t) * 0.12 * Float(speed))) * 0.06
+        let breathe = sin(t * 0.35 * speed) * 0.008
+        // Keep the shell's fine structure anchored to each node. Moving the
+        // noise field per frame made the lights shimmer like random flicker.
+        let noiseOff = Double(fnoise(Float(sin(theta)*cos(phi)), Float(sin(phi)), Float(cos(theta)))) * 0.06
         r = r + breathe + noiseOff
 
         switch state {
         case .listening:
             let equatorBias = 1.0 - abs(cos(phi)) * 0.38
             r *= equatorBias
-            r += Double(audioLevel) * 0.08 * sin(t * 12.0 * speed + fi * 0.01)
+            r += Double(audioLevel) * 0.012
         case .processing:
-            let inward = (sin(t * 2.5 * speed + fi * 0.03) * 0.5 + 0.5)
-            r *= mix(1.0, 0.45, inward)
+            r *= 0.86 + sin(t * 0.48 * speed) * 0.015
         case .speaking:
-            let wave = sin(phi * 6.0 + t * 4.0 * speed) * 0.04 * (1.0 + Double(audioLevel))
+            let wave = sin(phi * 5.0 + t * 2.0 * speed) * 0.018 * (1.0 + Double(audioLevel))
             r += wave
         case .permission:
             r = shellR + sin(t * 0.3) * 0.006
         case .error:
-            let flicker = sin(t * 8.0 + fi * 0.17) > 0 ? 1.0 : 0.0
-            r = shellR * (0.72 + flicker * 0.38)
+            r = shellR * 0.96
         default:
             break
         }
 
         if lod {
             r *= 0.68
-            r += Double(fnoise(Float(phi), Float(theta), Float(t) * 0.5 * Float(speed))) * 0.14
+            r += Double(fnoise(Float(phi), Float(theta), 0.5)) * 0.14
         }
 
         // Spherical → Cartesian
@@ -283,7 +281,7 @@ private func drawFilamentShells(ctx: GraphicsContext, size: CGSize, t: Double, s
         px = px2; pz = pz2
         let py2 =  py * cos(p) - pz * sin(p)
         let pz3 =  py * sin(p) + pz * cos(p)
-        py = py2; _ = pz3
+        py = py2; pz = pz3
 
         // Perspective
         let depth = 2.5 + pz * 0.3
@@ -336,8 +334,7 @@ private func drawNeuralNetwork(ctx: GraphicsContext, size: CGSize, t: Double, sp
         let y = 1.0 - 2.0 * (fi + 0.5) / Double(count)
         let ringRadius = sqrt(max(0, 1.0 - y * y))
         let theta = goldenAngle * fi
-        let pulse = sin(t * 1.2 * speed + fi * 0.025) * 0.012
-        let nodeRadius = 0.78 + Double(i % 4) * 0.055 + pulse
+        let nodeRadius = 0.78 + Double(i % 4) * 0.055
         var px = cos(theta) * ringRadius * nodeRadius
         var py = y * nodeRadius
         var pz = sin(theta) * ringRadius * nodeRadius
@@ -362,27 +359,23 @@ private func drawNeuralNetwork(ctx: GraphicsContext, size: CGSize, t: Double, sp
     }
 
     var quietLinks = Path()
-    var brightLinks = Path()
-    var dimNodes = Path()
-    var brightNodes = Path()
-    let linkOffsets = [1, 5, 13]
-    let linkLimit = minimumDimension * min(0.20, 0.065 + Double(zoom) * 0.022)
+    var highlightedLinks = Path()
+    var nodeHalos = Path()
+    var nodeCores = Path()
+    let linkOffsets = [1, 2, 3, 8]
+    let linkLimit = minimumDimension * min(0.22, 0.075 + Double(zoomAmount) * 0.12)
 
     for i in 0..<count {
         let node = nodes[i]
         guard node.point.x > -10, node.point.x < size.width + 10,
               node.point.y > -10, node.point.y < size.height + 10 else { continue }
 
-        let nodeRadius = CGFloat(0.75 + zoomAmount * 0.65)
+        let nodeRadius = CGFloat(0.72 + zoomAmount * 0.38)
         let nodeRect = CGRect(x: node.point.x - nodeRadius,
                               y: node.point.y - nodeRadius,
                               width: nodeRadius * 2, height: nodeRadius * 2)
-        let nodePulse = (sin(t * 2.1 * speed + Double(i) * 0.08) + 1) * 0.5
-        if nodePulse > 0.72 {
-            brightNodes.addEllipse(in: nodeRect.insetBy(dx: -0.5, dy: -0.5))
-        } else {
-            dimNodes.addEllipse(in: nodeRect)
-        }
+        nodeHalos.addEllipse(in: nodeRect.insetBy(dx: -1.35, dy: -1.35))
+        nodeCores.addEllipse(in: nodeRect)
 
         for linkOffset in linkOffsets {
             let neighborIndex = i + linkOffset
@@ -392,32 +385,49 @@ private func drawNeuralNetwork(ctx: GraphicsContext, size: CGSize, t: Double, sp
             let dy = neighbor.point.y - node.point.y
             guard hypot(dx, dy) < linkLimit else { continue }
 
-            let pulse = (sin(t * 1.8 * speed + Double(i) * 0.035
-                             + Double(linkOffset) * 0.4) + 1) * 0.5
-            var path = pulse > 0.55 ? brightLinks : quietLinks
+            // Keep the topology and brightness steady; a fixed sparse subset
+            // gets a brighter trace so the network reads as illuminated.
+            let isHighlighted = (i + linkOffset * 7) % 5 == 0
+            var path = isHighlighted ? highlightedLinks : quietLinks
             path.move(to: node.point)
             path.addLine(to: neighbor.point)
-            if pulse > 0.55 { brightLinks = path } else { quietLinks = path }
+            if isHighlighted { highlightedLinks = path } else { quietLinks = path }
         }
     }
 
     let accent = KarenTheme.accentRGB(for: state)
+    let fieldBreath = 0.94 + 0.06 * sin(t * 0.32 * speed)
+    let fieldRadius = minimumDimension * CGFloat(0.58 + zoomAmount * 0.08)
+    ctx.fill(Path(CGRect(origin: .zero, size: size)),
+             with: .radialGradient(
+                Gradient(colors: [
+                    Color(red: min(1, accent.r * 0.45 + 0.24),
+                          green: min(1, accent.g * 0.45 + 0.24),
+                          blue: min(1, accent.b * 0.45 + 0.24),
+                          opacity: 0.12 * fieldBreath),
+                    Color(red: accent.r, green: accent.g, blue: accent.b, opacity: 0.045),
+                    .clear
+                ]),
+                center: CGPoint(x: cx, y: cy),
+                startRadius: 0,
+                endRadius: fieldRadius
+             ))
     ctx.stroke(quietLinks,
                with: .color(Color(red: accent.r * 0.55, green: accent.g * 0.62,
-                                  blue: accent.b * 0.92, opacity: 0.24)),
-               lineWidth: 0.55)
-    ctx.stroke(brightLinks,
+                                  blue: accent.b * 0.92, opacity: 0.28)),
+               lineWidth: 0.62)
+    ctx.stroke(highlightedLinks,
                with: .color(Color(red: min(1, accent.r * 0.55 + 0.35),
                                   green: min(1, accent.g * 0.55 + 0.35),
-                                  blue: min(1, accent.b * 0.55 + 0.35), opacity: 0.58)),
-               lineWidth: 0.8)
-    ctx.fill(dimNodes,
-             with: .color(Color(red: accent.r * 0.72, green: accent.g * 0.72,
-                                blue: accent.b * 0.9, opacity: 0.7)))
-    ctx.fill(brightNodes,
-             with: .color(Color(red: min(1, 0.7 + accent.r * 0.3),
-                                green: min(1, 0.7 + accent.g * 0.3),
-                                blue: min(1, 0.7 + accent.b * 0.3), opacity: 0.98)))
+                                  blue: min(1, accent.b * 0.55 + 0.35), opacity: 0.62)),
+               lineWidth: 0.9)
+    ctx.fill(nodeHalos,
+             with: .color(Color(red: accent.r, green: accent.g,
+                                blue: accent.b, opacity: 0.16 * fieldBreath)))
+    ctx.fill(nodeCores,
+             with: .color(Color(red: min(1, 0.72 + accent.r * 0.28),
+                                green: min(1, 0.72 + accent.g * 0.28),
+                                blue: min(1, 0.72 + accent.b * 0.28), opacity: 0.95)))
 }
 
 // ─── Orbiting rings ───────────────────────────────────────────────────────────
@@ -439,7 +449,7 @@ private func drawRings(ctx: GraphicsContext, size: CGSize, t: Double, speed: Dou
     ]
 
     let SEGS = 120
-    for (ri, ring) in rings.enumerated() {
+    for ring in rings {
         var R = ring.radius
         var rotAngle = t * ring.rotSpeed * speed
 
@@ -455,16 +465,8 @@ private func drawRings(ctx: GraphicsContext, size: CGSize, t: Double, speed: Dou
         }
 
         var points: [CGPoint] = []
-        var visible = true
 
         for seg in 0...SEGS {
-            if state == .error {
-                let frac = Double(seg) / Double(SEGS)
-                let flicker = sin(t * 6.0 + frac * .pi * 2 + Double(ri) * 1.4) > 0.5
-                visible = flicker
-            }
-            guard visible else { points.append(points.last ?? .zero); continue }
-
             let angle = Double(seg) / Double(SEGS) * 2.0 * .pi
             var px = R * cos(angle)
             var py = 0.0
@@ -487,6 +489,7 @@ private func drawRings(ctx: GraphicsContext, size: CGSize, t: Double, speed: Dou
             let pz4 = -px * sin(y) + pz * cos(y)
             px = px4; pz = pz4
             let py4 =  py * cos(p) - pz4 * sin(p)
+            pz = py * sin(p) + pz4 * cos(p)
             py = py4
 
             let depth = 2.5 + pz * 0.3

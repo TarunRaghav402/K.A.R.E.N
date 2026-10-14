@@ -1,0 +1,6 @@
+# Local packaged release outputs
+/dist/
+/.build/package/
+
+# Python environment created for source builds and release packaging
+/sidecar/.venv/

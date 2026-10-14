@@ -55,8 +55,8 @@ _REPLY_GROUPS: list[tuple[str, tuple[str, ...], tuple[str, ...]]] = [
         "All systems are running smoothly. Thanks for asking; what can I do for you?",
         "I’m doing well and standing by for your next command.")),
     ("creator", (r"\bwho (?:is|was) your creator\b|\bwho created you\b|\bwho (?:made|built|programmed) you\b|\bwho is your boss\b",), (
-        "I was created by TARUN RAGHV, pronounced Ta-run-ra-ghav, who built me to be a helpful voice assistant.",
-        "TARUN RAGHV, pronounced Ta-run-ra-ghav, built me line by line, so you could say he’s my architect.")),
+        "I was created by Tarun Raghav, pronounced Ta-run Raa-ghav, who built me to be a helpful voice assistant.",
+        "Tarun Raghav, pronounced Ta-run Raa-ghav, built me line by line, so you could say he’s my architect.")),
     ("identity", (r"\bwho are you\b|\bwhat are you\b|\bintroduce yourself\b|\btell me about yourself\b|\bwhat is your name\b|\bwhat's your name\b|\byour name\b",), (
         "I’m K.A.R.E.N., your personal voice assistant, built to answer, assist, and occasionally impress.",
         "My name is K.A.R.E.N. I’m a voice-first assistant designed to make your day easier.")),

@@ -26,7 +26,7 @@ constant int STATE_PERMISSION = 4;
 constant int STATE_ERROR      = 5;
 
 float3 themeAccent(int state) {
-    if (state == STATE_LISTENING) return float3(0.12, 0.92, 0.48);
+    if (state == STATE_LISTENING || state == STATE_PROCESSING) return float3(0.12, 0.92, 0.48);
     if (state == STATE_SPEAKING || state == STATE_ERROR) return float3(1.0, 0.20, 0.27);
     if (state == STATE_PERMISSION) return float3(1.0, 0.64, 0.20);
     return float3(0.22, 0.52, 1.0);
@@ -93,7 +93,7 @@ fragment float4 star_frag(StarVertex in [[stage_in]],
     float2 off  = fract(uv * 180.0);
     float h = hash(float3(cell, 1.7));
     if (h > 0.993) {
-        float twinkle = 0.7 + 0.3 * sin(u.time * (2.0 + h * 3.0) + h * 6.28);
+        float twinkle = 1.0;
         float r = length(off - 0.5);
         float star = smoothstep(0.25, 0.0, r) * twinkle;
         col += float3(star * mix(0.14, 0.28, h)) * mix(float3(0.85, 0.90, 1.0), accent, 0.38);
@@ -135,8 +135,8 @@ vertex FilamentOut filament_vert(
 
     // Time-based breathing (state-dependent)
     float speed = (u.reduceMotion > 0.5) ? 0.2 : 1.0;
-    float breathe = sin(u.time * 0.8 * speed) * 0.018;
-    float noiseOffset = fbm(float3(sin(theta)*cos(phi), sin(phi), cos(theta)) + u.time * 0.12 * speed, 2) * 0.06;
+    float breathe = sin(u.time * 0.35 * speed) * 0.008;
+    float noiseOffset = fbm(float3(sin(theta)*cos(phi), sin(phi), cos(theta)), 2) * 0.06;
 
     float radius = baseR + breathe + noiseOffset;
 
@@ -145,22 +145,19 @@ vertex FilamentOut filament_vert(
         // Rings tighten toward equator; pulse with audio
         float equatorBias = 1.0 - abs(cos(phi)) * 0.4;
         radius *= equatorBias;
-        radius += u.audioLevel * 0.06 * sin(u.time * 12.0 * speed + i * 0.01);
+        radius += u.audioLevel * 0.012;
     } else if (u.orbState == STATE_PROCESSING) {
-        // Filaments flow inward to core
-        float inward = (sin(u.time * 2.5 * speed + i * 0.03) * 0.5 + 0.5);
-        radius *= mix(1.0, 0.55, inward);
+        // Hold the filaments in a calm, slightly contracted state.
+        radius *= 0.86 + sin(u.time * 0.48 * speed) * 0.015;
     } else if (u.orbState == STATE_SPEAKING) {
         // Waveform ripples across shell
-        float wave = sin(phi * 6.0 + u.time * 4.0 * speed) * 0.035 * (1.0 + u.audioLevel);
+        float wave = sin(phi * 5.0 + u.time * 2.0 * speed) * 0.018 * (1.0 + u.audioLevel);
         radius += wave;
     } else if (u.orbState == STATE_PERMISSION) {
         // Locked rings — barely move
         radius = baseR + sin(u.time * 0.3) * 0.005;
     } else if (u.orbState == STATE_ERROR) {
-        // Flicker / broken pattern
-        float flicker = step(0.5, fract(u.time * 8.0 + i * 0.17));
-        radius = baseR * (0.75 + flicker * 0.35);
+        radius = baseR * 0.96;
     }
 
     // LOD: zoom in → denser, branching look
@@ -188,7 +185,7 @@ vertex FilamentOut filament_vert(
     float3 baseColor = mix(coreColor, midColor, smoothstep(0.0, 0.4, t));
     baseColor = mix(baseColor, outerColor, smoothstep(0.4, 1.0, t));
 
-    // Error state: desaturate + flicker red tinge
+    // Error state: desaturate with a steady red tint.
     if (u.orbState == STATE_ERROR) {
         float lum = dot(baseColor, float3(0.299, 0.587, 0.114));
         baseColor = mix(baseColor, float3(lum), 0.6) + float3(0.15, 0.0, 0.0);
@@ -252,11 +249,6 @@ vertex RingOut ring_vert(
     } else if (u.orbState == STATE_PERMISSION) {
         // Lock — barely rotate
         rotAngle = 0.0;
-    } else if (u.orbState == STATE_ERROR) {
-        // Flicker gap
-        if (fract(u.time * 6.0 + float(iid) * 0.4) > 0.75) {
-            R = 0.0; // hide segment → broken ring effect
-        }
     }
 
     float3 p = float3(R * cos(angle), 0, R * sin(angle));
@@ -303,9 +295,9 @@ fragment float4 core_frag(CoreOut in [[stage_in]],
     // Core sits at center of viewport — small, restrained glow
     float glow = exp(-r * r * 14.0) * 0.55;
     if (u.orbState == STATE_PROCESSING) {
-        glow *= 1.0 + 0.3 * sin(u.time * 6.0);
+        glow *= 0.97 + 0.03 * sin(u.time * 0.55);
     } else if (u.orbState == STATE_ERROR) {
-        glow *= 0.4 + 0.3 * step(0.5, fract(u.time * 9.0));
+        glow *= 0.78 + 0.04 * sin(u.time * 0.45);
     }
 
     float3 coreColor = mix(float3(0.95, 0.97, 1.0), themeAccent(u.orbState), 0.22);
