@@ -33,6 +33,7 @@ final class KarenCore: ObservableObject {
     @Published var orbPitch: Float     = 0.0
     @Published var orbOffsetX: Float   = 0.0
     @Published var orbOffsetY: Float   = 0.0
+    @Published var memoryNodeLabels: [String] = []
 
     // Sheet/panel state
     @Published var showSettings: Bool     = false
@@ -77,6 +78,7 @@ final class KarenCore: ObservableObject {
 
     init() {
         setupSidecar()
+        refreshMemoryNodeLabels()
         ttsEngine = TTSEngine()
     }
 
@@ -84,15 +86,15 @@ final class KarenCore: ObservableObject {
 
     func setupSidecar() {
         sidecarBridge = SidecarBridge()
-        sidecarBridge?.onReply = { [weak self] id, text, speak in
+        sidecarBridge?.onReply = { [weak self] id, text, speechText, speak in
             Task { @MainActor in
                 guard let self else { return }
                 self.replyText = text
                 if speak && !self.isMuted && !self.isTextOnly {
-                    self.replyText = ""
+                    if speechText == text { self.replyText = "" }
                     self.isLocalSpeechActive = true
                     self.orbState = .speaking
-                    await self.ttsEngine?.speak(text)
+                    await self.ttsEngine?.speak(speechText)
                     self.isLocalSpeechActive = false
                 }
                 guard self.continuousConversation else {
@@ -126,6 +128,18 @@ final class KarenCore: ObservableObject {
             Task { @MainActor in
                 self?.orbState = .error
                 self?.replyText = "Error: \(msg)"
+            }
+        }
+        sidecarBridge?.onAction = { [weak self] id, skill, payload in
+            Task { @MainActor in
+                guard let self else { return }
+                guard skill == "open_application",
+                      let applicationName = payload["application_name"] as? String,
+                      !applicationName.isEmpty else {
+                    self.replyText = "I can’t perform that action yet."
+                    return
+                }
+                self.openApplication(named: applicationName)
             }
         }
         sidecarBridge?.connect()
@@ -228,6 +242,29 @@ final class KarenCore: ObservableObject {
         else { resumeWakeWordIfNeeded() }
     }
 
+    private func openApplication(named name: String) {
+        let normalized = name.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
+        let aliases = ["chrome": "google chrome", "edge": "microsoft edge"]
+        let launchName = aliases[normalized] ?? name
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/usr/bin/open")
+        process.arguments = ["-a", launchName]
+        process.standardOutput = FileHandle.nullDevice
+        process.standardError = FileHandle.nullDevice
+        process.terminationHandler = { [weak self] process in
+            guard process.terminationStatus != 0 else { return }
+            Task { @MainActor in
+                self?.replyText = "I couldn’t find or open \(name). Check that it’s installed, then try again."
+            }
+        }
+        do {
+            try process.run()
+        } catch {
+            replyText = "I couldn’t open \(name): \(error.localizedDescription)"
+            return
+        }
+    }
+
     func toggleWakeWord() {
         wakeWordEnabled.toggle()
         if wakeWordEnabled {
@@ -316,9 +353,17 @@ final class KarenCore: ObservableObject {
     }
 
     func openMemoryMap() {
+        refreshMemoryNodeLabels()
         if zoomBeforeMemory == nil { zoomBeforeMemory = orbZoom }
         showMemory = true
         applyZoom(3.6 / max(orbZoom, 0.3))
+    }
+
+    func refreshMemoryNodeLabels() {
+        memoryNodeLabels = sidecarBridge?.memory?.list_approved().compactMap { row in
+            guard let content = row["content"] as? String else { return nil }
+            return content
+        } ?? []
     }
 
     func closeMemoryMap() {

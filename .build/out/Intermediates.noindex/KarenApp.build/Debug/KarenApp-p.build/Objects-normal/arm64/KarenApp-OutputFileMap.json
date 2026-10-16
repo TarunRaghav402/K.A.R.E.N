@@ -1,129 +1,139 @@
 {
   "" : {
-    "diagnostics" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenApp-primary.dia",
-    "emit-module-dependencies" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenApp-primary-emit-module.d",
-    "emit-module-diagnostics" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenApp-primary-emit-module.dia",
-    "pch" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenApp-primary-Bridging-header.pch",
-    "swift-dependencies" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenApp-primary.swiftdeps"
+    "diagnostics" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenApp-primary.dia",
+    "emit-module-dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenApp-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenApp-primary-emit-module.dia",
+    "pch" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenApp-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenApp-primary.swiftdeps"
   },
-  "/Users/tarunraghav/.gemini/antigravity/scratch/karen/KarenApp/Sources/App/KarenApp.swift" : {
-    "const-values" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenApp.swiftconstvalues",
-    "dependencies" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenApp.d",
-    "diagnostics" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenApp.dia",
+  "/Users/tarunraghav/VolumeE/karen/KarenApp/Sources/App/KarenApp.swift" : {
+    "const-values" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenApp.swiftconstvalues",
+    "dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenApp.d",
+    "diagnostics" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenApp.dia",
     "index-unit-output-path" : "/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenApp.o",
-    "llvm-bc" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenApp.bc",
-    "object" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenApp.o",
-    "swift-dependencies" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenApp.swiftdeps",
-    "swiftmodule" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenApp~partial.swiftmodule"
+    "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenApp.bc",
+    "object" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenApp.o",
+    "swift-dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenApp.swiftdeps",
+    "swiftmodule" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenApp~partial.swiftmodule"
   },
-  "/Users/tarunraghav/.gemini/antigravity/scratch/karen/KarenApp/Sources/App/KarenCore.swift" : {
-    "const-values" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenCore.swiftconstvalues",
-    "dependencies" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenCore.d",
-    "diagnostics" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenCore.dia",
+  "/Users/tarunraghav/VolumeE/karen/KarenApp/Sources/App/KarenCore.swift" : {
+    "const-values" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenCore.swiftconstvalues",
+    "dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenCore.d",
+    "diagnostics" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenCore.dia",
     "index-unit-output-path" : "/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenCore.o",
-    "llvm-bc" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenCore.bc",
-    "object" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenCore.o",
-    "swift-dependencies" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenCore.swiftdeps",
-    "swiftmodule" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenCore~partial.swiftmodule"
+    "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenCore.bc",
+    "object" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenCore.o",
+    "swift-dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenCore.swiftdeps",
+    "swiftmodule" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenCore~partial.swiftmodule"
   },
-  "/Users/tarunraghav/.gemini/antigravity/scratch/karen/KarenApp/Sources/Gestures/GestureProcessor.swift" : {
-    "const-values" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/GestureProcessor.swiftconstvalues",
-    "dependencies" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/GestureProcessor.d",
-    "diagnostics" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/GestureProcessor.dia",
+  "/Users/tarunraghav/VolumeE/karen/KarenApp/Sources/App/KarenTheme.swift" : {
+    "const-values" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenTheme.swiftconstvalues",
+    "dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenTheme.d",
+    "diagnostics" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenTheme.dia",
+    "index-unit-output-path" : "/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenTheme.o",
+    "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenTheme.bc",
+    "object" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenTheme.o",
+    "swift-dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenTheme.swiftdeps",
+    "swiftmodule" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/KarenTheme~partial.swiftmodule"
+  },
+  "/Users/tarunraghav/VolumeE/karen/KarenApp/Sources/Gestures/GestureProcessor.swift" : {
+    "const-values" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/GestureProcessor.swiftconstvalues",
+    "dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/GestureProcessor.d",
+    "diagnostics" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/GestureProcessor.dia",
     "index-unit-output-path" : "/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/GestureProcessor.o",
-    "llvm-bc" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/GestureProcessor.bc",
-    "object" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/GestureProcessor.o",
-    "swift-dependencies" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/GestureProcessor.swiftdeps",
-    "swiftmodule" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/GestureProcessor~partial.swiftmodule"
+    "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/GestureProcessor.bc",
+    "object" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/GestureProcessor.o",
+    "swift-dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/GestureProcessor.swiftdeps",
+    "swiftmodule" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/GestureProcessor~partial.swiftmodule"
   },
-  "/Users/tarunraghav/.gemini/antigravity/scratch/karen/KarenApp/Sources/Metal/OrbCanvasView.swift" : {
-    "const-values" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbCanvasView.swiftconstvalues",
-    "dependencies" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbCanvasView.d",
-    "diagnostics" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbCanvasView.dia",
+  "/Users/tarunraghav/VolumeE/karen/KarenApp/Sources/Metal/OrbCanvasView.swift" : {
+    "const-values" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbCanvasView.swiftconstvalues",
+    "dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbCanvasView.d",
+    "diagnostics" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbCanvasView.dia",
     "index-unit-output-path" : "/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbCanvasView.o",
-    "llvm-bc" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbCanvasView.bc",
-    "object" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbCanvasView.o",
-    "swift-dependencies" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbCanvasView.swiftdeps",
-    "swiftmodule" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbCanvasView~partial.swiftmodule"
+    "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbCanvasView.bc",
+    "object" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbCanvasView.o",
+    "swift-dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbCanvasView.swiftdeps",
+    "swiftmodule" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbCanvasView~partial.swiftmodule"
   },
-  "/Users/tarunraghav/.gemini/antigravity/scratch/karen/KarenApp/Sources/Metal/OrbRenderer.swift" : {
-    "const-values" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbRenderer.swiftconstvalues",
-    "dependencies" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbRenderer.d",
-    "diagnostics" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbRenderer.dia",
+  "/Users/tarunraghav/VolumeE/karen/KarenApp/Sources/Metal/OrbRenderer.swift" : {
+    "const-values" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbRenderer.swiftconstvalues",
+    "dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbRenderer.d",
+    "diagnostics" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbRenderer.dia",
     "index-unit-output-path" : "/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbRenderer.o",
-    "llvm-bc" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbRenderer.bc",
-    "object" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbRenderer.o",
-    "swift-dependencies" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbRenderer.swiftdeps",
-    "swiftmodule" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbRenderer~partial.swiftmodule"
+    "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbRenderer.bc",
+    "object" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbRenderer.o",
+    "swift-dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbRenderer.swiftdeps",
+    "swiftmodule" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbRenderer~partial.swiftmodule"
   },
-  "/Users/tarunraghav/.gemini/antigravity/scratch/karen/KarenApp/Sources/Metal/OrbView.swift" : {
-    "const-values" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbView.swiftconstvalues",
-    "dependencies" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbView.d",
-    "diagnostics" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbView.dia",
+  "/Users/tarunraghav/VolumeE/karen/KarenApp/Sources/Metal/OrbView.swift" : {
+    "const-values" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbView.swiftconstvalues",
+    "dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbView.d",
+    "diagnostics" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbView.dia",
     "index-unit-output-path" : "/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbView.o",
-    "llvm-bc" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbView.bc",
-    "object" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbView.o",
-    "swift-dependencies" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbView.swiftdeps",
-    "swiftmodule" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbView~partial.swiftmodule"
+    "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbView.bc",
+    "object" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbView.o",
+    "swift-dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbView.swiftdeps",
+    "swiftmodule" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbView~partial.swiftmodule"
   },
-  "/Users/tarunraghav/.gemini/antigravity/scratch/karen/KarenApp/Sources/Sidecar/SidecarBridge.swift" : {
-    "const-values" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SidecarBridge.swiftconstvalues",
-    "dependencies" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SidecarBridge.d",
-    "diagnostics" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SidecarBridge.dia",
+  "/Users/tarunraghav/VolumeE/karen/KarenApp/Sources/Sidecar/SidecarBridge.swift" : {
+    "const-values" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SidecarBridge.swiftconstvalues",
+    "dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SidecarBridge.d",
+    "diagnostics" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SidecarBridge.dia",
     "index-unit-output-path" : "/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SidecarBridge.o",
-    "llvm-bc" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SidecarBridge.bc",
-    "object" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SidecarBridge.o",
-    "swift-dependencies" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SidecarBridge.swiftdeps",
-    "swiftmodule" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SidecarBridge~partial.swiftmodule"
+    "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SidecarBridge.bc",
+    "object" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SidecarBridge.o",
+    "swift-dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SidecarBridge.swiftdeps",
+    "swiftmodule" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SidecarBridge~partial.swiftmodule"
   },
-  "/Users/tarunraghav/.gemini/antigravity/scratch/karen/KarenApp/Sources/Speech/SpeechEngine.swift" : {
-    "const-values" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SpeechEngine.swiftconstvalues",
-    "dependencies" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SpeechEngine.d",
-    "diagnostics" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SpeechEngine.dia",
+  "/Users/tarunraghav/VolumeE/karen/KarenApp/Sources/Speech/SpeechEngine.swift" : {
+    "const-values" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SpeechEngine.swiftconstvalues",
+    "dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SpeechEngine.d",
+    "diagnostics" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SpeechEngine.dia",
     "index-unit-output-path" : "/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SpeechEngine.o",
-    "llvm-bc" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SpeechEngine.bc",
-    "object" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SpeechEngine.o",
-    "swift-dependencies" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SpeechEngine.swiftdeps",
-    "swiftmodule" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SpeechEngine~partial.swiftmodule"
+    "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SpeechEngine.bc",
+    "object" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SpeechEngine.o",
+    "swift-dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SpeechEngine.swiftdeps",
+    "swiftmodule" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SpeechEngine~partial.swiftmodule"
   },
-  "/Users/tarunraghav/.gemini/antigravity/scratch/karen/KarenApp/Sources/Speech/WakeWordDetector.swift" : {
-    "const-values" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/WakeWordDetector.swiftconstvalues",
-    "dependencies" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/WakeWordDetector.d",
-    "diagnostics" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/WakeWordDetector.dia",
+  "/Users/tarunraghav/VolumeE/karen/KarenApp/Sources/Speech/WakeWordDetector.swift" : {
+    "const-values" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/WakeWordDetector.swiftconstvalues",
+    "dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/WakeWordDetector.d",
+    "diagnostics" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/WakeWordDetector.dia",
     "index-unit-output-path" : "/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/WakeWordDetector.o",
-    "llvm-bc" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/WakeWordDetector.bc",
-    "object" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/WakeWordDetector.o",
-    "swift-dependencies" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/WakeWordDetector.swiftdeps",
-    "swiftmodule" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/WakeWordDetector~partial.swiftmodule"
+    "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/WakeWordDetector.bc",
+    "object" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/WakeWordDetector.o",
+    "swift-dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/WakeWordDetector.swiftdeps",
+    "swiftmodule" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/WakeWordDetector~partial.swiftmodule"
   },
-  "/Users/tarunraghav/.gemini/antigravity/scratch/karen/KarenApp/Sources/Views/ContentView.swift" : {
-    "const-values" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/ContentView.swiftconstvalues",
-    "dependencies" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/ContentView.d",
-    "diagnostics" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/ContentView.dia",
+  "/Users/tarunraghav/VolumeE/karen/KarenApp/Sources/Views/ContentView.swift" : {
+    "const-values" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/ContentView.swiftconstvalues",
+    "dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/ContentView.d",
+    "diagnostics" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/ContentView.dia",
     "index-unit-output-path" : "/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/ContentView.o",
-    "llvm-bc" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/ContentView.bc",
-    "object" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/ContentView.o",
-    "swift-dependencies" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/ContentView.swiftdeps",
-    "swiftmodule" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/ContentView~partial.swiftmodule"
+    "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/ContentView.bc",
+    "object" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/ContentView.o",
+    "swift-dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/ContentView.swiftdeps",
+    "swiftmodule" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/ContentView~partial.swiftmodule"
   },
-  "/Users/tarunraghav/.gemini/antigravity/scratch/karen/KarenApp/Sources/Views/MenuBarContent.swift" : {
-    "const-values" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/MenuBarContent.swiftconstvalues",
-    "dependencies" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/MenuBarContent.d",
-    "diagnostics" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/MenuBarContent.dia",
+  "/Users/tarunraghav/VolumeE/karen/KarenApp/Sources/Views/MenuBarContent.swift" : {
+    "const-values" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/MenuBarContent.swiftconstvalues",
+    "dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/MenuBarContent.d",
+    "diagnostics" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/MenuBarContent.dia",
     "index-unit-output-path" : "/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/MenuBarContent.o",
-    "llvm-bc" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/MenuBarContent.bc",
-    "object" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/MenuBarContent.o",
-    "swift-dependencies" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/MenuBarContent.swiftdeps",
-    "swiftmodule" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/MenuBarContent~partial.swiftmodule"
+    "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/MenuBarContent.bc",
+    "object" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/MenuBarContent.o",
+    "swift-dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/MenuBarContent.swiftdeps",
+    "swiftmodule" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/MenuBarContent~partial.swiftmodule"
   },
-  "/Users/tarunraghav/.gemini/antigravity/scratch/karen/KarenApp/Sources/Views/SettingsView.swift" : {
-    "const-values" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SettingsView.swiftconstvalues",
-    "dependencies" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SettingsView.d",
-    "diagnostics" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SettingsView.dia",
+  "/Users/tarunraghav/VolumeE/karen/KarenApp/Sources/Views/SettingsView.swift" : {
+    "const-values" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SettingsView.swiftconstvalues",
+    "dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SettingsView.d",
+    "diagnostics" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SettingsView.dia",
     "index-unit-output-path" : "/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SettingsView.o",
-    "llvm-bc" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SettingsView.bc",
-    "object" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SettingsView.o",
-    "swift-dependencies" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SettingsView.swiftdeps",
-    "swiftmodule" : "/Users/tarunraghav/.gemini/antigravity/scratch/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SettingsView~partial.swiftmodule"
+    "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SettingsView.bc",
+    "object" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SettingsView.o",
+    "swift-dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SettingsView.swiftdeps",
+    "swiftmodule" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SettingsView~partial.swiftmodule"
   }
 }

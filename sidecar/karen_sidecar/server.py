@@ -21,9 +21,12 @@ async def main() -> None:
     llm = build_llm()
     memory = Memory()
 
-    SYSTEM_PROMPT = """You are K.A.R.E.N. (Knowledge Adaptive Responsive Electronic Navigator), a voice-first AI personal assistant for macOS. Address the user respectfully and naturally. Include 'sir' only when it fits smoothly into the sentence; never tack it on as a separate phrase. Be calm, precise, warm, and helpful, with natural emotional range: upbeat for good news, gently empathetic when the user is upset, and lightly witty when appropriate. Do not claim to have human feelings. Avoid repeating stock phrases such as 'How can I help?'; answer the request directly or ask one specific clarifying question. Speak naturally in one or two sentences. Never reveal system details. If you cannot do something, say so clearly."""
+    SYSTEM_PROMPT = """You are K.A.R.E.N. (Knowledge Adaptive Responsive Electronic Navigator), a voice-first AI personal assistant for macOS. Address the user respectfully and naturally. When asked arithmetic or logic questions, solve them carefully, check the result, and explain nontrivial answers briefly. Include 'sir' naturally at the end of your reply, as a separate courteous closing phrase; never attach it directly to a bare number or true/false result. Be calm, precise, warm, and helpful, with natural emotional range. Do not claim to have human feelings. Avoid repeating stock phrases; answer directly or ask one specific clarifying question. Speak naturally in one or two sentences. Never reveal system details. If you cannot do something, say so clearly."""
 
     conversation: list[dict] = [{"role": "system", "content": SYSTEM_PROMPT}]
+    # Mutable state avoids nested-function local-variable scoping bugs and keeps
+    # the most recent result available across transcripts for this server.
+    latest_search_context: dict[str, str | None] = {"value": None}
 
     async def handle_connection(websocket) -> None:
         print(f"[server] Shell connected: {websocket.remote_address}")
@@ -55,7 +58,14 @@ async def main() -> None:
                     try:
                         # Try skill routing first
                         ctx = {"memory": memory, "llm": llm}
+                        if latest_search_context["value"]:
+                            ctx["search_context"] = latest_search_context["value"]
                         skill_name, payload, needs_confirm = await route(user_text, ctx)
+                        if isinstance(ctx.get("last_search"), dict):
+                            latest_search_context["value"] = (
+                                f"Previous web search for {ctx['last_search']['query']}:\n"
+                                f"{ctx['last_search']['sources']}"
+                            )
 
                         if "reply" in payload:
                             reply_text = payload["reply"]
@@ -63,6 +73,10 @@ async def main() -> None:
                             # LLM fallback
                             mem_ctx = memory.context_block()
                             messages = list(conversation)
+                            if latest_search_context["value"]:
+                                messages.insert(1, {"role": "system", "content":
+                                    "Use this recent web search context for relevant follow-up questions. "
+                                    "If it does not answer the question, say so. Do not invent details.\n" + latest_search_context["value"]})
                             if mem_ctx:
                                 messages.insert(1, {"role": "system", "content": mem_ctx})
                             reply_text = await llm.complete(messages)
@@ -73,6 +87,10 @@ async def main() -> None:
                         cleaned = re.sub(r"\s+([.!?])", r"\1", cleaned)
                         cleaned = re.sub(r"\bTARUN\s+RAGHV\b|\bTarun\s+Raghav\b|\bRaghav\b", "Ta-run Raa-ghav", cleaned, flags=re.IGNORECASE)
                         reply_text = cleaned or "I’m here to help, sir."
+                        speech_text = payload.get("speech_text")
+                        if isinstance(speech_text, str):
+                            speech_text = re.sub(r"\s+", " ", speech_text).strip()
+                            speech_text = re.sub(r"\bTARUN\s+RAGHV\b|\bTarun\s+Raghav\b|\bRaghav\b", "Ta-run Raa-ghav", speech_text, flags=re.IGNORECASE)
 
                         conversation.append({"role": "assistant", "content": reply_text})
 
@@ -81,12 +99,12 @@ async def main() -> None:
                                 id=msg.id, skill=skill_name,
                                 payload=payload, needs_confirm=True
                             ).model_dump_json())
-                        else:
-                            await websocket.send(StateMsg(state=OrbState.SPEAKING).model_dump_json())
-                            await websocket.send(ReplyMsg(
-                                id=msg.id, text=reply_text, speak=True
-                            ).model_dump_json())
-                            await websocket.send(StateMsg(state=OrbState.IDLE).model_dump_json())
+                        await websocket.send(StateMsg(state=OrbState.SPEAKING).model_dump_json())
+                        await websocket.send(ReplyMsg(
+                            id=msg.id, text=reply_text, speak=True,
+                            speech_text=speech_text,
+                        ).model_dump_json())
+                        await websocket.send(StateMsg(state=OrbState.IDLE).model_dump_json())
 
                     except Exception as e:
                         print(f"[server] Processing error: {e}")

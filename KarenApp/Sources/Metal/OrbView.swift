@@ -13,13 +13,95 @@ struct OrbView: View {
         // Both OrbMTKView (Metal) and OrbCanvasView (Canvas) are included
         // in the Xcode build. When building with `swift build` only
         // OrbCanvasView is used.
+        ZStack {
 #if CANVAS_RENDERER
-        OrbCanvasView()
-            .environmentObject(karen)
+            OrbCanvasView()
+                .environmentObject(karen)
 #else
-        OrbMTKView()
-            .environmentObject(karen)
+            OrbMTKView()
+                .environmentObject(karen)
 #endif
+            MemoryOrbNodeOverlay(labels: karen.memoryNodeLabels,
+                                 zoom: karen.orbZoom,
+                                 offsetX: karen.orbOffsetX,
+                                 offsetY: karen.orbOffsetY,
+                                 state: karen.orbState)
+        }
+    }
+}
+
+private struct MemoryOrbNodeOverlay: View {
+    let labels: [String]
+    let zoom: Float
+    let offsetX: Float
+    let offsetY: Float
+    let state: OrbState
+
+    private var visibility: Double {
+        let amount = min(max((Double(zoom) - 2.0) / 1.5, 0), 1)
+        return amount * amount * (3 - 2 * amount)
+    }
+
+    var body: some View {
+        GeometryReader { geometry in
+            let center = CGPoint(x: geometry.size.width / 2 + CGFloat(offsetX) * min(geometry.size.width, geometry.size.height) * 0.28,
+                                 y: geometry.size.height / 2 - CGFloat(offsetY) * min(geometry.size.width, geometry.size.height) * 0.28)
+            ZStack {
+                Canvas { context, _ in
+                    guard labels.count > 0 else { return }
+                    var links = Path()
+                    for index in labels.indices {
+                        let point = nodePosition(index: index, count: labels.count, size: geometry.size, center: center)
+                        links.move(to: center)
+                        links.addLine(to: point)
+                        if index > 0 {
+                            let previous = nodePosition(index: index - 1, count: labels.count, size: geometry.size, center: center)
+                            links.move(to: previous)
+                            links.addLine(to: point)
+                        }
+                    }
+                    context.stroke(links, with: .color(KarenTheme.accent(for: state).opacity(0.32 * visibility)), lineWidth: 0.8)
+                }
+
+                ForEach(Array(labels.enumerated()), id: \.offset) { index, label in
+                    let point = nodePosition(index: index, count: labels.count, size: geometry.size, center: center)
+                    HStack(spacing: 5) {
+                        Circle()
+                            .fill(KarenTheme.accent(for: state))
+                            .frame(width: 5, height: 5)
+                        Text(label)
+                            .font(.system(size: 9, weight: .medium, design: .rounded))
+                            .lineLimit(1)
+                            .truncationMode(.tail)
+                            .frame(maxWidth: 126, alignment: .leading)
+                    }
+                    .padding(.horizontal, 7)
+                    .padding(.vertical, 5)
+                    .background(Color(red: 0.012, green: 0.022, blue: 0.045).opacity(0.92), in: Capsule())
+                    .overlay(Capsule().strokeBorder(KarenTheme.accent(for: state).opacity(0.52), lineWidth: 0.7))
+                    .foregroundStyle(.white.opacity(0.96))
+                    .shadow(color: KarenTheme.accent(for: state).opacity(0.2), radius: 7)
+                    .help(label)
+                    .position(point)
+                    .opacity(visibility)
+                }
+            }
+            .animation(.easeInOut(duration: 0.35), value: visibility)
+        }
+        .allowsHitTesting(false)
+        .accessibilityLabel("Saved memories appear as labeled orb nodes when zoomed in")
+    }
+
+    private func nodePosition(index: Int, count: Int, size: CGSize, center: CGPoint) -> CGPoint {
+        let slotsPerRing = min(10, max(count, 1))
+        let ring = index / slotsPerRing
+        let slot = index % slotsPerRing
+        let remaining = count - ring * slotsPerRing
+        let slots = min(slotsPerRing, remaining)
+        let angle = Double(slot) / Double(max(slots, 1)) * 2 * Double.pi - Double.pi / 2 + Double(ring) * 0.19
+        let ringRadius = min(0.43, 0.23 + Double(ring) * 0.105)
+        return CGPoint(x: center.x + cos(angle) * size.width * ringRadius,
+                       y: center.y + sin(angle) * size.height * ringRadius)
     }
 }
 

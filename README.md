@@ -99,12 +99,44 @@ All messages are JSON over a WebSocket bound to localhost (`127.0.0.1:18765`).
 | Message | Fields | Description |
 |---------|--------|-------------|
 | `state` | `state` | Orb state transition |
-| `reply` | `id`, `text`, `speak` | Text (and optional TTS) reply |
+| `reply` | `id`, `text`, `speak`, optional `speech_text` | Displayed reply and optional separate text for TTS |
 | `action` | `id`, `skill`, `payload`, `needs_confirm` | Skill action (may need confirmation) |
 | `error` | `id`, `message` | Error |
 | `pong` | — | Ping response |
 
 **OrbState values:** `idle` · `listening` · `processing` · `speaking` · `permission` · `error`
+
+---
+
+## Arithmetic, logic, and web search
+
+K.A.R.E.N. routes arithmetic and Boolean expressions to local, safe parsers. It
+supports spoken numbers, decimals, negative numbers, common functions, standard
+operator precedence, comparisons, Boolean operators, and truth tables. Invalid
+or incomplete calculations receive a clarification prompt. Search requests use
+the official Brave Search API; the assistant shows result titles and source URLs
+while speaking only a short summary.
+
+To enable online search when launching from source, create a Brave Search API
+key, then export it in the same terminal before running the app:
+
+```bash
+export KAREN_SEARCH_PROVIDER=brave
+export KAREN_BRAVE_API_KEY='your-api-key'
+export KAREN_SEARCH_COUNTRY=IN
+export KAREN_SEARCH_LANG=en
+bash scripts/run.sh
+```
+
+The key stays in the process environment and should not be committed to the
+repository. Without a provider and key, K.A.R.E.N. says search is unavailable
+and does not claim it searched. A configured real LLM can summarize retrieved
+snippets and use the latest search context for follow-up questions. The default
+offline MockLLM cannot provide open-ended knowledge or generate contextual
+follow-up answers; local math and logic continue to work offline.
+
+Supported settings: `KAREN_SEARCH_PROVIDER=brave`, `KAREN_BRAVE_API_KEY`,
+`KAREN_SEARCH_COUNTRY` (default `IN`), and `KAREN_SEARCH_LANG` (default `en`).
 
 ---
 
@@ -167,11 +199,14 @@ cd sidecar
 .venv/bin/python3 -m pytest tests/ -v
 ```
 
-**28 tests, 0 failures** (verified 2026-10-13):
+**97 tests, 0 failures** (verified 2026-10-16):
 - `test_protocol.py` — 6 tests: message parsing, serialisation
 - `test_llm_router.py` — 5 tests: MockLLM cycling, skill routing
 - `test_memory.py` — 5 tests: propose/approve/delete/context
 - `test_gesture_math.py` — 12 tests: pinch zoom, rotation delta, clamping
+- `test_math_engine.py` — safe arithmetic, spoken parsing, Decimal precision, limits
+- `test_logic_engine.py` — Boolean expressions, comparisons, truth tables
+- `test_intelligence.py` — intent classification, Brave API and search errors
 
 ---
 
@@ -195,7 +230,9 @@ cd sidecar
 | Metal orb (6 states) | **Partial** | Canvas renderer verified; Metal shaders written but need Xcode.app |
 | SwiftUI Canvas orb | **Verified** | 60 fps, all 6 states, LOD, reduce motion |
 | Python sidecar + WebSocket | **Verified** | Localhost socket, typed protocol, mock LLM |
-| MockLLM offline mode | **Verified** | All 28 tests pass |
+| MockLLM offline mode | **Verified** | 97 Python tests pass |
+| Local arithmetic and logic | **Verified** | Safe parsers, spoken expressions, truth tables |
+| Brave web search | **Implemented** | Requires an API key and network access |
 | On-device STT (SFSpeechRecognizer) | **UNVERIFIED** | Code written; needs mic permission at runtime |
 | TTS (AVSpeechSynthesizer) | **UNVERIFIED** | Code written; needs audio output at runtime |
 | Wake word ("Karen") | **UNVERIFIED** | SFSpeechRecognizer loop written; needs runtime test |

@@ -9,6 +9,11 @@ import re
 import random
 from typing import Callable, Awaitable, Any
 
+from .intent import Intent, classify_intent
+from .intelligence import answer_search_request
+from .logic_engine import LogicInputError, solve_voice_logic
+from .math_engine import MathInputError, normalize_math_expression, solve_voice_math
+
 SkillHandler = Callable[[str, dict], Awaitable[dict]]
 
 _REGISTRY: dict[str, tuple[re.Pattern, SkillHandler]] = {}
@@ -33,8 +38,6 @@ def set_fallback(fn: SkillHandler) -> SkillHandler:
 # Keeping these as intent groups lets K.A.R.E.N. respond immediately without
 # an API key, and randomizes alternate lines so repeated commands feel natural.
 _REPLY_GROUPS: list[tuple[str, tuple[str, ...], tuple[str, ...]]] = [
-    ("time", (r"\bwhat time|\btime now\b|\btell me the time\b|\bcurrent time\b|\btime\b",), ()),
-    ("date", (r"\bdate\b|\btoday\b|\bwhat day\b|\bwhich day\b|\bwhat month\b|\bwhich month\b|\bwhat year\b|\bwhich year\b",), ()),
     ("coin", (r"\bflip a coin\b|\btoss a coin\b|\bheads or tails\b",), ()),
     ("dice", (r"\broll (?:a )?die\b|\broll (?:the )?dice\b",), ()),
     ("random", (r"\brandom number\b|\bpick a number\b|\bgive me a number\b",), ()),
@@ -61,7 +64,7 @@ _REPLY_GROUPS: list[tuple[str, tuple[str, ...], tuple[str, ...]]] = [
         "I’m K.A.R.E.N., your personal voice assistant, built to answer, assist, and occasionally impress.",
         "My name is K.A.R.E.N. I’m a voice-first assistant designed to make your day easier.")),
     ("capability", (r"\bwhat can you do\b|\bwhat are your features\b|\bwhat are your abilities\b|\bhow can you help\b",), (
-        "I can answer common questions offline, tell you the time and date, tell jokes, flip a coin, roll dice, and help you control the orb.",)),
+        "I can solve arithmetic and logic expressions, answer common questions offline, tell you the time and date, tell jokes, flip a coin, roll dice, and help you control the orb.",)),
     ("robot", (r"\bare you a robot\b",), ("Not exactly. I have no body, only code, a voice, and a rather good sense of timing.",)),
     ("human", (r"\bare you human\b|\bare you an ai\b|\bare you artificial intelligence\b",), ("I’m an artificial intelligence, not a human, and I’m here to help.",)),
     ("age", (r"\bhow old are you\b|\bwhat is your age\b",), ("I’m as young as this version of the app, and ready to learn new ways to help.",)),
@@ -129,6 +132,24 @@ _REPLY_GROUPS: list[tuple[str, tuple[str, ...], tuple[str, ...]]] = [
 
 _CATALOG_PATTERN = re.compile("|".join("(?:" + pattern + ")" for _, patterns, _ in _REPLY_GROUPS for pattern in patterns), re.IGNORECASE)
 
+@skill("open_application", r"\b(?:open|launch|start)\s+(?:the\s+)?[\w][\w .&+'-]*")
+async def _open_application_skill(text: str, ctx: dict) -> dict:
+    match = re.search(r"\b(?:open|launch|start)\s+(?:the\s+)?(.+?)\s*[.!?]*$", text, re.IGNORECASE)
+    if not match:
+        return {"reply": "Which app would you like me to open?"}
+
+    app_name = match.group(1).strip(" \t\r\n.,!?'“”")
+    app_name = re.sub(r"^(?:app|application)\s+", "", app_name, flags=re.IGNORECASE)
+    app_name = re.sub(r"\s+(?:for me|please)$", "", app_name, flags=re.IGNORECASE).strip()
+    if not app_name or len(app_name) > 80:
+        return {"reply": "Tell me the name of the app you want me to open."}
+
+    return {
+        "reply": f"Opening {app_name}.",
+        "__needs_confirm__": True,
+        "application_name": app_name,
+    }
+
 
 @skill("offline_reply_catalog", _CATALOG_PATTERN.pattern)
 async def _offline_reply_catalog(text: str, ctx: dict) -> dict:
@@ -169,6 +190,29 @@ async def route(text: str, context: dict[str, Any]) -> tuple[str, dict, bool]:
     Returns (skill_name, payload, needs_confirm).
     Falls back to 'llm' skill if no pattern matches.
     """
+    intent = classify_intent(text)
+    if intent == Intent.MATH:
+        try:
+            calculation = solve_voice_math(text)
+        except MathInputError as exc:
+            expression = normalize_math_expression(text)
+            missing = re.search(r"(.+?)\s*([+*/%-])\s*$", expression)
+            if missing:
+                action = {"+": "add to", "-": "subtract from", "*": "multiply", "/": "divide", "%": "find the remainder after dividing"}[missing.group(2)]
+                return "math", {"reply": f"What number should I {action} {missing.group(1).strip()}?"}, False
+            return "math", {"reply": f"I couldn’t parse that calculation: {exc}. Please repeat the numbers and operation."}, False
+        return "math", {"reply": f"The answer is {calculation['answer']}, sir.", "expression": calculation["expression"]}, False
+
+    if intent == Intent.LOGIC:
+        try:
+            answer = solve_voice_logic(text)
+        except (LogicInputError, MathInputError) as exc:
+            return "logic", {"reply": f"I couldn’t evaluate that logic expression: {exc}. Please clarify the variables or operators."}, False
+        return "logic", {"reply": f"{answer['answer']}. Sir.", "expression": answer["expression"]}, False
+
+    if intent == Intent.SEARCH:
+        return "web_search", await answer_search_request(text, context), False
+
     for name, (pat, handler) in _REGISTRY.items():
         if pat.search(text):
             payload = await handler(text, context)
@@ -201,7 +245,7 @@ async def _identity_skill(text: str, ctx: dict) -> dict:
 
 @skill("help", r"\b(what can you do|how can you help|help me|your commands)\b")
 async def _help_skill(text: str, ctx: dict) -> dict:
-    return {"reply": "You can ask me a question, ask for the time or date, ask what I remember, or say zoom in, zoom out, or reset the orb. You can also move, rotate, and zoom the orb with hand gestures."}
+    return {"reply": "You can ask me arithmetic or logic questions, ask for the time or date, ask what I remember, say ‘open Chrome’ or ‘open’ another installed app, or control the orb with voice and hand gestures."}
 
 
 @skill("greeting", r"\b(hello|hi|hey there|good morning|good afternoon|good evening)\b")

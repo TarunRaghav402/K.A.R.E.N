@@ -9,9 +9,10 @@ import Network
 
 final class SidecarBridge: NSObject {
     // Callbacks (called on main queue)
-    var onReply:       ((String, String, Bool) -> Void)?
+    var onReply:       ((String, String, String, Bool) -> Void)?
     var onStateChange: ((String) -> Void)?
     var onError:       ((String, String) -> Void)?
+    var onAction:      ((String, String, [String: Any]) -> Void)?
 
     // Exposed for MemoryView
     var memory: MemoryBridge?
@@ -185,14 +186,17 @@ final class SidecarBridge: NSObject {
                 let id    = json["id"]   as? String ?? ""
                 let text  = json["text"] as? String ?? ""
                 let speak = json["speak"] as? Bool   ?? true
-                self.onReply?(id, text, speak)
+                let speechText = json["speech_text"] as? String ?? text
+                self.onReply?(id, text, speechText, speak)
             case "error":
                 let id  = json["id"]      as? String ?? ""
                 let msg = json["message"] as? String ?? "Unknown error"
                 self.onError?(id, msg)
             case "action":
-                // Action requiring confirmation — forward to KarenCore via notification
-                NotificationCenter.default.post(name: .karenActionRequest, object: json)
+                let id = json["id"] as? String ?? ""
+                let skill = json["skill"] as? String ?? ""
+                let payload = json["payload"] as? [String: Any] ?? [:]
+                self.onAction?(id, skill, payload)
             case "pong":
                 break
             default:

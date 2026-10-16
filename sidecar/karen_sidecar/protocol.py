@@ -10,7 +10,7 @@ Shell → Sidecar:
 
 Sidecar → Shell:
   { "type": "state",       "state": OrbState }
-  { "type": "reply",       "id": str, "text": str, "speak": bool }
+  { "type": "reply",       "id": str, "text": str, "speak": bool, "speech_text": str | None }
   { "type": "action",      "id": str, "skill": str, "payload": dict, "needs_confirm": bool }
   { "type": "error",       "id": str, "message": str }
   { "type": "pong" }
@@ -63,6 +63,7 @@ class ReplyMsg(BaseModel):
     id: str
     text: str
     speak: bool = True
+    speech_text: str | None = None
 
 
 class ActionMsg(BaseModel):

@@ -386,6 +386,7 @@ struct MemoryView: View {
                           content: row["content"] as? String ?? "",
                           createdAt: row["created_at"] as? String ?? "")
         }) ?? []
+        karen.refreshMemoryNodeLabels()
     }
 
     private func addMemory() {
