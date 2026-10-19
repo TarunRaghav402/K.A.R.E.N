@@ -3,6 +3,8 @@ import AVFoundation
 import Combine
 import AppKit
 import Speech
+import Vision
+import UniformTypeIdentifiers
 
 // ─── Orb State ────────────────────────────────────────────────────────────────
 
@@ -34,6 +36,7 @@ final class KarenCore: ObservableObject {
     @Published var orbOffsetX: Float   = 0.0
     @Published var orbOffsetY: Float   = 0.0
     @Published var memoryNodeLabels: [String] = []
+    @Published var selectedImageLabels: [String] = []
 
     // Sheet/panel state
     @Published var showSettings: Bool     = false
@@ -53,8 +56,23 @@ final class KarenCore: ObservableObject {
         case .processing: return "circle.dotted"
         case .speaking:   return "waveform"
         case .error:      return "exclamationmark.circle"
-        default:          return "sparkle"
+        default:          return "sparkles"
         }
+    }
+
+    func showAssistantWindow() {
+        windowOpener?()
+        NSApp.activate(ignoringOtherApps: true)
+    }
+
+    func setWindowOpener(_ opener: @escaping () -> Void) {
+        windowOpener = opener
+    }
+
+    func hideAssistantWindow() {
+        NSApp.windows
+            .filter { $0.title == "K.A.R.E.N." && $0.isVisible }
+            .forEach { $0.close() }
     }
 
     // Sub-systems (initialised lazily after permission grants)
@@ -71,6 +89,7 @@ final class KarenCore: ObservableObject {
     private var rotationTargetPitch: Float = 0
     private var rotationAnimationTask: Task<Void, Never>?
     private var isLocalSpeechActive = false
+    private var windowOpener: (() -> Void)?
     private var continuousConversation = false
     private var conversationGeneration = 0
     private var isHandlingUtterance = false
@@ -145,6 +164,28 @@ final class KarenCore: ObservableObject {
         sidecarBridge?.connect()
     }
 
+    @discardableResult
+    func saveTavilySearchKey(_ value: String) -> Bool {
+        guard SearchCredentialStore.saveTavilyKey(value) else { return false }
+        restartSidecarForSearchSettings()
+        return true
+    }
+
+    @discardableResult
+    func removeTavilySearchKey() -> Bool {
+        guard SearchCredentialStore.removeTavilyKey() else { return false }
+        restartSidecarForSearchSettings()
+        return true
+    }
+
+    private func restartSidecarForSearchSettings() {
+        guard let bridge = sidecarBridge else {
+            setupSidecar()
+            return
+        }
+        bridge.stop { [weak self] in self?.setupSidecar() }
+    }
+
     // ── Listening controls ───────────────────────────────────────────────────
 
     func toggleListening() {
@@ -178,12 +219,17 @@ final class KarenCore: ObservableObject {
                     defer { self.isHandlingUtterance = false }
                     let normalized = text.trimmingCharacters(in: .whitespacesAndNewlines)
                         .lowercased().trimmingCharacters(in: CharacterSet(charactersIn: ".!?;, "))
-                    if normalized == "quit" || normalized == "quit karen" {
+                    let backgroundCommands: Set<String> = [
+                        "quit", "quit karen", "exit", "exit karen", "close karen",
+                        "close the app", "go offline", "terminate"
+                    ]
+                    if backgroundCommands.contains(normalized) {
                         self.continuousConversation = false
                         self.conversationGeneration += 1
                         self.isListening = false
                         self.speechEngine?.stopListening()
                         self.orbState = .idle
+                        self.hideAssistantWindow()
                         self.resumeWakeWordIfNeeded()
                         return
                     }
@@ -203,7 +249,8 @@ final class KarenCore: ObservableObject {
                         return
                     }
                     do {
-                        try await bridge.sendTranscript(id: UUID().uuidString, text: text, final: true)
+                        try await bridge.sendTranscript(id: UUID().uuidString, text: text, final: true,
+                                                        imageLabels: self.selectedImageLabels)
                     } catch {
                         self.replyText = "I couldn't send that request. Please try again."
                         self.orbState = .error
@@ -263,6 +310,65 @@ final class KarenCore: ObservableObject {
             replyText = "I couldn’t open \(name): \(error.localizedDescription)"
             return
         }
+    }
+
+    func sendTextInput(_ text: String) {
+        let value = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !value.isEmpty, let bridge = sidecarBridge else { return }
+        orbState = .processing
+        Task {
+            do {
+                try await bridge.sendTranscript(id: UUID().uuidString, text: value, final: true,
+                                                source: "text", imageLabels: selectedImageLabels)
+            } catch {
+                replyText = "I couldn't send that message. Please try again."
+                orbState = .error
+            }
+        }
+    }
+
+    func chooseImageInput() {
+        let panel = NSOpenPanel()
+        panel.title = "Choose an image for K.A.R.E.N."
+        panel.prompt = "Use Image"
+        panel.allowedContentTypes = [.image]
+        panel.allowsMultipleSelection = false
+        guard panel.runModal() == .OK, let url = panel.url else { return }
+
+        replyText = "Looking at the selected image…"
+        orbState = .processing
+        Task { [weak self] in
+            let labels = await Task.detached(priority: .userInitiated) { () -> [String]? in
+                do {
+                let request = VNClassifyImageRequest()
+                try VNImageRequestHandler(url: url).perform([request])
+                    return (request.results ?? [])
+                    .filter { $0.confidence >= 0.08 }
+                    .prefix(6)
+                    .map { "\($0.identifier) (\(Int($0.confidence * 100))%)" }
+                } catch {
+                    return nil
+                }
+            }.value
+
+            guard let self else { return }
+            guard let labels else {
+                self.orbState = .error
+                self.replyText = "I couldn't read that image. Try another image format."
+                return
+            }
+            self.selectedImageLabels = labels
+            self.orbState = .idle
+            if labels.isEmpty {
+                self.replyText = "I couldn't confidently label that image. Try a clearer picture."
+            } else {
+                self.replyText = "Image ready. Ask me what it shows. The image stays on your Mac."
+            }
+        }
+    }
+
+    func clearImageInput() {
+        selectedImageLabels = []
     }
 
     func toggleWakeWord() {
@@ -375,6 +481,7 @@ final class KarenCore: ObservableObject {
 
     func onWakeWord() {
         guard !isListening else { return }
+        showAssistantWindow()
         NSApp.activate(ignoringOtherApps: true)
         wakeWordDetector?.stop()
         continuousConversation = true

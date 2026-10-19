@@ -1,4 +1,4 @@
-"""Optional Brave Search API client with bounded caching and safe failures."""
+"""Optional web-search API clients with bounded caching and safe failures."""
 
 from __future__ import annotations
 
@@ -13,6 +13,7 @@ import httpx
 
 
 ENDPOINT = "https://api.search.brave.com/res/v1/web/search"
+TAVILY_ENDPOINT = "https://api.tavily.com/search"
 CACHE_TTL_SECONDS = 300
 CACHE_LIMIT = 64
 
@@ -56,14 +57,36 @@ def parse_brave_results(payload: dict[str, Any]) -> list[SearchResult]:
     return results
 
 
+def parse_tavily_results(payload: dict[str, Any]) -> list[SearchResult]:
+    raw_results = payload.get("results", [])
+    if not isinstance(raw_results, list):
+        return []
+    results: list[SearchResult] = []
+    for item in raw_results:
+        if not isinstance(item, dict):
+            continue
+        url = item.get("url")
+        if not isinstance(url, str) or not _safe_source_url(url):
+            continue
+        title = item.get("title") if isinstance(item.get("title"), str) else "Search result"
+        content = item.get("content") if isinstance(item.get("content"), str) else ""
+        results.append(SearchResult(title=title.strip()[:240], url=url, description=content.strip()[:1200]))
+        if len(results) >= 5:
+            break
+    return results
+
+
 async def search_web(query: str, *, provider: str | None = None,
                      api_key: str | None = None, client: httpx.AsyncClient | None = None,
                      use_cache: bool = True) -> list[SearchResult]:
     selected_provider = (provider or os.environ.get("KAREN_SEARCH_PROVIDER", "")).strip().lower()
-    if selected_provider != "brave":
-        raise SearchError("Web search is not configured. Set KAREN_SEARCH_PROVIDER=brave and add a Brave API key.")
-    token = api_key or os.environ.get("KAREN_BRAVE_API_KEY", "")
+    if selected_provider not in {"brave", "tavily"}:
+        raise SearchError("Web search is not configured. Add a free Tavily key in K.A.R.E.N. Settings > Free Web Search.")
+    key_environment_name = "KAREN_TAVILY_API_KEY" if selected_provider == "tavily" else "KAREN_BRAVE_API_KEY"
+    token = api_key or os.environ.get(key_environment_name, "")
     if not token:
+        if selected_provider == "tavily":
+            raise SearchError("Tavily web search needs an API key. Add one in K.A.R.E.N. Settings > Free Web Search.")
         raise SearchError("Brave web search needs a key in KAREN_BRAVE_API_KEY. No search was made.")
     query = query.strip()
     if not query or len(query) > 600:
@@ -83,16 +106,25 @@ async def search_web(query: str, *, provider: str | None = None,
     owns_client = client is None
     active_client = client or httpx.AsyncClient(timeout=httpx.Timeout(8.0, connect=3.0))
     try:
-        response = await active_client.get(
-            ENDPOINT,
-            params={"q": query, "count": 5, "country": country, "search_lang": language},
-            headers={"Accept": "application/json", "X-Subscription-Token": token},
-        )
+        if selected_provider == "tavily":
+            response = await active_client.post(
+                TAVILY_ENDPOINT,
+                json={"query": query, "search_depth": "basic", "max_results": 5,
+                      "include_answer": False, "include_raw_content": False,
+                      "language": language},
+                headers={"Accept": "application/json", "Authorization": f"Bearer {token}"},
+            )
+        else:
+            response = await active_client.get(
+                ENDPOINT,
+                params={"q": query, "count": 5, "country": country, "search_lang": language},
+                headers={"Accept": "application/json", "X-Subscription-Token": token},
+            )
         response.raise_for_status()
         payload = response.json()
         if not isinstance(payload, dict):
             raise SearchError("The search provider returned an unreadable response.")
-        results = parse_brave_results(payload)
+        results = parse_tavily_results(payload) if selected_provider == "tavily" else parse_brave_results(payload)
         if not results:
             return []
         if use_cache:
@@ -107,11 +139,11 @@ async def search_web(query: str, *, provider: str | None = None,
     except httpx.HTTPStatusError as exc:
         status = exc.response.status_code
         if status == 401 or status == 403:
-            message = "Brave rejected the API key. Check KAREN_BRAVE_API_KEY and your API plan."
+            message = f"{selected_provider.title()} rejected the API key. Check the key and your account plan."
         elif status == 429:
-            message = "Brave search rate limit reached. Please try again later."
+            message = f"{selected_provider.title()} search rate limit reached. Please try again later."
         else:
-            message = f"Brave search returned HTTP {status}. Please try again later."
+            message = f"{selected_provider.title()} search returned HTTP {status}. Please try again later."
         raise SearchError(message) from exc
     except (httpx.HTTPError, ValueError) as exc:
         raise SearchError("I couldn’t connect to web search. Check the network and try again.") from exc

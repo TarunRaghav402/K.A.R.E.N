@@ -4,7 +4,9 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject var karen: KarenCore
+    @Environment(\.openWindow) private var openWindow
     @State private var showGestureGuide = false
+    @State private var typedInput = ""
 
     var body: some View {
         ZStack {
@@ -42,8 +44,30 @@ struct ContentView: View {
             // Bottom HUD
             VStack {
                 Spacer()
-                HUDBar()
-                    .padding(.bottom, 20)
+                VStack(spacing: 9) {
+                    HStack(spacing: 8) {
+                        TextField("Type a message or question…", text: $typedInput)
+                            .textFieldStyle(.plain)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 11)
+                            .onSubmit(submitTypedInput)
+                            .accessibilityLabel("Message K.A.R.E.N.")
+                        Button(action: submitTypedInput) {
+                            Image(systemName: "arrow.up.circle.fill")
+                                .font(.system(size: 22))
+                                .foregroundStyle(KarenTheme.accent(for: karen.orbState))
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel("Send message")
+                    }
+                    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 14))
+                    .overlay(RoundedRectangle(cornerRadius: 14)
+                        .strokeBorder(KarenTheme.accent(for: karen.orbState).opacity(0.22), lineWidth: 1))
+                    .padding(.horizontal, 40)
+
+                    HUDBar()
+                }
+                .padding(.bottom, 20)
             }
 
             // Reply text overlay
@@ -71,6 +95,9 @@ struct ContentView: View {
             if showGestureGuide {
                 GestureGuideOverlay(dismiss: { showGestureGuide = false })
             }
+        }
+        .onAppear {
+            karen.setWindowOpener { openWindow(id: "main") }
         }
         .sheet(isPresented: $karen.showSettings) {
             SettingsView()
@@ -104,6 +131,13 @@ struct ContentView: View {
             karen.requestCamera()
         }
         .frame(minWidth: 680, minHeight: 560)
+    }
+
+    private func submitTypedInput() {
+        let value = typedInput.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !value.isEmpty else { return }
+        typedInput = ""
+        karen.sendTextInput(value)
     }
 }
 
@@ -179,6 +213,20 @@ struct HUDBar: View {
             }
             .accessibilityLabel("Reset orb view")
 
+            HUDButton(icon: karen.selectedImageLabels.isEmpty ? "photo" : "photo.fill",
+                      label: karen.selectedImageLabels.isEmpty ? "Image" : "Ready",
+                      active: !karen.selectedImageLabels.isEmpty, tint: .white) {
+                karen.chooseImageInput()
+            }
+            .accessibilityLabel(karen.selectedImageLabels.isEmpty ? "Choose an image" : "Replace selected image")
+
+            if !karen.selectedImageLabels.isEmpty {
+                HUDButton(icon: "xmark.circle", label: "Clear", active: false, tint: .white) {
+                    karen.clearImageInput()
+                }
+                .accessibilityLabel("Clear selected image context")
+            }
+
             // Memory
             HUDButton(icon: "brain", label: "Memory", active: false, tint: .white) {
                 karen.openMemoryMap()
@@ -232,12 +280,17 @@ struct ReplyBubble: View {
     let text: String
 
     var body: some View {
-        Text(text)
-            .font(.system(size: 14, weight: .regular, design: .rounded))
-            .foregroundStyle(.white)
-            .multilineTextAlignment(.center)
+        ScrollView(.vertical) {
+            Text(text)
+                .font(.system(size: 14, weight: .regular, design: .rounded))
+                .foregroundStyle(.white)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 12)
+        }
+            .frame(maxHeight: 240)
             .padding(.horizontal, 20)
-            .padding(.vertical, 12)
             .background(
                 RoundedRectangle(cornerRadius: 14)
                     .fill(KarenTheme.panel(for: karen.orbState).opacity(0.96))

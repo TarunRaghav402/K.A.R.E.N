@@ -43,6 +43,11 @@
     "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/OrbView.bc",
     "object" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/OrbView.o"
   },
+  "/Users/tarunraghav/VolumeE/karen/KarenApp/Sources/Sidecar/SearchCredentialStore.swift" : {
+    "index-unit-output-path" : "/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/SearchCredentialStore.o",
+    "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/SearchCredentialStore.bc",
+    "object" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/SearchCredentialStore.o"
+  },
   "/Users/tarunraghav/VolumeE/karen/KarenApp/Sources/Sidecar/SidecarBridge.swift" : {
     "index-unit-output-path" : "/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/SidecarBridge.o",
     "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/SidecarBridge.bc",

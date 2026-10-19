@@ -1,0 +1,4 @@
+Target dependency graph (2 targets)
+Target 'AllExcludingTests' in project 'Aggregate'
+➜ Explicit dependency on target 'KarenApp-product' in project 'KarenApp'
+Target 'KarenApp-product' in project 'KarenApp' (no dependencies)

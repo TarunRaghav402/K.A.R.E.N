@@ -7,7 +7,7 @@ struct KarenApp: App {
     @StateObject private var karen = KarenCore()
 
     var body: some Scene {
-        WindowGroup("K.A.R.E.N.") {
+        Window("K.A.R.E.N.", id: "main") {
             ContentView()
                 .environmentObject(karen)
                 .frame(minWidth: 680, minHeight: 560)
@@ -45,6 +45,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         false // run as background agent
     }
     func applicationDidFinishLaunching(_ notification: Notification) {
-        NSApp.setActivationPolicy(.regular)
+        NSApp.setActivationPolicy(.accessory)
+        // Launch as a menu-bar assistant. The window is opened again on a
+        // wake-word request or from the menu bar's Open command.
+        DispatchQueue.main.async {
+            NSApp.windows.first(where: { $0.title == "K.A.R.E.N." && $0.isVisible })?.close()
+        }
+    }
+
+    func applicationWillTerminate(_ notification: Notification) {
+        SidecarBridge.stopAll()
     }
 }

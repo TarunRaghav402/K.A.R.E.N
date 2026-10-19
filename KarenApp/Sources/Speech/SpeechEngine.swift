@@ -165,12 +165,7 @@ final class TTSEngine: NSObject, AVSpeechSynthesizerDelegate {
     }
 
     private func makeUtterance(_ text: String) -> AVSpeechUtterance {
-        // Keep the displayed reply spelled normally, while speaking the
-        // creator's name phonetically so English voices don't say “R A G H”.
-        let spokenText = text
-            .replacingOccurrences(of: "TARUN RAGHV", with: "Ta-run Raa-ghav", options: .caseInsensitive)
-            .replacingOccurrences(of: "Tarun Raghav", with: "Ta-run Raa-ghav", options: .caseInsensitive)
-        let utterance = AVSpeechUtterance(string: spokenText)
+        let utterance = AVSpeechUtterance(string: text)
         utterance.voice = voiceId.isEmpty ? AVSpeechSynthesisVoice(language: "en-US")
                                           : AVSpeechSynthesisVoice(identifier: voiceId)
         utterance.rate = rate

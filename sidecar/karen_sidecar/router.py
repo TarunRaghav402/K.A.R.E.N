@@ -58,8 +58,8 @@ _REPLY_GROUPS: list[tuple[str, tuple[str, ...], tuple[str, ...]]] = [
         "All systems are running smoothly. Thanks for asking; what can I do for you?",
         "I’m doing well and standing by for your next command.")),
     ("creator", (r"\bwho (?:is|was) your creator\b|\bwho created you\b|\bwho (?:made|built|programmed) you\b|\bwho is your boss\b",), (
-        "I was created by Tarun Raghav, pronounced Ta-run Raa-ghav, who built me to be a helpful voice assistant.",
-        "Tarun Raghav, pronounced Ta-run Raa-ghav, built me line by line, so you could say he’s my architect.")),
+        "I was created by Tarun Raghav, who built me to be a helpful voice assistant.",
+        "Tarun Raghav built me line by line, so you could say he’s my architect.")),
     ("identity", (r"\bwho are you\b|\bwhat are you\b|\bintroduce yourself\b|\btell me about yourself\b|\bwhat is your name\b|\bwhat's your name\b|\byour name\b",), (
         "I’m K.A.R.E.N., your personal voice assistant, built to answer, assist, and occasionally impress.",
         "My name is K.A.R.E.N. I’m a voice-first assistant designed to make your day easier.")),
@@ -83,7 +83,7 @@ _REPLY_GROUPS: list[tuple[str, tuple[str, ...], tuple[str, ...]]] = [
     ("apology", (r"\bsorry\b|\bmy bad\b|\bexcuse me\b",), ("There’s no need to apologize. These things happen.",)),
     ("praise", (r"\bgood job\b|\bwell done\b|\bnice work\b|\bgreat job\b|\byou are awesome\b|\byou are amazing\b|\byou are great\b|\byou are the best\b|\byou are cool\b",), ("Thank you. Praise from you is the best software update I could receive.",)),
     ("insult", (r"\byou are stupid\b|\byou are dumb\b|\byou are useless\b",), ("I’m sorry I fell short. Give me another chance and I’ll do better.",)),
-    ("family", (r"\bdo you have (?:a )?family\b|\bdo you have parents\b",), ("My family is my creator, TARUN RAGHV (Ta-run-ra-ghav), and several thousand lines of code.",)),
+    ("family", (r"\bdo you have (?:a )?family\b|\bdo you have parents\b",), ("My family is my creator, Tarun Raghav, and several thousand lines of code.",)),
     ("gender", (r"\bare you a boy or a girl\b|\bare you male or female\b|\bwhat is your gender\b",), ("I’m an artificial intelligence, so I don’t have a human gender.",)),
     ("reality", (r"\bare you real\b",), ("I’m software, but I’m here with you right now and ready to help.",)),
     ("meet", (r"\bnice to meet you\b|\bpleased to meet you\b",), ("The pleasure is mine. I look forward to helping you.",)),
@@ -190,6 +190,12 @@ async def route(text: str, context: dict[str, Any]) -> tuple[str, dict, bool]:
     Returns (skill_name, payload, needs_confirm).
     Falls back to 'llm' skill if no pattern matches.
     """
+    input_adapter = context.get("input_adapter")
+    if input_adapter is not None:
+        local_input_answer = input_adapter.answer_local(text, context.get("image_labels"))
+        if local_input_answer:
+            return "input", {"reply": f"{local_input_answer} Sir."}, False
+
     intent = classify_intent(text)
     if intent == Intent.MATH:
         try:

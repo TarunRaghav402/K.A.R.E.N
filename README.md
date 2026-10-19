@@ -114,11 +114,17 @@ K.A.R.E.N. routes arithmetic and Boolean expressions to local, safe parsers. It
 supports spoken numbers, decimals, negative numbers, common functions, standard
 operator precedence, comparisons, Boolean operators, and truth tables. Invalid
 or incomplete calculations receive a clarification prompt. Search requests use
-the official Brave Search API; the assistant shows result titles and source URLs
-while speaking only a short summary.
+Brave Search or Tavily; the assistant shows result titles and source URLs while
+speaking only a short summary. Tavily's free plan is available from Settings,
+where its key is stored in macOS Keychain.
 
-To enable online search when launching from source, create a Brave Search API
-key, then export it in the same terminal before running the app:
+To use free web search, create a Tavily key and add it under **Settings > Free
+Web Search**. Tavily currently includes 1,000 monthly credits on its free plan;
+basic searches cost one credit. The key is stored in macOS Keychain and takes
+effect immediately. Brave Search remains available for users who already have
+a Brave API key.
+
+When launching from source, Brave can also be configured in the environment:
 
 ```bash
 export KAREN_SEARCH_PROVIDER=brave
@@ -137,6 +143,37 @@ follow-up answers; local math and logic continue to work offline.
 
 Supported settings: `KAREN_SEARCH_PROVIDER=brave`, `KAREN_BRAVE_API_KEY`,
 `KAREN_SEARCH_COUNTRY` (default `IN`), and `KAREN_SEARCH_LANG` (default `en`).
+
+## Text, voice, and image inputs
+
+The message box accepts typed questions, the microphone sends its recognized
+transcript, and **Image** lets you choose a picture. Image classification uses
+macOS Vision on the Mac; the picture itself is not sent to the sidecar or web
+service. Ask “What is this?” after selecting it to hear the most likely label.
+Labels are estimates, so use a clear image and treat uncertain results as
+suggestions. A photo classifier does not determine a person's identity.
+
+On first launch, K.A.R.E.N. creates a personal editable copy at
+`~/Library/Application Support/KAREN/input_sources.json` from the template
+[`sidecar/data/input_sources.json`](sidecar/data/input_sources.json). Add
+user-provided facts and object descriptions there. For example, `facts` entries
+can contain `triggers` and an `answer` for questions such as “Who are my
+friends?”; `objects` entries can contain `tags` and a `description` for
+classifier labels you want K.A.R.E.N. to explain. Keep the file to information
+you choose to provide. You can point to another JSON file with
+`KAREN_INPUT_FILE` before launching from source.
+
+```json
+{
+  "version": 1,
+  "facts": [
+    { "triggers": ["my friends"], "answer": "Your friends are <names you provide>." }
+  ],
+  "objects": [
+    { "tags": ["cat", "tabby"], "description": "This is my cat, <name you provide>." }
+  ]
+}
+```
 
 ---
 
@@ -232,7 +269,7 @@ cd sidecar
 | Python sidecar + WebSocket | **Verified** | Localhost socket, typed protocol, mock LLM |
 | MockLLM offline mode | **Verified** | 97 Python tests pass |
 | Local arithmetic and logic | **Verified** | Safe parsers, spoken expressions, truth tables |
-| Brave web search | **Implemented** | Requires an API key and network access |
+| Tavily and Brave web search | **Implemented** | Tavily free tier available; both require a key and network access |
 | On-device STT (SFSpeechRecognizer) | **UNVERIFIED** | Code written; needs mic permission at runtime |
 | TTS (AVSpeechSynthesizer) | **UNVERIFIED** | Code written; needs audio output at runtime |
 | Wake word ("Karen") | **UNVERIFIED** | SFSpeechRecognizer loop written; needs runtime test |

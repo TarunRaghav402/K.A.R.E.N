@@ -8,6 +8,16 @@ import Network
 // Protocol is documented in sidecar/karen_sidecar/protocol.py
 
 final class SidecarBridge: NSObject {
+    private static let registryLock = NSLock()
+    private static let activeBridges = NSHashTable<SidecarBridge>.weakObjects()
+
+    static func stopAll() {
+        registryLock.lock()
+        let bridges = activeBridges.allObjects
+        registryLock.unlock()
+        bridges.forEach { $0.stop() }
+    }
+
     // Callbacks (called on main queue)
     var onReply:       ((String, String, String, Bool) -> Void)?
     var onStateChange: ((String) -> Void)?
@@ -23,18 +33,39 @@ final class SidecarBridge: NSObject {
     private var pingTimer: Timer?
     private var reconnectTask: Task<Void, Never>?
     private var isStopped = false
+    private var isConnecting = false
+    private var isSocketReady = false
+
+    private enum BridgeError: LocalizedError {
+        case notConnected
+
+        var errorDescription: String? {
+            "K.A.R.E.N.’s voice service is still starting. Please try again in a moment."
+        }
+    }
 
     override init() {
         memory = MemoryBridge()
         super.init()
+        Self.registryLock.lock()
+        Self.activeBridges.add(self)
+        Self.registryLock.unlock()
+    }
+
+    deinit {
+        stop()
+        Self.registryLock.lock()
+        Self.activeBridges.remove(self)
+        Self.registryLock.unlock()
     }
 
     // MARK: - Connect
 
     func connect() {
         launchSidecar()
-        // Give the sidecar 2 s to start listening
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+        // Let the sidecar bind its local port; requests arriving during startup
+        // wait briefly for the socket instead of disappearing.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
             self?.openWebSocket()
         }
     }
@@ -43,16 +74,24 @@ final class SidecarBridge: NSObject {
 
     private func launchSidecar() {
         let resources = Bundle.main.resourceURL ?? URL(fileURLWithPath: Bundle.main.bundlePath)
-        let packagedSidecar = resources.appendingPathComponent("KarenSidecar").path
-        let isPackaged = FileManager.default.isExecutableFile(atPath: packagedSidecar)
+        let packagedSidecarDirectory = resources.appendingPathComponent("KarenSidecar", isDirectory: true)
+        let onedirExecutable = packagedSidecarDirectory.appendingPathComponent("KarenSidecar").path
+        let onefileExecutable = resources.appendingPathComponent("KarenSidecar").path
+        let isOnedirPackage = FileManager.default.isExecutableFile(atPath: onedirExecutable)
+        let isOnefilePackage = FileManager.default.isExecutableFile(atPath: onefileExecutable)
+        let isPackaged = isOnedirPackage || isOnefilePackage
 
         let executable: String
         let arguments: [String]
         let workingDirectory: URL
-        if isPackaged {
+        if isOnedirPackage {
+            executable = onedirExecutable
+            arguments = []
+            workingDirectory = packagedSidecarDirectory
+        } else if isOnefilePackage {
             // GitHub releases contain a frozen Python sidecar, so users do not
             // need Python, a checkout, or a virtual environment installed.
-            executable = packagedSidecar
+            executable = onefileExecutable
             arguments = []
             workingDirectory = resources
         } else {
@@ -81,6 +120,10 @@ final class SidecarBridge: NSObject {
         proc.arguments = arguments
         proc.currentDirectoryURL = workingDirectory
         var environment = ProcessInfo.processInfo.environment
+        if let tavilyKey = SearchCredentialStore.loadTavilyKey() {
+            environment["KAREN_SEARCH_PROVIDER"] = "tavily"
+            environment["KAREN_TAVILY_API_KEY"] = tavilyKey
+        }
         if !isPackaged, let repoRoot = findRepoRoot() {
             environment["PYTHONPATH"] = repoRoot + "/sidecar"
         }
@@ -92,6 +135,16 @@ final class SidecarBridge: NSObject {
         let pipe = Pipe()
         proc.standardOutput = pipe
         proc.standardError  = pipe
+        proc.terminationHandler = { [weak self] terminatedProcess in
+            DispatchQueue.main.async {
+                guard let self, !self.isStopped else { return }
+                self.process = nil
+                let reason = terminatedProcess.terminationReason == .uncaughtSignal ? "signal" : "exit"
+                let status = terminatedProcess.terminationStatus
+                print("[SidecarBridge] Sidecar ended by \(reason) with status \(status)")
+                self.onError?("", "K.A.R.E.N.’s local voice service stopped (\(reason) \(status)).")
+            }
+        }
         pipe.fileHandleForReading.readabilityHandler = { fh in
             if let line = String(data: fh.availableData, encoding: .utf8), !line.isEmpty {
                 print("[sidecar] \(line.trimmingCharacters(in: .whitespacesAndNewlines))")
@@ -139,15 +192,26 @@ final class SidecarBridge: NSObject {
 
     private func openWebSocket() {
         guard !isStopped else { return }
+        guard !isSocketReady, !isConnecting else { return }
         guard let url = socketURL else { return }
+        isConnecting = true
 
         let config = URLSessionConfiguration.default
         let session = URLSession(configuration: config)
         webSocketTask = session.webSocketTask(with: url)
         webSocketTask?.resume()
+        guard let task = webSocketTask else { return }
 
         schedulePing()
         receiveMessages()
+        task.send(.string("{\"type\":\"ping\"}")) { [weak self] error in
+            if let error {
+                print("[SidecarBridge] Startup ping failed: \(error.localizedDescription)")
+                DispatchQueue.main.async {
+                    self?.isConnecting = false
+                }
+            }
+        }
         print("[SidecarBridge] WebSocket opened")
     }
 
@@ -163,6 +227,9 @@ final class SidecarBridge: NSObject {
             case .failure(let err):
                 print("[SidecarBridge] Receive error: \(err) — reconnecting in 2s")
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                    self.isConnecting = false
+                    self.isSocketReady = false
+                    self.webSocketTask = nil
                     self.openWebSocket()
                 }
             }
@@ -198,6 +265,8 @@ final class SidecarBridge: NSObject {
                 let payload = json["payload"] as? [String: Any] ?? [:]
                 self.onAction?(id, skill, payload)
             case "pong":
+                self.isConnecting = false
+                self.isSocketReady = true
                 break
             default:
                 print("[SidecarBridge] Unknown message type: \(type)")
@@ -207,11 +276,23 @@ final class SidecarBridge: NSObject {
 
     // MARK: - Send
 
-    func sendTranscript(id: String, text: String, final isFinal: Bool) async throws {
-        let msg: [String: Any] = ["type": "transcript", "id": id, "text": text, "final": isFinal]
+    func sendTranscript(id: String, text: String, final isFinal: Bool,
+                        source: String = "voice", imageLabels: [String] = []) async throws {
+        let msg: [String: Any] = ["type": "transcript", "id": id, "text": text,
+                                  "final": isFinal, "source": source,
+                                  "image_labels": imageLabels]
         let data = try JSONSerialization.data(withJSONObject: msg)
         guard let str = String(data: data, encoding: .utf8) else { return }
-        try await webSocketTask?.send(.string(str))
+        let task = try await waitForSocket()
+        try await task.send(.string(str))
+    }
+
+    private func waitForSocket() async throws -> URLSessionWebSocketTask {
+        for _ in 0..<50 {
+            if isSocketReady, let task = webSocketTask, task.state == .running { return task }
+            try await Task.sleep(nanoseconds: 100_000_000)
+        }
+        throw BridgeError.notConnected
     }
 
     func sendCancel(id: String) {
@@ -232,11 +313,20 @@ final class SidecarBridge: NSObject {
 
     // MARK: - Shutdown
 
-    func stop() {
+    func stop(completion: (() -> Void)? = nil) {
         isStopped = true
         pingTimer?.invalidate()
         webSocketTask?.cancel(with: .goingAway, reason: nil)
-        process?.terminate()
+        isConnecting = false
+        isSocketReady = false
+        guard let process, process.isRunning else {
+            completion?()
+            return
+        }
+        process.terminationHandler = { _ in
+            DispatchQueue.main.async { completion?() }
+        }
+        process.terminate()
     }
 }
 

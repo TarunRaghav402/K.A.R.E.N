@@ -40,7 +40,13 @@ for size in 16 32 128 256 512; do
     doubled=$((size * 2))
     sips -z "$doubled" "$doubled" "$ICON_PNG" --out "$ICONSET_DIR/icon_${size}x${size}@2x.png" >/dev/null
 done
-iconutil -c icns "$ICONSET_DIR" -o "$APP_CONTENTS/Resources/KarenIcon.icns"
+if iconutil -c icns "$ICONSET_DIR" -o "$APP_CONTENTS/Resources/KarenIcon.icns"; then
+    :
+else
+    # Finder artwork is optional; a malformed iconset must not stop the app
+    # bundle from being completed and launched.
+    rm -f "$APP_CONTENTS/Resources/KarenIcon.icns"
+fi
 cat > "$APP_CONTENTS/Info.plist" <<'PLIST'
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -58,8 +64,14 @@ cat > "$APP_CONTENTS/Info.plist" <<'PLIST'
     <string>__KAREN_PROJECT_ROOT__</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
-    <key>CFBundleIconFile</key>
-    <string>KarenIcon</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>CFBundleDevelopmentRegion</key>
+    <string>en</string>
+    <key>CFBundleSupportedPlatforms</key>
+    <array><string>MacOSX</string></array>
+    <key>CFBundleSignature</key>
+    <string>????</string>
     <key>LSMinimumSystemVersion</key>
     <string>15.0</string>
     <key>NSMicrophoneUsageDescription</key>
@@ -70,9 +82,21 @@ cat > "$APP_CONTENTS/Info.plist" <<'PLIST'
     <string>K.A.R.E.N. uses the camera only when gesture control is enabled.</string>
     <key>NSHighResolutionCapable</key>
     <true/>
+    <key>LSUIElement</key>
+    <true/>
+    <key>NSPrincipalClass</key>
+    <string>NSApplication</string>
 </dict>
 </plist>
 PLIST
+
+if [ -f "$APP_CONTENTS/Resources/KarenIcon.icns" ]; then
+    /usr/libexec/PlistBuddy -c 'Add :CFBundleIconFile string KarenIcon' "$APP_CONTENTS/Info.plist"
+fi
+
+# PkgInfo keeps older Launch Services builds from treating SwiftPM's manually
+# assembled executable bundle as an incomplete application.
+printf 'APPL????' > "$APP_CONTENTS/PkgInfo"
 
 /usr/bin/plutil -replace KARENProjectRoot -string "$REPO_ROOT" "$APP_CONTENTS/Info.plist"
 
@@ -80,6 +104,7 @@ PLIST
 # rebuilds. Without this, ad-hoc signatures are identified by changing cdhashes
 # and macOS can treat every rebuilt copy as a new app for privacy prompts.
 /usr/bin/codesign --force --deep --sign - \
+    --options runtime \
     --identifier com.karen.assistant \
     --requirements '=designated => identifier "com.karen.assistant"' \
     "$APP_BUNDLE"

@@ -40,6 +40,8 @@ class TranscriptMsg(BaseModel):
     id: str
     text: str
     final: bool = True
+    source: Literal["voice", "text"] = "voice"
+    image_labels: list[str] = Field(default_factory=list)
 
 
 class PingMsg(BaseModel):

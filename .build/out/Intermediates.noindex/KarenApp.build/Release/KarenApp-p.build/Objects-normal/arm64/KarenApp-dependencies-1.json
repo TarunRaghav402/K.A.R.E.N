@@ -2,12 +2,12 @@
   {
     "isFramework" : true,
     "moduleName" : "AVFAudio",
-    "modulePath" : "\/Applications\/Xcode.app\/Contents\/Developer\/Toolchains\/XcodeDefault.xctoolchain\/usr\/lib\/swift\/macosx\/prebuilt-modules\/27.0\/AVFAudio.swiftmodule\/arm64e-apple-macos.swiftmodule"
+    "modulePath" : "\/Users\/tarunraghav\/VolumeE\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/AVFAudio-2ARRDEF1K2JK8.swiftmodule"
   },
   {
     "isFramework" : false,
     "moduleName" : "AVFoundation",
-    "modulePath" : "\/Applications\/Xcode.app\/Contents\/Developer\/Toolchains\/XcodeDefault.xctoolchain\/usr\/lib\/swift\/macosx\/prebuilt-modules\/27.0\/AVFoundation.swiftmodule\/arm64e-apple-macos.swiftmodule"
+    "modulePath" : "\/Users\/tarunraghav\/VolumeE\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/AVFoundation-10JEB170AA8Y4.swiftmodule"
   },
   {
     "isFramework" : false,
@@ -22,12 +22,12 @@
   {
     "isFramework" : true,
     "moduleName" : "AppKit",
-    "modulePath" : "\/Applications\/Xcode.app\/Contents\/Developer\/Toolchains\/XcodeDefault.xctoolchain\/usr\/lib\/swift\/macosx\/prebuilt-modules\/27.0\/AppKit.swiftmodule\/arm64e-apple-macos.swiftmodule"
+    "modulePath" : "\/Users\/tarunraghav\/VolumeE\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/AppKit-3J6VTUI4GV83N.swiftmodule"
   },
   {
     "isFramework" : true,
     "moduleName" : "AudioToolbox",
-    "modulePath" : "\/Applications\/Xcode.app\/Contents\/Developer\/Toolchains\/XcodeDefault.xctoolchain\/usr\/lib\/swift\/macosx\/prebuilt-modules\/27.0\/AudioToolbox.swiftmodule\/arm64e-apple-macos.swiftmodule"
+    "modulePath" : "\/Users\/tarunraghav\/VolumeE\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/AudioToolbox-3QHMEI06BCY7V.swiftmodule"
   },
   {
     "isFramework" : true,
@@ -142,7 +142,7 @@
   {
     "isFramework" : true,
     "moduleName" : "MediaToolbox",
-    "modulePath" : "\/Applications\/Xcode.app\/Contents\/Developer\/Toolchains\/XcodeDefault.xctoolchain\/usr\/lib\/swift\/macosx\/prebuilt-modules\/27.0\/MediaToolbox.swiftmodule\/arm64e-apple-macos.swiftmodule"
+    "modulePath" : "\/Users\/tarunraghav\/VolumeE\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/MediaToolbox-TWG5EAGJJ6VX.swiftmodule"
   },
   {
     "isFramework" : false,
@@ -152,7 +152,7 @@
   {
     "isFramework" : false,
     "moduleName" : "MetalKit",
-    "modulePath" : "\/Applications\/Xcode.app\/Contents\/Developer\/Toolchains\/XcodeDefault.xctoolchain\/usr\/lib\/swift\/macosx\/prebuilt-modules\/27.0\/MetalKit.swiftmodule\/arm64e-apple-macos.swiftmodule"
+    "modulePath" : "\/Users\/tarunraghav\/VolumeE\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/MetalKit-GWDFOBQUMW0V.swiftmodule"
   },
   {
     "isFramework" : false,
@@ -192,7 +192,7 @@
   {
     "isFramework" : true,
     "moduleName" : "Speech",
-    "modulePath" : "\/Applications\/Xcode.app\/Contents\/Developer\/Toolchains\/XcodeDefault.xctoolchain\/usr\/lib\/swift\/macosx\/prebuilt-modules\/27.0\/Speech.swiftmodule\/arm64e-apple-macos.swiftmodule"
+    "modulePath" : "\/Users\/tarunraghav\/VolumeE\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/Speech-I2B71U6HA54C.swiftmodule"
   },
   {
     "isFramework" : false,
@@ -202,12 +202,12 @@
   {
     "isFramework" : true,
     "moduleName" : "SwiftUI",
-    "modulePath" : "\/Applications\/Xcode.app\/Contents\/Developer\/Toolchains\/XcodeDefault.xctoolchain\/usr\/lib\/swift\/macosx\/prebuilt-modules\/27.0\/SwiftUI.swiftmodule\/arm64e-apple-macos.swiftmodule"
+    "modulePath" : "\/Users\/tarunraghav\/VolumeE\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/SwiftUI-SYEAK7D85EO4.swiftmodule"
   },
   {
     "isFramework" : true,
     "moduleName" : "SwiftUICore",
-    "modulePath" : "\/Applications\/Xcode.app\/Contents\/Developer\/Toolchains\/XcodeDefault.xctoolchain\/usr\/lib\/swift\/macosx\/prebuilt-modules\/27.0\/SwiftUICore.swiftmodule\/arm64e-apple-macos.swiftmodule"
+    "modulePath" : "\/Users\/tarunraghav\/VolumeE\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/SwiftUICore-YFVY9MRLB8E6.swiftmodule"
   },
   {
     "isFramework" : true,
@@ -237,7 +237,7 @@
   {
     "isFramework" : true,
     "moduleName" : "Vision",
-    "modulePath" : "\/Applications\/Xcode.app\/Contents\/Developer\/Toolchains\/XcodeDefault.xctoolchain\/usr\/lib\/swift\/macosx\/prebuilt-modules\/27.0\/Vision.swiftmodule\/arm64e-apple-macos.swiftmodule"
+    "modulePath" : "\/Users\/tarunraghav\/VolumeE\/karen\/.build\/out\/SDKExplicitPrecompiledModules\/Vision-UI9DW64MFX8J.swiftmodule"
   },
   {
     "isFramework" : false,

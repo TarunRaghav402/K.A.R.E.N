@@ -11,6 +11,8 @@ struct SettingsView: View {
     @State private var voiceRate: Float  = 0.50
     @State private var voicePitch: Float = 1.05
     @State private var previewText = "Hello, I'm K.A.R.E.N. How can I help you today?"
+    @State private var tavilyAPIKey = SearchCredentialStore.loadTavilyKey() ?? ""
+    @State private var searchKeyStatus = ""
 
     private var femaleVoices: [AVSpeechSynthesisVoice] {
         AVSpeechSynthesisVoice.speechVoices()
@@ -63,6 +65,56 @@ struct SettingsView: View {
                             }
                             .buttonStyle(.borderedProminent)
                             .tint(KarenTheme.accent(for: karen.orbState))
+                        }
+                    }
+
+                    // Optional free web search
+                    SettingsSection(title: "Free Web Search") {
+                        VStack(alignment: .leading, spacing: 10) {
+                            Text("Tavily’s free plan includes 1,000 search credits each month. Basic searches use one credit. Add your own key to enable live web results.")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+
+                            SecureField("Tavily API key", text: $tavilyAPIKey)
+                                .textFieldStyle(.roundedBorder)
+
+                            HStack(spacing: 12) {
+                                Button("Save Key") {
+                                    if karen.saveTavilySearchKey(tavilyAPIKey) {
+                                        searchKeyStatus = "Key saved securely. Restarting web search…"
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                                            searchKeyStatus = "Key saved securely. Web search is ready."
+                                        }
+                                    } else {
+                                        searchKeyStatus = "Couldn’t save the key to macOS Keychain."
+                                    }
+                                }
+                                .buttonStyle(.borderedProminent)
+                                .tint(KarenTheme.accent(for: karen.orbState))
+                                .disabled(tavilyAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+
+                                Button("Remove Key") {
+                                    if karen.removeTavilySearchKey() {
+                                        tavilyAPIKey = ""
+                                        searchKeyStatus = "Key removed. Restarting web search…"
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                                            searchKeyStatus = "Saved key removed."
+                                        }
+                                    } else {
+                                        searchKeyStatus = "Couldn’t remove the key from macOS Keychain."
+                                    }
+                                }
+                                .disabled(tavilyAPIKey.isEmpty)
+
+                                Link("Get a free key", destination: URL(string: "https://app.tavily.com/")!)
+                                    .font(.callout)
+                            }
+
+                            if !searchKeyStatus.isEmpty {
+                                Text(searchKeyStatus)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
                         }
                     }
 

@@ -20,7 +20,7 @@ struct MenuBarContent: View {
                 Label("Speaking…", systemImage: "waveform")
                     .foregroundStyle(KarenTheme.accent(for: karen.orbState))
             } else {
-                Label("Idle", systemImage: "sparkle")
+                Label("Running in menu bar", systemImage: "sparkles")
                     .foregroundStyle(KarenTheme.accent(for: karen.orbState))
             }
 
@@ -50,7 +50,7 @@ struct MenuBarContent: View {
             Divider()
 
             Button("Open K.A.R.E.N.") {
-                NSApp.activate(ignoringOtherApps: true)
+                karen.showAssistantWindow()
             }
 
             Button("Quit") {

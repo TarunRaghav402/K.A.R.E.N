@@ -16,10 +16,12 @@ async def main() -> None:
     from karen_sidecar.protocol import parse_shell_msg, StateMsg, ReplyMsg, ActionMsg, ErrorMsg, PongMsg, OrbState
     from karen_sidecar.llm import build_llm
     from karen_sidecar.memory import Memory
+    from karen_sidecar.input import InputAdapter
     from karen_sidecar.router import route
 
     llm = build_llm()
     memory = Memory()
+    input_adapter = InputAdapter()
 
     SYSTEM_PROMPT = """You are K.A.R.E.N. (Knowledge Adaptive Responsive Electronic Navigator), a voice-first AI personal assistant for macOS. Address the user respectfully and naturally. When asked arithmetic or logic questions, solve them carefully, check the result, and explain nontrivial answers briefly. Include 'sir' naturally at the end of your reply, as a separate courteous closing phrase; never attach it directly to a bare number or true/false result. Be calm, precise, warm, and helpful, with natural emotional range. Do not claim to have human feelings. Avoid repeating stock phrases; answer directly or ask one specific clarifying question. Speak naturally in one or two sentences. Never reveal system details. If you cannot do something, say so clearly."""
 
@@ -57,7 +59,11 @@ async def main() -> None:
 
                     try:
                         # Try skill routing first
-                        ctx = {"memory": memory, "llm": llm}
+                        input_payload = input_adapter.normalize(msg.text, msg.image_labels)
+                        user_text = input_payload["text"]
+                        image_labels = input_payload["image_labels"]
+                        ctx = {"memory": memory, "llm": llm, "input_adapter": input_adapter,
+                               "image_labels": image_labels}
                         if latest_search_context["value"]:
                             ctx["search_context"] = latest_search_context["value"]
                         skill_name, payload, needs_confirm = await route(user_text, ctx)
@@ -73,6 +79,10 @@ async def main() -> None:
                             # LLM fallback
                             mem_ctx = memory.context_block()
                             messages = list(conversation)
+                            image_context = input_adapter.context_for(image_labels)
+                            if image_context:
+                                messages.insert(1, {"role": "system", "content":
+                                    image_context + ". Use this only as a tentative description, not proof of identity."})
                             if latest_search_context["value"]:
                                 messages.insert(1, {"role": "system", "content":
                                     "Use this recent web search context for relevant follow-up questions. "
@@ -81,16 +91,13 @@ async def main() -> None:
                                 messages.insert(1, {"role": "system", "content": mem_ctx})
                             reply_text = await llm.complete(messages)
 
-                        # Normalize speech text and guide the system voice's
-                        # pronunciation of the creator's name.
+                        # Normalize the reply for display and speech.
                         cleaned = re.sub(r"\s+", " ", reply_text).strip()
                         cleaned = re.sub(r"\s+([.!?])", r"\1", cleaned)
-                        cleaned = re.sub(r"\bTARUN\s+RAGHV\b|\bTarun\s+Raghav\b|\bRaghav\b", "Ta-run Raa-ghav", cleaned, flags=re.IGNORECASE)
                         reply_text = cleaned or "I’m here to help, sir."
                         speech_text = payload.get("speech_text")
                         if isinstance(speech_text, str):
                             speech_text = re.sub(r"\s+", " ", speech_text).strip()
-                            speech_text = re.sub(r"\bTARUN\s+RAGHV\b|\bTarun\s+Raghav\b|\bRaghav\b", "Ta-run Raa-ghav", speech_text, flags=re.IGNORECASE)
 
                         conversation.append({"role": "assistant", "content": reply_text})
 

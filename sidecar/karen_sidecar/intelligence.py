@@ -11,8 +11,8 @@ from .web_search import SearchError, extract_search_query, search_web
 async def answer_search_request(text: str, context: dict[str, Any]) -> dict[str, Any]:
     provider, query = extract_search_query(text)
     if provider == "google":
-        return {"reply": "Google search is not configured. I currently support Brave Search; set KAREN_SEARCH_PROVIDER=brave and KAREN_BRAVE_API_KEY.",
-                "speech_text": "Google search is not configured. I can use Brave Search once it has been configured."}
+        return {"reply": "Google search is not configured. I can use Tavily web search when a key is added in Settings.",
+                "speech_text": "Google search is not configured. I can use Tavily web search once it has been configured."}
     try:
         results = await search_web(query, provider=provider)
     except SearchError as exc:
@@ -27,7 +27,13 @@ async def answer_search_request(text: str, context: dict[str, Any]) -> dict[str,
         for index, item in enumerate(results, 1)
     )
     context["last_search"] = {"query": query, "sources": source_context}
-    summary = " ".join(item.description for item in results[:3] if item.description)
+    # Offline mode has no language model to synthesize snippets, so show one
+    # short, clearly attributed excerpt instead of concatenating several pages
+    # into an unreadable wall of text.
+    first_snippet = next((item.description.strip() for item in results if item.description.strip()), "")
+    summary = " ".join(first_snippet.split())[:360]
+    if first_snippet and len(first_snippet) > 360:
+        summary = summary.rsplit(" ", 1)[0].rstrip(" ,;:") + "…"
     llm = context.get("llm")
     if llm is not None and not isinstance(llm, MockLLM):
         try:
@@ -45,7 +51,7 @@ async def answer_search_request(text: str, context: dict[str, Any]) -> dict[str,
 
     if not summary:
         summary = f"I found {len(results)} relevant pages for {query}."
-    citations = "\n".join(f"{index}. {item.title} — {item.url}" for index, item in enumerate(results, 1))
+    citations = "\n".join(f"{index}. {item.title} — {item.url}" for index, item in enumerate(results[:3], 1))
     speech = f"{summary.rstrip()} There are {len(results)} sources available in the results, sir."
     return {
         "reply": f"{summary}\n\nSources:\n{citations}",
