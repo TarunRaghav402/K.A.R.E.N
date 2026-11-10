@@ -11,8 +11,17 @@ struct SettingsView: View {
     @State private var voiceRate: Float  = 0.50
     @State private var voicePitch: Float = 1.05
     @State private var previewText = "Hello, I'm K.A.R.E.N. How can I help you today?"
-    @State private var tavilyAPIKey = SearchCredentialStore.loadTavilyKey() ?? ""
-    @State private var searchKeyStatus = ""
+    enum GeminiStatus: Equatable {
+        case connected
+        case notConnected
+        case invalidKey(String)
+        case connectionError(String)
+        case verifying
+    }
+
+    @State private var geminiAPIKey = SearchCredentialStore.loadGeminiKey() ?? ""
+    @State private var connectionStatus: GeminiStatus = SearchCredentialStore.loadGeminiKey() != nil ? .connected : .notConnected
+    @State private var statusDetails = ""
 
     private var femaleVoices: [AVSpeechSynthesisVoice] {
         AVSpeechSynthesisVoice.speechVoices()
@@ -68,52 +77,57 @@ struct SettingsView: View {
                         }
                     }
 
-                    // Optional free web search
-                    SettingsSection(title: "Free Web Search") {
-                        VStack(alignment: .leading, spacing: 10) {
-                            Text("Tavily’s free plan includes 1,000 search credits each month. Basic searches use one credit. Add your own key to enable live web results.")
+                    // Google Gemini AI & Search Grounding
+                    SettingsSection(title: "Google Gemini AI & Search Grounding") {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Google Gemini powers conversational intelligence and real-time Google Search grounding with automatic citations.")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
 
-                            SecureField("Tavily API key", text: $tavilyAPIKey)
-                                .textFieldStyle(.roundedBorder)
+                            HStack {
+                                SecureField("Enter your Google Gemini API key", text: $geminiAPIKey)
+                                    .textFieldStyle(.roundedBorder)
+
+                                statusBadge
+                            }
 
                             HStack(spacing: 12) {
-                                Button("Save Key") {
-                                    if karen.saveTavilySearchKey(tavilyAPIKey) {
-                                        searchKeyStatus = "Key saved securely. Restarting web search…"
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                                            searchKeyStatus = "Key saved securely. Web search is ready."
+                                Button(action: {
+                                    validateAndSaveKey()
+                                }) {
+                                    if connectionStatus == .verifying {
+                                        HStack(spacing: 6) {
+                                            ProgressView()
+                                                .controlSize(.small)
+                                            Text("Verifying…")
                                         }
                                     } else {
-                                        searchKeyStatus = "Couldn’t save the key to macOS Keychain."
+                                        Text("Save & Connect")
                                     }
                                 }
                                 .buttonStyle(.borderedProminent)
                                 .tint(KarenTheme.accent(for: karen.orbState))
-                                .disabled(tavilyAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                                .disabled(geminiAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || connectionStatus == .verifying)
 
                                 Button("Remove Key") {
-                                    if karen.removeTavilySearchKey() {
-                                        tavilyAPIKey = ""
-                                        searchKeyStatus = "Key removed. Restarting web search…"
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                                            searchKeyStatus = "Saved key removed."
-                                        }
+                                    if karen.removeGeminiKey() {
+                                        geminiAPIKey = ""
+                                        connectionStatus = .notConnected
+                                        statusDetails = "Gemini API key removed. K.A.R.E.N. is now in offline mode."
                                     } else {
-                                        searchKeyStatus = "Couldn’t remove the key from macOS Keychain."
+                                        statusDetails = "Couldn’t remove the key from macOS Keychain."
                                     }
                                 }
-                                .disabled(tavilyAPIKey.isEmpty)
+                                .disabled(geminiAPIKey.isEmpty || connectionStatus == .verifying)
 
-                                Link("Get a free key", destination: URL(string: "https://app.tavily.com/")!)
+                                Link("Get Gemini API key", destination: URL(string: "https://aistudio.google.com/app/apikey")!)
                                     .font(.callout)
                             }
 
-                            if !searchKeyStatus.isEmpty {
-                                Text(searchKeyStatus)
+                            if !statusDetails.isEmpty {
+                                Text(statusDetails)
                                     .font(.caption)
-                                    .foregroundStyle(.secondary)
+                                    .foregroundStyle(statusColor)
                             }
                         }
                     }
@@ -156,6 +170,96 @@ struct SettingsView: View {
         .frame(width: 480, height: 520)
         .background(KarenTheme.backdrop(for: karen.orbState)[0])
         .foregroundStyle(.white)
+    }
+
+    @ViewBuilder
+    private var statusBadge: some View {
+        switch connectionStatus {
+        case .connected:
+            HStack(spacing: 5) {
+                Circle().fill(Color.green).frame(width: 8, height: 8)
+                Text("Connected").font(.caption2.bold()).foregroundStyle(.green)
+            }
+            .padding(.horizontal, 8).padding(.vertical, 4)
+            .background(Color.green.opacity(0.12))
+            .clipShape(Capsule())
+
+        case .verifying:
+            HStack(spacing: 5) {
+                ProgressView().controlSize(.mini)
+                Text("Verifying…").font(.caption2).foregroundStyle(.yellow)
+            }
+            .padding(.horizontal, 8).padding(.vertical, 4)
+            .background(Color.yellow.opacity(0.12))
+            .clipShape(Capsule())
+
+        case .invalidKey:
+            HStack(spacing: 5) {
+                Circle().fill(Color.red).frame(width: 8, height: 8)
+                Text("Invalid Key").font(.caption2.bold()).foregroundStyle(.red)
+            }
+            .padding(.horizontal, 8).padding(.vertical, 4)
+            .background(Color.red.opacity(0.12))
+            .clipShape(Capsule())
+
+        case .connectionError:
+            HStack(spacing: 5) {
+                Circle().fill(Color.orange).frame(width: 8, height: 8)
+                Text("Connection Error").font(.caption2.bold()).foregroundStyle(.orange)
+            }
+            .padding(.horizontal, 8).padding(.vertical, 4)
+            .background(Color.orange.opacity(0.12))
+            .clipShape(Capsule())
+
+        case .notConnected:
+            HStack(spacing: 5) {
+                Circle().fill(Color.secondary).frame(width: 8, height: 8)
+                Text("Not Connected").font(.caption2).foregroundStyle(.secondary)
+            }
+            .padding(.horizontal, 8).padding(.vertical, 4)
+            .background(Color.secondary.opacity(0.12))
+            .clipShape(Capsule())
+        }
+    }
+
+    private var statusColor: Color {
+        switch connectionStatus {
+        case .connected: return .green
+        case .verifying: return .yellow
+        case .invalidKey: return .red
+        case .connectionError: return .orange
+        case .notConnected: return .secondary
+        }
+    }
+
+    private func validateAndSaveKey() {
+        let key = geminiAPIKey.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !key.isEmpty else { return }
+
+        connectionStatus = .verifying
+        statusDetails = "Validating key with Google Gemini API…"
+
+        Task {
+            let (isValid, message) = await karen.validateGeminiKey(key)
+            await MainActor.run {
+                if isValid {
+                    if karen.saveGeminiKey(key) {
+                        connectionStatus = .connected
+                        statusDetails = "Key verified & saved to Keychain. Google Search grounding is active."
+                    } else {
+                        connectionStatus = .connectionError("Keychain write failed")
+                        statusDetails = "Key verified, but couldn't save to macOS Keychain."
+                    }
+                } else {
+                    if message.lowercased().contains("network") || message.lowercased().contains("connect") {
+                        connectionStatus = .connectionError(message)
+                    } else {
+                        connectionStatus = .invalidKey(message)
+                    }
+                    statusDetails = message
+                }
+            }
+        }
     }
 }
 

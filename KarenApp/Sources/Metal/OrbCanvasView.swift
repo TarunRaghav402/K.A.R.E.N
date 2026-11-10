@@ -250,11 +250,11 @@ private func drawFilamentShells(ctx: GraphicsContext, size: CGSize, t: Double, s
         case .listening:
             let equatorBias = 1.0 - abs(cos(phi)) * 0.38
             r *= equatorBias
-            r += Double(audioLevel) * 0.012
+            r += Double(audioLevel) * 0.055
         case .processing:
             r *= 0.86 + sin(t * 0.48 * speed) * 0.015
         case .speaking:
-            let wave = sin(phi * 5.0 + t * 2.0 * speed) * 0.018 * (1.0 + Double(audioLevel))
+            let wave = sin(phi * 5.0 + t * 2.0 * speed) * 0.024 * (1.0 + Double(audioLevel) * 2.0)
             r += wave
         case .permission:
             r = shellR + sin(t * 0.3) * 0.006
@@ -455,7 +455,7 @@ private func drawRings(ctx: GraphicsContext, size: CGSize, t: Double, speed: Dou
 
         switch state {
         case .listening:
-            R *= 0.82 + Double(audioLevel) * 0.10
+            R *= 0.82 + Double(audioLevel) * 0.28
         case .processing:
             rotAngle = t * ring.rotSpeed * speed * 3.2
         case .permission:

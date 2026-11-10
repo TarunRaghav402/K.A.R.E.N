@@ -24,6 +24,10 @@ final class KarenCore: ObservableObject {
 
     // UI state
     @Published var replyText: String   = ""
+    @Published var liveTranscription: String = ""
+    @Published var lastUserQuery: String = ""
+    @Published var showResponsePanel: Bool = false
+    @Published var isSpeaking: Bool    = false
     @Published var isTextOnly: Bool    = false
     @Published var isMuted: Bool       = false
     @Published var isListening: Bool   = false
@@ -99,6 +103,16 @@ final class KarenCore: ObservableObject {
         setupSidecar()
         refreshMemoryNodeLabels()
         ttsEngine = TTSEngine()
+
+        // Eagerly query existing permission grants so audio & wake-word pipelines
+        // are activated immediately on startup without requiring extra clicks.
+        let micAuth = AVCaptureDevice.authorizationStatus(for: .audio) == .authorized
+        let speechAuth = SFSpeechRecognizer.authorizationStatus() == .authorized
+        micGranted = micAuth
+        speechGranted = speechAuth
+        if micAuth && speechAuth {
+            initSpeech()
+        }
     }
 
     // ── Sidecar ──────────────────────────────────────────────────────────────
@@ -109,20 +123,33 @@ final class KarenCore: ObservableObject {
             Task { @MainActor in
                 guard let self else { return }
                 self.replyText = text
+                self.showResponsePanel = true
+                withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+                    self.orbOffsetY = 0.48
+                }
+
                 if speak && !self.isMuted && !self.isTextOnly {
-                    if speechText == text { self.replyText = "" }
                     self.isLocalSpeechActive = true
+                    self.isSpeaking = true
                     self.orbState = .speaking
+
+                    // Activate barge-in interrupt detector while speaking
+                    self.wakeWordDetector?.isBargeInMode = true
+                    self.wakeWordDetector?.currentSpokenText = speechText
+                    self.wakeWordDetector?.start()
+
                     await self.ttsEngine?.speak(speechText)
+
+                    self.wakeWordDetector?.isBargeInMode = false
+                    self.wakeWordDetector?.stop()
+                    self.isSpeaking = false
                     self.isLocalSpeechActive = false
                 }
-                guard self.continuousConversation else {
+
+                if self.orbState == .speaking {
                     self.orbState = .idle
-                    self.resumeWakeWordIfNeeded()
-                    return
                 }
-                self.orbState = .idle
-                self.startListening()
+                self.resumeWakeWordIfNeeded()
             }
         }
         sidecarBridge?.onStateChange = { [weak self] state in
@@ -165,26 +192,32 @@ final class KarenCore: ObservableObject {
     }
 
     @discardableResult
-    func saveTavilySearchKey(_ value: String) -> Bool {
-        guard SearchCredentialStore.saveTavilyKey(value) else { return false }
-        restartSidecarForSearchSettings()
+    func saveGeminiKey(_ value: String) -> Bool {
+        guard SearchCredentialStore.saveGeminiKey(value) else { return false }
+        restartSidecar()
         return true
     }
 
     @discardableResult
-    func removeTavilySearchKey() -> Bool {
-        guard SearchCredentialStore.removeTavilyKey() else { return false }
-        restartSidecarForSearchSettings()
+    func removeGeminiKey() -> Bool {
+        guard SearchCredentialStore.removeGeminiKey() else { return false }
+        restartSidecar()
         return true
     }
 
-    private func restartSidecarForSearchSettings() {
+    func validateGeminiKey(_ key: String) async -> (isValid: Bool, message: String) {
+        await SearchCredentialStore.validateGeminiKey(key)
+    }
+
+    func restartSidecar() {
         guard let bridge = sidecarBridge else {
             setupSidecar()
             return
         }
         bridge.stop { [weak self] in self?.setupSidecar() }
     }
+
+
 
     // ── Listening controls ───────────────────────────────────────────────────
 
@@ -203,67 +236,84 @@ final class KarenCore: ObservableObject {
         guard speechGranted else {
             requestSpeechRecognition(); return
         }
-        // The wake-word engine and command recognizer share the microphone;
-        // stop the background listener while the user is speaking a request.
+        if speechEngine == nil {
+            initSpeech()
+        }
+        // Stop background wake detector so SpeechEngine has dedicated microphone access
         wakeWordDetector?.stop()
         continuousConversation = true
         conversationGeneration += 1
         isListening = true
+        liveTranscription = ""
         orbState = .listening
+
         speechEngine?.startListening { [weak self] text, isFinal in
             Task { @MainActor in
                 guard let self else { return }
-                if isFinal {
-                    guard !self.isHandlingUtterance else { return }
-                    self.isHandlingUtterance = true
-                    defer { self.isHandlingUtterance = false }
-                    let normalized = text.trimmingCharacters(in: .whitespacesAndNewlines)
-                        .lowercased().trimmingCharacters(in: CharacterSet(charactersIn: ".!?;, "))
-                    let backgroundCommands: Set<String> = [
-                        "quit", "quit karen", "exit", "exit karen", "close karen",
-                        "close the app", "go offline", "terminate"
-                    ]
-                    if backgroundCommands.contains(normalized) {
-                        self.continuousConversation = false
-                        self.conversationGeneration += 1
-                        self.isListening = false
-                        self.speechEngine?.stopListening()
-                        self.orbState = .idle
-                        self.hideAssistantWindow()
-                        self.resumeWakeWordIfNeeded()
-                        return
-                    }
-                    guard let bridge = self.sidecarBridge else {
-                        self.replyText = "The voice assistant service is unavailable. Restart K.A.R.E.N. to reconnect."
-                        self.isListening = false
-                        self.continuousConversation = false
-                        self.orbState = .error
-                        self.resumeWakeWordIfNeeded()
-                        return
-                    }
-                    if text.hasPrefix("Speech recognition is disabled") || text == "Speech recognition is not available." {
-                        self.replyText = text
-                        self.isListening = false
-                        self.continuousConversation = false
-                        self.orbState = .permission
-                        return
-                    }
-                    do {
-                        try await bridge.sendTranscript(id: UUID().uuidString, text: text, final: true,
-                                                        imageLabels: self.selectedImageLabels)
-                    } catch {
-                        self.replyText = "I couldn't send that request. Please try again."
-                        self.orbState = .error
-                        self.isListening = false
-                        if self.continuousConversation { self.startListening() }
-                        else { self.resumeWakeWordIfNeeded() }
-                        return
-                    }
-                    if self.orbState != .error && self.orbState != .permission {
-                        self.orbState = .processing
-                    }
-                    self.isListening = false
+                if !isFinal {
+                    self.liveTranscription = text
+                    return
                 }
+
+                // Final transcription received
+                self.liveTranscription = ""
+                guard !self.isHandlingUtterance else { return }
+                self.isHandlingUtterance = true
+                defer { self.isHandlingUtterance = false }
+
+                let normalized = text.trimmingCharacters(in: .whitespacesAndNewlines)
+                    .lowercased().trimmingCharacters(in: CharacterSet(charactersIn: ".!?;, "))
+                let backgroundCommands: Set<String> = [
+                    "quit", "quit karen", "exit", "exit karen", "close karen",
+                    "close the app", "go offline", "terminate"
+                ]
+                if backgroundCommands.contains(normalized) {
+                    self.continuousConversation = false
+                    self.conversationGeneration += 1
+                    self.isListening = false
+                    self.speechEngine?.stopListening()
+                    self.orbState = .idle
+                    self.hideAssistantWindow()
+                    self.resumeWakeWordIfNeeded()
+                    return
+                }
+
+                self.lastUserQuery = text
+                self.showResponsePanel = true
+                withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+                    self.orbOffsetY = 0.48
+                }
+
+                guard let bridge = self.sidecarBridge else {
+                    self.replyText = "The voice assistant service is unavailable. Restart K.A.R.E.N. to reconnect."
+                    self.isListening = false
+                    self.continuousConversation = false
+                    self.orbState = .error
+                    self.resumeWakeWordIfNeeded()
+                    return
+                }
+                if text.hasPrefix("Speech recognition is disabled") || text == "Speech recognition is not available." {
+                    self.replyText = text
+                    self.isListening = false
+                    self.continuousConversation = false
+                    self.orbState = .permission
+                    return
+                }
+                do {
+                    try await bridge.sendTranscript(id: UUID().uuidString, text: text, final: true,
+                                                    imageLabels: self.selectedImageLabels)
+                } catch {
+                    self.replyText = "I couldn't send that request. Please try again."
+                    self.orbState = .error
+                    self.isListening = false
+                    if self.continuousConversation { self.startListening() }
+                    else { self.resumeWakeWordIfNeeded() }
+                    return
+                }
+                if self.orbState != .error && self.orbState != .permission {
+                    self.orbState = .processing
+                }
+                self.isListening = false
             }
         }
     }
@@ -272,6 +322,7 @@ final class KarenCore: ObservableObject {
         continuousConversation = false
         conversationGeneration += 1
         isListening = false
+        liveTranscription = ""
         speechEngine?.stopListening()
         if orbState == .listening { orbState = .idle }
         resumeWakeWordIfNeeded()
@@ -279,14 +330,57 @@ final class KarenCore: ObservableObject {
 
     func toggleMute() {
         isMuted.toggle()
-        if isMuted { ttsEngine?.stop() }
+        if isMuted { stopSpeaking() }
     }
 
     func stopSpeaking() {
         ttsEngine?.stop()
-        orbState = .idle
-        if continuousConversation { startListening() }
-        else { resumeWakeWordIfNeeded() }
+        isSpeaking = false
+        isLocalSpeechActive = false
+        wakeWordDetector?.isBargeInMode = false
+        wakeWordDetector?.stop()
+        if orbState == .speaking { orbState = .idle }
+        resumeWakeWordIfNeeded()
+    }
+
+    func handleInterrupt() {
+        guard isSpeaking || orbState == .speaking || isLocalSpeechActive else { return }
+        print("[KarenCore] Interruption detected! Halting speech output...")
+        stopSpeaking()
+        startListening()
+    }
+
+    func replayLastResponse() {
+        guard !replyText.isEmpty else { return }
+        Task { @MainActor in
+            self.isSpeaking = true
+            self.orbState = .speaking
+            self.wakeWordDetector?.isBargeInMode = true
+            self.wakeWordDetector?.currentSpokenText = self.replyText
+            self.wakeWordDetector?.start()
+
+            await self.ttsEngine?.speak(self.replyText)
+
+            self.wakeWordDetector?.isBargeInMode = false
+            self.wakeWordDetector?.stop()
+            self.isSpeaking = false
+            if self.orbState == .speaking { self.orbState = .idle }
+        }
+    }
+
+    func askFollowUp() {
+        stopSpeaking()
+        startListening()
+    }
+
+    func dismissResponsePanel() {
+        stopSpeaking()
+        withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
+            showResponsePanel = false
+            orbOffsetY = 0.0
+            replyText = ""
+            liveTranscription = ""
+        }
     }
 
     private func openApplication(named name: String) {
@@ -315,6 +409,11 @@ final class KarenCore: ObservableObject {
     func sendTextInput(_ text: String) {
         let value = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !value.isEmpty, let bridge = sidecarBridge else { return }
+        lastUserQuery = value
+        showResponsePanel = true
+        withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+            orbOffsetY = 0.48
+        }
         orbState = .processing
         Task {
             do {
@@ -447,15 +546,42 @@ final class KarenCore: ObservableObject {
         micGranted = AVCaptureDevice.authorizationStatus(for: .audio) == .authorized
         speechGranted = SFSpeechRecognizer.authorizationStatus() == .authorized
         guard micGranted else { return }
-        if speechEngine != nil, wakeWordDetector != nil {
-            if wakeWordEnabled && speechGranted { wakeWordDetector?.start() }
-            return
+
+        if speechEngine == nil {
+            let engine = SpeechEngine()
+            engine.onAudioLevel = { [weak self] level in
+                Task { @MainActor in
+                    self?.audioLevel = level
+                }
+            }
+            engine.onError = { [weak self] errMsg in
+                Task { @MainActor in
+                    guard let self else { return }
+                    if self.isListening {
+                        self.isListening = false
+                        self.liveTranscription = ""
+                        self.orbState = .idle
+                        self.replyText = errMsg
+                        self.resumeWakeWordIfNeeded()
+                    }
+                }
+            }
+            speechEngine = engine
         }
-        speechEngine = SpeechEngine()
-        wakeWordDetector = WakeWordDetector(onWake: { [weak self] in
-            Task { @MainActor in self?.onWakeWord() }
-        })
-        if wakeWordEnabled && speechGranted { wakeWordDetector?.start() }
+
+        if wakeWordDetector == nil {
+            let detector = WakeWordDetector(onWake: { [weak self] in
+                Task { @MainActor in self?.onWakeWord() }
+            })
+            detector.onInterrupt = { [weak self] in
+                Task { @MainActor in self?.handleInterrupt() }
+            }
+            wakeWordDetector = detector
+        }
+
+        if wakeWordEnabled && speechGranted && !isListening {
+            wakeWordDetector?.start()
+        }
     }
 
     func openMemoryMap() {

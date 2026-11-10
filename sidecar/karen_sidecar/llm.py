@@ -1,83 +1,332 @@
 """
-LLM client — pluggable provider.
-Reads provider/key from env. Falls back to MockLLM when no key is set.
+LLM client — Google Gemini API provider.
+Falls back to MockLLM only when offline mode is explicitly requested or no key is configured.
 """
 
 from __future__ import annotations
 import os
 import asyncio
-import json
-import random
+import re
+from typing import Any
 from abc import ABC, abstractmethod
+import httpx
+
+
+DEFAULT_GEMINI_MODEL = "gemini-3.8-flash"
+FALLBACK_GEMINI_MODELS = ["gemini-3.6-flash", "gemini-3.5-flash"]
+
+
+class LLMResponse(str):
+    """String response that also carries speech text, citations, and search queries."""
+
+    text: str
+    speech_text: str
+    sources: list[dict[str, str]]
+    search_queries: list[str]
+
+    def __new__(
+        cls,
+        text: str,
+        speech_text: str | None = None,
+        sources: list[dict[str, str]] | None = None,
+        search_queries: list[str] | None = None,
+    ):
+        obj = super().__new__(cls, text)
+        obj.text = text
+        obj.speech_text = speech_text if speech_text is not None else text
+        obj.sources = sources or []
+        obj.search_queries = search_queries or []
+        return obj
 
 
 class BaseLLM(ABC):
     @abstractmethod
-    async def complete(self, messages: list[dict], *, max_tokens: int = 256) -> str:
+    async def complete(self, messages: list[dict[str, Any]], *, max_tokens: int = 512) -> LLMResponse:
         ...
 
 
 class MockLLM(BaseLLM):
     """Useful offline conversational fallback that never makes a network call."""
 
-    async def complete(self, messages: list[dict], *, max_tokens: int = 256) -> str:
-        await asyncio.sleep(0.1)
+    async def complete(self, messages: list[dict[str, Any]], *, max_tokens: int = 512) -> LLMResponse:
+        await asyncio.sleep(0.05)
         user_text = next((m.get("content", "") for m in reversed(messages)
                           if m.get("role") == "user"), "")
-        text = user_text.strip()
+        text = str(user_text).strip()
         lowered = text.lower()
         if not text:
-            return "I didn't catch that. Could you say it again?"
-        if any(token in lowered for token in ("how are you", "are you okay", "how's it going")):
-            return "I'm doing well and ready to help. What would you like to work on?"
-        if any(token in lowered for token in ("your purpose", "why were you made", "what is karen")):
-            return "I'm K.A.R.E.N., a voice assistant for your Mac. I can answer simple questions offline, speak replies, and help you explore the orb."
-        if any(token in lowered for token in ("goodbye", "bye karen", "see you")):
-            return "Goodbye! I'll be here when you need me."
-        if "weather" in lowered:
-            return "I can't check live weather while offline. If you connect an AI provider, I can help with more online questions."
-        return random.choice([
-            "I don't have a reliable answer for that yet. Could you give me a little more detail?",
-            "I may have missed what you meant. Try rephrasing it, or ask for help to hear what I can do.",
-            "I can help with common questions and commands offline. What would you like me to focus on?",
-            "I haven't learned that one yet. If you phrase it another way, I’ll see what I can do.",
-        ])
+            reply = "I didn't catch that. Could you say it again?"
+        elif any(token in lowered for token in ("how are you", "are you okay", "how's it going")):
+            reply = "I'm doing well and ready to help. What would you like to work on?"
+        elif any(token in lowered for token in ("your purpose", "why were you made", "what is karen")):
+            reply = "I'm K.A.R.E.N., a voice assistant for your Mac. I can answer simple questions offline, speak replies, and help you explore the orb."
+        elif any(token in lowered for token in ("goodbye", "bye karen", "see you")):
+            reply = "Goodbye! I'll be here when you need me."
+        elif "weather" in lowered:
+            reply = "I can't check live weather while offline. Add a Gemini API key in Settings to enable live web queries."
+        else:
+            reply = "I can help with common questions and commands offline. Add a Gemini API key in Settings for full online assistance."
+        return LLMResponse(reply, speech_text=reply)
 
 
-class OpenAILLM(BaseLLM):
-    """OpenAI-compatible provider (also works with local servers like Ollama)."""
+class GeminiLLM(BaseLLM):
+    """Google Gemini client using the official REST API (v1beta).
 
-    def __init__(self, base_url: str, api_key: str, model: str):
-        self.base_url = base_url.rstrip("/")
-        self.api_key = api_key
-        self.model = model
+    Uses gemini-3.8-flash by default with native Google Search grounding.
+    """
 
-    async def complete(self, messages: list[dict], *, max_tokens: int = 256) -> str:
-        try:
-            import httpx
-        except ImportError:
-            return "[httpx not installed — using offline mock]"
+    def __init__(
+        self,
+        api_key: str,
+        model: str = DEFAULT_GEMINI_MODEL,
+        grounding: bool = True,
+        client: httpx.AsyncClient | None = None,
+    ):
+        clean_key = api_key.strip()
+        if not clean_key:
+            raise ValueError("Gemini API key cannot be empty.")
+        self.api_key = clean_key
+        self.model = model.strip() or DEFAULT_GEMINI_MODEL
+        self.grounding = grounding
+        self._client = client
+
+    def _convert_messages(self, messages: list[dict[str, Any]]) -> tuple[dict[str, Any] | None, list[dict[str, Any]]]:
+        """Maps OpenAI/Karen conversation format to Gemini API format.
+
+        - Extracts system messages into a top-level system_instruction block.
+        - Maps 'assistant' role to Gemini's 'model' role.
+        - Merges consecutive messages with the same role.
+        - Ensures the content sequence begins with a 'user' turn.
+        """
+        system_prompts: list[str] = []
+        conversation_turns: list[dict[str, Any]] = []
+
+        for msg in messages:
+            role = str(msg.get("role", "")).strip().lower()
+            content = str(msg.get("content", "")).strip()
+            if not content:
+                continue
+
+            if role == "system":
+                system_prompts.append(content)
+            elif role in ("assistant", "model"):
+                conversation_turns.append({"role": "model", "parts": [{"text": content}]})
+            else:  # default to "user"
+                conversation_turns.append({"role": "user", "parts": [{"text": content}]})
+
+        # Top-level system_instruction
+        system_instruction: dict[str, Any] | None = None
+        if system_prompts:
+            system_instruction = {"parts": [{"text": "\n\n".join(system_prompts)}]}
+
+        # Consolidate consecutive turns with the same role
+        consolidated: list[dict[str, Any]] = []
+        for turn in conversation_turns:
+            if consolidated and consolidated[-1]["role"] == turn["role"]:
+                prev_text = consolidated[-1]["parts"][0]["text"]
+                curr_text = turn["parts"][0]["text"]
+                consolidated[-1]["parts"][0]["text"] = f"{prev_text}\n{curr_text}"
+            else:
+                consolidated.append(turn)
+
+        # Gemini requires contents to start with role 'user'
+        if consolidated and consolidated[0]["role"] != "user":
+            consolidated.insert(0, {"role": "user", "parts": [{"text": "Hello."}]})
+
+        return system_instruction, consolidated
+
+    async def complete(self, messages: list[dict[str, Any]], *, max_tokens: int = 512) -> LLMResponse:
+        system_instruction, contents = self._convert_messages(messages)
+        if not contents:
+            return LLMResponse("How can I assist you, sir?", speech_text="How can I assist you, sir?")
+
+        body: dict[str, Any] = {
+            "contents": contents,
+            "generationConfig": {
+                "maxOutputTokens": max_tokens,
+                "temperature": 0.7,
+                "topP": 0.95,
+            },
+        }
+
+        if system_instruction:
+            body["system_instruction"] = system_instruction
+
+        if self.grounding:
+            # Official Google Search grounding tool specification
+            body["tools"] = [{"google_search": {}}]
 
         headers = {
-            "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
+            "x-goog-api-key": self.api_key,
         }
-        body = {"model": self.model, "messages": messages, "max_tokens": max_tokens}
-        async with httpx.AsyncClient(timeout=30) as client:
-            r = await client.post(f"{self.base_url}/chat/completions", headers=headers, json=body)
-            r.raise_for_status()
-            return r.json()["choices"][0]["message"]["content"].strip()
+
+        owns_client = self._client is None
+        client = self._client or httpx.AsyncClient(http2=True, timeout=httpx.Timeout(45.0, connect=8.0))
+
+        # Models to try: primary model first, followed by fallbacks if high demand occurs
+        models_to_try = [self.model]
+        for fallback in FALLBACK_GEMINI_MODELS:
+            if fallback not in models_to_try:
+                models_to_try.append(fallback)
+
+        last_error = ""
+
+        try:
+            for idx, current_model in enumerate(models_to_try):
+                url = f"https://generativelanguage.googleapis.com/v1beta/models/{current_model}:generateContent"
+                has_fallback = idx < len(models_to_try) - 1
+
+                try:
+                    resp = await client.post(
+                        url,
+                        headers=headers,
+                        params={"key": self.api_key},
+                        json=body,
+                        timeout=30.0,
+                    )
+
+                    # If Google Search grounding specifically hits rate limits / quota (429),
+                    # retry the request without grounding so the user still receives an answer.
+                    if resp.status_code == 429 and "tools" in body:
+                        print(f"[GeminiLLM] Grounding quota exceeded; retrying {current_model} without search tool...")
+                        unaugmented_body = dict(body)
+                        unaugmented_body.pop("tools", None)
+                        resp = await client.post(
+                            url,
+                            headers=headers,
+                            params={"key": self.api_key},
+                            json=unaugmented_body,
+                            timeout=30.0,
+                        )
+
+                except httpx.TimeoutException:
+                    if has_fallback:
+                        last_error = f"Model {current_model} timed out."
+                        print(f"[GeminiLLM] {last_error} Falling back to next model...")
+                        continue
+                    raise
+
+                # If model is experiencing temporary 503 high demand spikes, try next fallback model
+                if resp.status_code == 503:
+                    last_error = f"Model {current_model} is experiencing high demand (503)."
+                    print(f"[GeminiLLM] {last_error} Checking next model...")
+                    continue
+
+                # If model returned 429 (e.g. daily free tier request limit for this specific model), try fallback
+                if resp.status_code == 429:
+                    if has_fallback:
+                        last_error = f"Model {current_model} quota or rate limit exceeded (429)."
+                        print(f"[GeminiLLM] {last_error} Checking next model...")
+                        continue
+                    raise RuntimeError("Gemini rate limit or daily quota exceeded. Please check your plan or try again later.")
+
+                if resp.status_code in (401, 403):
+                    raise RuntimeError("Gemini API key is invalid or lacks required permissions. Check your key in Settings.")
+                elif resp.status_code == 400:
+                    err_text = ""
+                    try:
+                        err_json = resp.json()
+                        err_text = err_json.get("error", {}).get("message", "")
+                    except Exception:
+                        pass
+                    msg = f": {err_text}" if err_text else ""
+                    raise RuntimeError(f"Gemini API bad request (HTTP 400){msg}")
+                elif resp.status_code >= 500:
+                    raise RuntimeError(f"Gemini service unavailable (HTTP {resp.status_code}). Please try again shortly.")
+
+                resp.raise_for_status()
+                payload = resp.json()
+
+                candidates = payload.get("candidates", [])
+                if not candidates:
+                    raise RuntimeError("Gemini returned an empty response.")
+
+                first_candidate = candidates[0]
+                parts = first_candidate.get("content", {}).get("parts", [])
+                raw_text = "".join(p.get("text", "") for p in parts if isinstance(p, dict) and "text" in p).strip()
+                if not raw_text:
+                    raw_text = "I received no response text from Gemini."
+
+                # Extract search grounding metadata and citations if present
+                grounding_meta = first_candidate.get("groundingMetadata") or {}
+                grounding_chunks = grounding_meta.get("groundingChunks") or []
+                search_queries = grounding_meta.get("webSearchQueries") or []
+
+                sources: list[dict[str, str]] = []
+                seen_urls: set[str] = set()
+                for chunk in grounding_chunks:
+                    web = chunk.get("web") if isinstance(chunk, dict) else None
+                    if not web:
+                        continue
+                    uri = str(web.get("uri", "")).strip()
+                    title = str(web.get("title", "")).strip() or "Source"
+                    if uri and uri.startswith("http") and uri not in seen_urls:
+                        seen_urls.add(uri)
+                        sources.append({"title": title, "url": uri})
+
+                # Spoken text is conversational without reading raw URLs
+                speech_text = raw_text
+
+                # Display text appends formatted citations when web search grounding was used
+                if sources:
+                    source_lines = [f"• {s['title']} ({s['url']})" for s in sources[:5]]
+                    display_text = f"{raw_text}\n\nSources:\n" + "\n".join(source_lines)
+                else:
+                    display_text = raw_text
+
+                return LLMResponse(
+                    text=display_text,
+                    speech_text=speech_text,
+                    sources=sources,
+                    search_queries=search_queries,
+                )
+
+            # If all models returned 503
+            raise RuntimeError(f"Google Gemini service is temporarily unavailable due to high demand: {last_error}")
+
+        except httpx.TimeoutException as exc:
+            raise RuntimeError("Gemini request timed out. Please check your internet connection.") from exc
+        except httpx.ConnectError as exc:
+            raise RuntimeError("Could not connect to Gemini API. Check your internet connection.") from exc
+        except httpx.HTTPStatusError as exc:
+            raise RuntimeError(f"Gemini HTTP {exc.response.status_code} error.") from exc
+        finally:
+            if owns_client:
+                await client.aclose()
 
 
 def build_llm() -> BaseLLM:
-    """Factory — reads KAREN_LLM_PROVIDER, KAREN_LLM_KEY, KAREN_LLM_MODEL from env."""
-    provider = os.environ.get("KAREN_LLM_PROVIDER", "mock").lower()
-    if provider == "mock" or not os.environ.get("KAREN_LLM_KEY"):
-        print("[llm] Using offline MockLLM (set KAREN_LLM_PROVIDER + KAREN_LLM_KEY to enable real LLM)")
+    """Factory — reads provider and keys from environment.
+
+    Supported providers:
+    - 'gemini' (default when a Gemini key is present)
+    - 'mock' (offline mode)
+    """
+    api_key = (
+        os.environ.get("KAREN_GEMINI_KEY")
+        or os.environ.get("KAREN_LLM_KEY")
+        or os.environ.get("GEMINI_API_KEY", "")
+    ).strip()
+
+    provider = os.environ.get("KAREN_LLM_PROVIDER", "").strip().lower()
+
+    # If provider is explicitly mock, or no key exists and no provider is specified:
+    if provider == "mock" or (not provider and not api_key):
+        print("[llm] Using offline MockLLM")
         return MockLLM()
 
-    api_key   = os.environ["KAREN_LLM_KEY"]
-    model     = os.environ.get("KAREN_LLM_MODEL", "gpt-4o-mini")
-    base_url  = os.environ.get("KAREN_LLM_BASE_URL", "https://api.openai.com/v1")
-    print(f"[llm] Provider: {provider}, model: {model}, base: {base_url}")
-    return OpenAILLM(base_url=base_url, api_key=api_key, model=model)
+    # If provider is set to gemini, or an api_key exists:
+    if provider == "gemini" or api_key:
+        if not api_key:
+            raise RuntimeError(
+                "Gemini provider was selected, but no API key was found in Keychain or environment."
+            )
+        model = os.environ.get("KAREN_GEMINI_MODEL", DEFAULT_GEMINI_MODEL).strip()
+        grounding_str = os.environ.get("KAREN_GEMINI_GROUNDING", "true").strip().lower()
+        grounding = grounding_str not in ("false", "0", "no")
+        print(f"[llm] Initialized GeminiLLM with model='{model}', grounding={grounding}")
+        return GeminiLLM(api_key=api_key, model=model, grounding=grounding)
+
+    # Any unknown provider
+    raise RuntimeError(f"Unknown LLM provider '{provider}'. Please use 'gemini' or 'mock'.")

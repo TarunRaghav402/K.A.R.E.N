@@ -120,15 +120,19 @@ final class SidecarBridge: NSObject {
         proc.arguments = arguments
         proc.currentDirectoryURL = workingDirectory
         var environment = ProcessInfo.processInfo.environment
-        if let tavilyKey = SearchCredentialStore.loadTavilyKey() {
-            environment["KAREN_SEARCH_PROVIDER"] = "tavily"
-            environment["KAREN_TAVILY_API_KEY"] = tavilyKey
+        if let geminiKey = SearchCredentialStore.loadGeminiKey(), !geminiKey.isEmpty {
+            environment["KAREN_LLM_PROVIDER"] = "gemini"
+            environment["KAREN_GEMINI_KEY"] = geminiKey
+            environment["KAREN_LLM_KEY"] = geminiKey
+        } else if let envKey = environment["KAREN_GEMINI_KEY"] ?? environment["KAREN_LLM_KEY"] ?? environment["GEMINI_API_KEY"], !envKey.isEmpty {
+            environment["KAREN_LLM_PROVIDER"] = "gemini"
+            environment["KAREN_GEMINI_KEY"] = envKey
+            environment["KAREN_LLM_KEY"] = envKey
+        } else if environment["KAREN_LLM_PROVIDER"] == nil {
+            environment["KAREN_LLM_PROVIDER"] = "mock"
         }
         if !isPackaged, let repoRoot = findRepoRoot() {
             environment["PYTHONPATH"] = repoRoot + "/sidecar"
-        }
-        if environment["KAREN_LLM_PROVIDER"] == nil {
-            environment["KAREN_LLM_PROVIDER"] = "mock"
         }
         proc.environment = environment
 

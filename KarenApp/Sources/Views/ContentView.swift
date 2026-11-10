@@ -24,6 +24,7 @@ struct ContentView: View {
             // Orb renderer (Metal when Xcode build, Canvas when swift build)
             OrbView()
                 .ignoresSafeArea()
+                .offset(y: karen.showResponsePanel ? -90 : 0)
                 .accessibilityLabel("K.A.R.E.N. neural orb visualization")
                 .accessibilityHint("Use controls below to interact")
                 // Mouse/trackpad interaction
@@ -39,14 +40,42 @@ struct ContentView: View {
                 .onScrollWheel { delta in
                     karen.applyZoom(Float(1.0 + delta.y * 0.02))
                 }
+                .animation(.spring(response: 0.6, dampingFraction: 0.8), value: karen.showResponsePanel)
                 .animation(.easeInOut(duration: 0.7), value: karen.orbState)
+
+            // Dynamic Response Panel emerging from the orb
+            if karen.showResponsePanel {
+                VStack {
+                    Spacer()
+                        .frame(height: 60)
+                    DynamicResponsePanel()
+                    Spacer()
+                        .frame(height: 110)
+                }
+                .transition(.asymmetric(
+                    insertion: .opacity.combined(with: .scale(scale: 0.96)).combined(with: .move(edge: .bottom)),
+                    removal: .opacity.combined(with: .scale(scale: 0.96))
+                ))
+                .animation(.spring(response: 0.55, dampingFraction: 0.82), value: karen.showResponsePanel)
+            }
+
+            // Live Listening Overlay
+            if karen.orbState == .listening {
+                VStack {
+                    Spacer()
+                    LiveListeningIndicator()
+                        .padding(.bottom, 115)
+                }
+                .transition(.opacity.combined(with: .scale(scale: 0.95)))
+                .animation(.spring(response: 0.45, dampingFraction: 0.78), value: karen.orbState)
+            }
 
             // Bottom HUD
             VStack {
                 Spacer()
                 VStack(spacing: 9) {
                     HStack(spacing: 8) {
-                        TextField("Type a message or question…", text: $typedInput)
+                        TextField(karen.showResponsePanel ? "Ask a follow-up or type a new question…" : "Type a message or question…", text: $typedInput)
                             .textFieldStyle(.plain)
                             .padding(.horizontal, 14)
                             .padding(.vertical, 11)
@@ -68,16 +97,6 @@ struct ContentView: View {
                     HUDBar()
                 }
                 .padding(.bottom, 20)
-            }
-
-            // Reply text overlay
-            if !karen.replyText.isEmpty {
-                VStack {
-                    Spacer()
-                        .frame(height: 60)
-                    ReplyBubble(text: karen.replyText)
-                    Spacer()
-                }
             }
 
             // State badge (top center)

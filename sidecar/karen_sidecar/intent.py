@@ -17,7 +17,7 @@ class Intent(StrEnum):
     UNSUPPORTED = "unsupported or ambiguous request"
 
 
-_SEARCH = re.compile(r"\b(search(?:\s+(?:the\s+)?(?:internet|web|brave|google)|\s+for\b)|look up online|find online|on the internet|latest|current|recent news|today's news|current price)\b", re.I)
+_SEARCH = re.compile(r"\b(search(?:\s+(?:the\s+)?(?:internet|web|google)|\s+for\b)|look up online|find online|on the internet|latest|current|recent news|today's news|current price)\b", re.I)
 _LOGIC = re.compile(r"\b(?:truth table|logical|logic|xor|nand|nor|implies|equivalent to|greater than|less than|equal to|not equal to)\b|\b(?:true|false)\b\s+(?:and|or|xor|nand|nor)\b|\bnot\s+(?:true|false)\b|(?:==|!=|>=|<=|(?<!\*)>(?!>)|(?<!<)<)", re.I)
 _MATH = re.compile(r"\b(?:calculate|compute|work out|arithmetic|plus|addition|add|added|minus|subtraction|subtract|subtracted|take away|less|times|multiply|multiplication|multiplied|product|divided|division|divide|quotient|over|slash|modulo|remainder|square root|cube root|factorial|percentage|percent of|gcd|lcm|sine|cosine|tangent|logarithm|mean|median|mode|prime factor)\b|\d\s*(?:\+|\*|/|%|\*\*|//|-)\s*\d", re.I)
 _APP = re.compile(r"\b(?:open|launch|start)\s+(?:the\s+)?[a-z]", re.I)

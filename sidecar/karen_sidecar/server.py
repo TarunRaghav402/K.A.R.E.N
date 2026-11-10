@@ -12,6 +12,13 @@ PORT = 18765
 
 
 async def main() -> None:
+    # Source checkouts may keep local keys in an ignored .env file. The
+    # packaged app receives credentials from macOS Keychain via its environment.
+    try:
+        from dotenv import load_dotenv
+        load_dotenv(override=False)
+    except ImportError:
+        pass
     # Import here so startup errors are visible
     from karen_sidecar.protocol import parse_shell_msg, StateMsg, ReplyMsg, ActionMsg, ErrorMsg, PongMsg, OrbState
     from karen_sidecar.llm import build_llm
@@ -74,9 +81,10 @@ async def main() -> None:
                             )
 
                         if "reply" in payload:
-                            reply_text = payload["reply"]
+                            reply_text = str(payload["reply"]).strip()
+                            speech_text = payload.get("speech_text")
                         else:
-                            # LLM fallback
+                            # LLM call (Gemini or Mock fallback)
                             mem_ctx = memory.context_block()
                             messages = list(conversation)
                             image_context = input_adapter.context_for(image_labels)
@@ -89,17 +97,18 @@ async def main() -> None:
                                     "If it does not answer the question, say so. Do not invent details.\n" + latest_search_context["value"]})
                             if mem_ctx:
                                 messages.insert(1, {"role": "system", "content": mem_ctx})
-                            reply_text = await llm.complete(messages)
+                            
+                            res = await llm.complete(messages)
+                            reply_text = getattr(res, "text", str(res)).strip()
+                            speech_text = getattr(res, "speech_text", reply_text).strip()
 
-                        # Normalize the reply for display and speech.
-                        cleaned = re.sub(r"\s+", " ", reply_text).strip()
-                        cleaned = re.sub(r"\s+([.!?])", r"\1", cleaned)
-                        reply_text = cleaned or "I’m here to help, sir."
-                        speech_text = payload.get("speech_text")
+                        # Normalize speech text for natural TTS output
                         if isinstance(speech_text, str):
-                            speech_text = re.sub(r"\s+", " ", speech_text).strip()
+                            speech_text = re.sub(r"[ \t]+", " ", speech_text).strip()
+                            speech_text = re.sub(r"\s+([.!?])", r"\1", speech_text)
 
-                        conversation.append({"role": "assistant", "content": reply_text})
+                        reply_text = reply_text or "I’m here to help, sir."
+                        conversation.append({"role": "assistant", "content": speech_text or reply_text})
 
                         if needs_confirm:
                             await websocket.send(ActionMsg(

@@ -108,41 +108,33 @@ All messages are JSON over a WebSocket bound to localhost (`127.0.0.1:18765`).
 
 ---
 
-## Arithmetic, logic, and web search
+## Arithmetic, logic, and Google Gemini AI
 
 K.A.R.E.N. routes arithmetic and Boolean expressions to local, safe parsers. It
 supports spoken numbers, decimals, negative numbers, common functions, standard
 operator precedence, comparisons, Boolean operators, and truth tables. Invalid
-or incomplete calculations receive a clarification prompt. Search requests use
-Brave Search or Tavily; the assistant shows result titles and source URLs while
-speaking only a short summary. Tavily's free plan is available from Settings,
-where its key is stored in macOS Keychain.
+or incomplete calculations receive a clarification prompt.
 
-To use free web search, create a Tavily key and add it under **Settings > Free
-Web Search**. Tavily currently includes 1,000 monthly credits on its free plan;
-basic searches cost one credit. The key is stored in macOS Keychain and takes
-effect immediately. Brave Search remains available for users who already have
-a Brave API key.
+General knowledge, contextual follow-ups, and live web searches are powered by
+the official **Google Gemini API** (`gemini-3.8-flash`) with native **Google
+Search grounding**. Live web information is cited with source URLs and titles
+in the visual UI while keeping voice replies concise and natural.
 
-When launching from source, Brave can also be configured in the environment:
+To enable Google Gemini and live search grounding:
+1. Open K.A.R.E.N. **Settings** (⌘,).
+2. Enter your Gemini API key under **Google Gemini AI & Search Grounding**.
+3. Click **Save & Connect**. The key is validated with Google and saved securely
+   in macOS Keychain.
+
+When launching from source via terminal, you can also set the key in your environment:
 
 ```bash
-export KAREN_SEARCH_PROVIDER=brave
-export KAREN_BRAVE_API_KEY='your-api-key'
-export KAREN_SEARCH_COUNTRY=IN
-export KAREN_SEARCH_LANG=en
+export KAREN_GEMINI_KEY='your-gemini-api-key'
 bash scripts/run.sh
 ```
 
-The key stays in the process environment and should not be committed to the
-repository. Without a provider and key, K.A.R.E.N. says search is unavailable
-and does not claim it searched. A configured real LLM can summarize retrieved
-snippets and use the latest search context for follow-up questions. The default
-offline MockLLM cannot provide open-ended knowledge or generate contextual
-follow-up answers; local math and logic continue to work offline.
-
-Supported settings: `KAREN_SEARCH_PROVIDER=brave`, `KAREN_BRAVE_API_KEY`,
-`KAREN_SEARCH_COUNTRY` (default `IN`), and `KAREN_SEARCH_LANG` (default `en`).
+Without an API key, K.A.R.E.N. operates in offline mode with safe local math,
+logic, memory, device controls, and offline fallback responses.
 
 ## Text, voice, and image inputs
 
@@ -217,14 +209,12 @@ All permissions explained in the in-app **Permissions Center** before requesting
 
 ## LLM Configuration
 
-K.A.R.E.N. defaults to offline **MockLLM** (no key needed, no network). To use a real LLM:
+K.A.R.E.N. defaults to offline **MockLLM** (no key needed, no network). To connect Google Gemini:
 
 ```bash
-export KAREN_LLM_PROVIDER=openai
-export KAREN_LLM_KEY=sk-...              # stored in Keychain in production
-export KAREN_LLM_MODEL=gpt-4o-mini
-export KAREN_LLM_BASE_URL=https://api.openai.com/v1  # or Ollama: http://localhost:11434/v1
-swift run KarenApp
+export KAREN_GEMINI_KEY=AIzaSy...         # or configure via Settings UI (stored in Keychain)
+export KAREN_GEMINI_MODEL=gemini-3.8-flash # default
+bash scripts/run.sh
 ```
 
 ---
@@ -236,14 +226,15 @@ cd sidecar
 .venv/bin/python3 -m pytest tests/ -v
 ```
 
-**97 tests, 0 failures** (verified 2026-10-16):
+**138 tests, 0 failures**:
+- `test_gemini.py` — 10 tests: Gemini client, search grounding citations, error handling, role mappings
 - `test_protocol.py` — 6 tests: message parsing, serialisation
-- `test_llm_router.py` — 5 tests: MockLLM cycling, skill routing
+- `test_llm_router.py` — 6 tests: MockLLM cycling, skill routing, search routing
 - `test_memory.py` — 5 tests: propose/approve/delete/context
 - `test_gesture_math.py` — 12 tests: pinch zoom, rotation delta, clamping
 - `test_math_engine.py` — safe arithmetic, spoken parsing, Decimal precision, limits
 - `test_logic_engine.py` — Boolean expressions, comparisons, truth tables
-- `test_intelligence.py` — intent classification, Brave API and search errors
+- `test_intelligence.py` — intent classification, search parsing, and query extraction
 
 ---
 
@@ -267,9 +258,9 @@ cd sidecar
 | Metal orb (6 states) | **Partial** | Canvas renderer verified; Metal shaders written but need Xcode.app |
 | SwiftUI Canvas orb | **Verified** | 60 fps, all 6 states, LOD, reduce motion |
 | Python sidecar + WebSocket | **Verified** | Localhost socket, typed protocol, mock LLM |
-| MockLLM offline mode | **Verified** | 97 Python tests pass |
+| MockLLM offline mode | **Verified** | 138 Python tests pass |
 | Local arithmetic and logic | **Verified** | Safe parsers, spoken expressions, truth tables |
-| Tavily and Brave web search | **Implemented** | Tavily free tier available; both require a key and network access |
+| Google Gemini API + Google Search grounding | **Verified** | gemini-3.8-flash, official REST API, Keychain key storage, citations |
 | On-device STT (SFSpeechRecognizer) | **UNVERIFIED** | Code written; needs mic permission at runtime |
 | TTS (AVSpeechSynthesizer) | **UNVERIFIED** | Code written; needs audio output at runtime |
 | Wake word ("Karen") | **UNVERIFIED** | SFSpeechRecognizer loop written; needs runtime test |
@@ -278,7 +269,6 @@ cd sidecar
 | Permissions Center UI | **Verified** | All views render; actual grants need runtime |
 | Memory (SQLite, approval-gated) | **Verified** | 5 memory tests pass |
 | Phone pairing | **Not implemented (Phase 7)** | Planned: Bonjour + WebSocket + pairing code |
-| Real LLM (OpenAI-compatible) | **UNVERIFIED** | Client written; needs API key |
 | GPU instancing (filaments) | **Partial** | Metal shader written; Canvas uses CPU loop (800–2000 pts) |
 
 ---
@@ -348,7 +338,7 @@ karen/
 
 ### 🔜 Next (Phase 7–8)
 - Phone pairing: Bonjour + WebSocket + pairing code + iOS companion stub
-- Real LLM integration: end-to-end test with OpenAI-compatible API
+- Real LLM integration: Google Gemini API with Google Search grounding
 - Xcode project (`.xcodeproj`) for full Metal + sandbox entitlements
 - Polish: accessibility audit, performance profiling, screenshots
 

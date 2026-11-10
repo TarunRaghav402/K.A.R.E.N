@@ -24,10 +24,12 @@ swift build -c release --package-path "$REPO_ROOT"
 
 # Launch SwiftUI as a macOS app bundle so Launch Services keeps it running as a
 # normal desktop app, instead of treating the SwiftPM executable as a command.
-APP_BUNDLE="$REPO_ROOT/.build/release/K.A.R.E.N..app"
+BIN_PATH="$(swift build -c release --show-bin-path)"
+APP_BUNDLE="$REPO_ROOT/.build/K.A.R.E.N..app"
 APP_CONTENTS="$APP_BUNDLE/Contents"
+rm -rf "$APP_BUNDLE"
 mkdir -p "$APP_CONTENTS/MacOS" "$APP_CONTENTS/Resources"
-cp "$REPO_ROOT/.build/release/KarenApp" "$APP_CONTENTS/MacOS/KarenApp"
+cp "$BIN_PATH/KarenApp" "$APP_CONTENTS/MacOS/KarenApp"
 
 # Install the K.A.R.E.N. dot-orb mark as the Finder/Dock app icon.
 ICONSET_DIR="$REPO_ROOT/.build/KarenIcon.iconset"
@@ -112,6 +114,7 @@ printf 'APPL????' > "$APP_CONTENTS/PkgInfo"
 INSTALL_BUNDLE="$HOME/Applications/K.A.R.E.N..app"
 mkdir -p "$HOME/Applications"
 killall KarenApp >/dev/null 2>&1 || true
+pkill -f karen_sidecar >/dev/null 2>&1 || true
 # Remove the old SwiftPM-named bundle so Spotlight and Launchpad only see the
 # human-facing K.A.R.E.N. app name.
 OLD_APP_BUNDLE="$REPO_ROOT/.build/release/KarenApp.app"
@@ -119,6 +122,7 @@ if [ -d "$OLD_APP_BUNDLE" ]; then
     /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -u "$OLD_APP_BUNDLE" || true
     rm -rf "$OLD_APP_BUNDLE"
 fi
+rm -rf "$INSTALL_BUNDLE"
 ditto "$APP_BUNDLE" "$INSTALL_BUNDLE"
 /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -u "$INSTALL_BUNDLE" || true
 /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f "$INSTALL_BUNDLE"

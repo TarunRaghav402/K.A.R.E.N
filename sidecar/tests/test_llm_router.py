@@ -38,7 +38,21 @@ async def test_route_phone_unavailable():
 
 @pytest.mark.asyncio
 async def test_route_fallback():
-    # Unknown intent with no LLM fallback set should still return gracefully
+    # Unknown requests are treated as knowledge questions and use configured search.
     skill_name, payload, _ = await route("sgkjhsdfkjhsdf random", {})
-    # Either "unknown" or "llm" — both valid
-    assert skill_name in ("unknown", "llm")
+    assert skill_name == "web_search"
+    assert "reply" in payload
+
+
+@pytest.mark.asyncio
+async def test_general_knowledge_question_uses_web_search(monkeypatch):
+    from karen_sidecar import router
+
+    async def fake_search(text, context):
+        return {"reply": "A laptop is a portable computer.", "speech_text": "A laptop is a portable computer."}
+
+    monkeypatch.setattr(router, "answer_search_request", fake_search)
+    skill_name, payload, needs_confirm = await route("What is a laptop?", {})
+    assert skill_name == "web_search"
+    assert "laptop" in payload["reply"].lower()
+    assert needs_confirm is False

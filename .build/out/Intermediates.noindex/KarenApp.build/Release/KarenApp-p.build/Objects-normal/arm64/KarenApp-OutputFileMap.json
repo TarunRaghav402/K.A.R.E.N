@@ -53,6 +53,11 @@
     "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/SidecarBridge.bc",
     "object" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/SidecarBridge.o"
   },
+  "/Users/tarunraghav/VolumeE/karen/KarenApp/Sources/Sound/SoundManager.swift" : {
+    "index-unit-output-path" : "/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/SoundManager.o",
+    "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/SoundManager.bc",
+    "object" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/SoundManager.o"
+  },
   "/Users/tarunraghav/VolumeE/karen/KarenApp/Sources/Speech/SpeechEngine.swift" : {
     "index-unit-output-path" : "/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/SpeechEngine.o",
     "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Release/KarenApp-p.build/Objects-normal/arm64/SpeechEngine.bc",

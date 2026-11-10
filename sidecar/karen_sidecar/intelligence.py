@@ -1,60 +1,18 @@
-"""Orchestration helpers for search summaries and tool responses."""
+"""Orchestration helpers for search queries and Gemini Google Search grounding."""
 
 from __future__ import annotations
-
 from typing import Any
-
 from .llm import MockLLM
-from .web_search import SearchError, extract_search_query, search_web
 
 
 async def answer_search_request(text: str, context: dict[str, Any]) -> dict[str, Any]:
-    provider, query = extract_search_query(text)
-    if provider == "google":
-        return {"reply": "Google search is not configured. I can use Tavily web search when a key is added in Settings.",
-                "speech_text": "Google search is not configured. I can use Tavily web search once it has been configured."}
-    try:
-        results = await search_web(query, provider=provider)
-    except SearchError as exc:
-        return {"reply": str(exc), "speech_text": str(exc)}
-
-    if not results:
-        return {"reply": f"I searched for {query}, but the provider returned no results.",
-                "speech_text": "I searched, but the provider returned no results."}
-
-    source_context = "\n".join(
-        f"[{index}] {item.title}\nURL: {item.url}\nSnippet: {item.description}"
-        for index, item in enumerate(results, 1)
-    )
-    context["last_search"] = {"query": query, "sources": source_context}
-    # Offline mode has no language model to synthesize snippets, so show one
-    # short, clearly attributed excerpt instead of concatenating several pages
-    # into an unreadable wall of text.
-    first_snippet = next((item.description.strip() for item in results if item.description.strip()), "")
-    summary = " ".join(first_snippet.split())[:360]
-    if first_snippet and len(first_snippet) > 360:
-        summary = summary.rsplit(" ", 1)[0].rstrip(" ,;:") + "…"
+    """Handles search requests when in offline mode or routes to Gemini grounding."""
     llm = context.get("llm")
     if llm is not None and not isinstance(llm, MockLLM):
-        try:
-            generated = await llm.complete([
-                {"role": "system", "content": (
-                    "Summarize only claims supported by these search snippets. Do not invent facts or "
-                    "citations. Say when the snippets do not establish an answer. Use two concise sentences."
-                )},
-                {"role": "user", "content": f"Question: {query}\n\nSearch results:\n{source_context}"},
-            ], max_tokens=160)
-            if generated.strip():
-                summary = generated.strip()
-        except Exception as exc:  # Search results remain useful if the optional summarizer is down.
-            print(f"[search] Summary generation failed: {type(exc).__name__}")
+        # Gemini handles search queries natively using Google Search grounding
+        return {}
 
-    if not summary:
-        summary = f"I found {len(results)} relevant pages for {query}."
-    citations = "\n".join(f"{index}. {item.title} — {item.url}" for index, item in enumerate(results[:3], 1))
-    speech = f"{summary.rstrip()} There are {len(results)} sources available in the results, sir."
     return {
-        "reply": f"{summary}\n\nSources:\n{citations}",
-        "speech_text": speech,
-        "search_context": source_context,
+        "reply": "Live Google Search and web intelligence require a Google Gemini API key. You can add your key in K.A.R.E.N. Settings.",
+        "speech_text": "Live web search requires a Gemini API key. Please add your key in Settings.",
     }

@@ -11,6 +11,7 @@ from typing import Callable, Awaitable, Any
 
 from .intent import Intent, classify_intent
 from .intelligence import answer_search_request
+from .llm import MockLLM
 from .logic_engine import LogicInputError, solve_voice_logic
 from .math_engine import MathInputError, normalize_math_expression, solve_voice_math
 
@@ -217,6 +218,9 @@ async def route(text: str, context: dict[str, Any]) -> tuple[str, dict, bool]:
         return "logic", {"reply": f"{answer['answer']}. Sir.", "expression": answer["expression"]}, False
 
     if intent == Intent.SEARCH:
+        llm = context.get("llm")
+        if llm is not None and not isinstance(llm, MockLLM):
+            return "llm", {}, False
         return "web_search", await answer_search_request(text, context), False
 
     for name, (pat, handler) in _REGISTRY.items():
@@ -224,6 +228,12 @@ async def route(text: str, context: dict[str, Any]) -> tuple[str, dict, bool]:
             payload = await handler(text, context)
             needs_confirm = payload.pop("__needs_confirm__", False)
             return name, payload, needs_confirm
+
+    if intent in {Intent.KNOWLEDGE, Intent.PROGRAMMING}:
+        llm = context.get("llm")
+        if llm is not None and not isinstance(llm, MockLLM):
+            return "llm", {}, False
+        return "web_search", await answer_search_request(text, context), False
 
     if _FALLBACK:
         payload = await _FALLBACK(text, context)

@@ -76,6 +76,16 @@
     "swift-dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbView.swiftdeps",
     "swiftmodule" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/OrbView~partial.swiftmodule"
   },
+  "/Users/tarunraghav/VolumeE/karen/KarenApp/Sources/Sidecar/SearchCredentialStore.swift" : {
+    "const-values" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SearchCredentialStore.swiftconstvalues",
+    "dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SearchCredentialStore.d",
+    "diagnostics" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SearchCredentialStore.dia",
+    "index-unit-output-path" : "/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SearchCredentialStore.o",
+    "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SearchCredentialStore.bc",
+    "object" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SearchCredentialStore.o",
+    "swift-dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SearchCredentialStore.swiftdeps",
+    "swiftmodule" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SearchCredentialStore~partial.swiftmodule"
+  },
   "/Users/tarunraghav/VolumeE/karen/KarenApp/Sources/Sidecar/SidecarBridge.swift" : {
     "const-values" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SidecarBridge.swiftconstvalues",
     "dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SidecarBridge.d",
@@ -85,6 +95,16 @@
     "object" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SidecarBridge.o",
     "swift-dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SidecarBridge.swiftdeps",
     "swiftmodule" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SidecarBridge~partial.swiftmodule"
+  },
+  "/Users/tarunraghav/VolumeE/karen/KarenApp/Sources/Sound/SoundManager.swift" : {
+    "const-values" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SoundManager.swiftconstvalues",
+    "dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SoundManager.d",
+    "diagnostics" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SoundManager.dia",
+    "index-unit-output-path" : "/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SoundManager.o",
+    "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SoundManager.bc",
+    "object" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SoundManager.o",
+    "swift-dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SoundManager.swiftdeps",
+    "swiftmodule" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SoundManager~partial.swiftmodule"
   },
   "/Users/tarunraghav/VolumeE/karen/KarenApp/Sources/Speech/SpeechEngine.swift" : {
     "const-values" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenApp-p.build/Objects-normal/arm64/SpeechEngine.swiftconstvalues",

@@ -5,11 +5,11 @@
       "name" : "KarenApp",
       "path" : "/Users/tarunraghav/VolumeE/karen",
       "projects" : [
-        "b33da42ad5831968395b186fa30c02623e86d6868873dd40257540290989de3d",
+        "e7e9fe7418844256420760073244d3c915a8d46891174e8235f193dbc3b1028a",
         "6d2a9936f273362733a843946e5748268587ff4d060e21cd260a5869e236f1e6"
       ]
     },
-    "signature" : "4c2c37269320c8bd990ecc14213ce0d59d1f1e7653662edc31de9d9492c7565f",
+    "signature" : "ce5ab162521402795a62366e7fc72182704f9922e1b9c85712608dd3570137f0",
     "type" : "workspace"
   },
   {
@@ -273,6 +273,14 @@
               {
                 "fileType" : "sourcecode.swift",
                 "guid" : "PACKAGE:karen::MAINGROUP::REF_2::REF_9",
+                "name" : "Sound/SoundManager.swift",
+                "path" : "Sound/SoundManager.swift",
+                "sourceTree" : "<group>",
+                "type" : "file"
+              },
+              {
+                "fileType" : "sourcecode.swift",
+                "guid" : "PACKAGE:karen::MAINGROUP::REF_2::REF_10",
                 "name" : "Speech/SpeechEngine.swift",
                 "path" : "Speech/SpeechEngine.swift",
                 "sourceTree" : "<group>",
@@ -280,7 +288,7 @@
               },
               {
                 "fileType" : "sourcecode.swift",
-                "guid" : "PACKAGE:karen::MAINGROUP::REF_2::REF_10",
+                "guid" : "PACKAGE:karen::MAINGROUP::REF_2::REF_11",
                 "name" : "Speech/WakeWordDetector.swift",
                 "path" : "Speech/WakeWordDetector.swift",
                 "sourceTree" : "<group>",
@@ -288,7 +296,7 @@
               },
               {
                 "fileType" : "sourcecode.swift",
-                "guid" : "PACKAGE:karen::MAINGROUP::REF_2::REF_11",
+                "guid" : "PACKAGE:karen::MAINGROUP::REF_2::REF_12",
                 "name" : "Views/ContentView.swift",
                 "path" : "Views/ContentView.swift",
                 "sourceTree" : "<group>",
@@ -296,7 +304,7 @@
               },
               {
                 "fileType" : "sourcecode.swift",
-                "guid" : "PACKAGE:karen::MAINGROUP::REF_2::REF_12",
+                "guid" : "PACKAGE:karen::MAINGROUP::REF_2::REF_13",
                 "name" : "Views/MenuBarContent.swift",
                 "path" : "Views/MenuBarContent.swift",
                 "sourceTree" : "<group>",
@@ -304,7 +312,7 @@
               },
               {
                 "fileType" : "sourcecode.swift",
-                "guid" : "PACKAGE:karen::MAINGROUP::REF_2::REF_13",
+                "guid" : "PACKAGE:karen::MAINGROUP::REF_2::REF_14",
                 "name" : "Views/SettingsView.swift",
                 "path" : "Views/SettingsView.swift",
                 "sourceTree" : "<group>",
@@ -394,6 +402,14 @@
               {
                 "fileType" : "sourcecode.swift",
                 "guid" : "PACKAGE:karen::MAINGROUP::REF_3::REF_9",
+                "name" : "Sound/SoundManager.swift",
+                "path" : "Sound/SoundManager.swift",
+                "sourceTree" : "<group>",
+                "type" : "file"
+              },
+              {
+                "fileType" : "sourcecode.swift",
+                "guid" : "PACKAGE:karen::MAINGROUP::REF_3::REF_10",
                 "name" : "Speech/SpeechEngine.swift",
                 "path" : "Speech/SpeechEngine.swift",
                 "sourceTree" : "<group>",
@@ -401,7 +417,7 @@
               },
               {
                 "fileType" : "sourcecode.swift",
-                "guid" : "PACKAGE:karen::MAINGROUP::REF_3::REF_10",
+                "guid" : "PACKAGE:karen::MAINGROUP::REF_3::REF_11",
                 "name" : "Speech/WakeWordDetector.swift",
                 "path" : "Speech/WakeWordDetector.swift",
                 "sourceTree" : "<group>",
@@ -409,7 +425,7 @@
               },
               {
                 "fileType" : "sourcecode.swift",
-                "guid" : "PACKAGE:karen::MAINGROUP::REF_3::REF_11",
+                "guid" : "PACKAGE:karen::MAINGROUP::REF_3::REF_12",
                 "name" : "Views/ContentView.swift",
                 "path" : "Views/ContentView.swift",
                 "sourceTree" : "<group>",
@@ -417,7 +433,7 @@
               },
               {
                 "fileType" : "sourcecode.swift",
-                "guid" : "PACKAGE:karen::MAINGROUP::REF_3::REF_12",
+                "guid" : "PACKAGE:karen::MAINGROUP::REF_3::REF_13",
                 "name" : "Views/MenuBarContent.swift",
                 "path" : "Views/MenuBarContent.swift",
                 "sourceTree" : "<group>",
@@ -425,7 +441,7 @@
               },
               {
                 "fileType" : "sourcecode.swift",
-                "guid" : "PACKAGE:karen::MAINGROUP::REF_3::REF_13",
+                "guid" : "PACKAGE:karen::MAINGROUP::REF_3::REF_14",
                 "name" : "Views/SettingsView.swift",
                 "path" : "Views/SettingsView.swift",
                 "sourceTree" : "<group>",
@@ -451,12 +467,12 @@
       "projectIsPackage" : "true",
       "projectName" : "KarenApp",
       "targets" : [
-        "eb5d0088e405463166a9649319701d7c12f59922cf94c27926c6d94dbddb5b70",
-        "f256b36883b8a580b440c92cc7e3e3f603f6476e18769268f15382efd94cd544",
+        "8ded65b1877f03e93b6a4649a814c98f0b9ecec0d366a9ef432fcfc5175cdd16",
+        "7b9e7bdc964e2401c808a085025c0bf2ba92ce19e3a0e46476e900c5f3799187",
         "fe858477e041715c2b03a13e21fdcc1fb98360e0b31a3f5febaa84a6f61be51d"
       ]
     },
-    "signature" : "b33da42ad5831968395b186fa30c02623e86d6868873dd40257540290989de3d",
+    "signature" : "e7e9fe7418844256420760073244d3c915a8d46891174e8235f193dbc3b1028a",
     "type" : "project"
   },
   {
@@ -694,6 +710,15 @@
 
               ],
               "removeHeadersOnCopy" : "false"
+            },
+            {
+              "codeSignOnCopy" : "false",
+              "fileReference" : "PACKAGE:karen::MAINGROUP::REF_2::REF_14",
+              "guid" : "PACKAGE-PRODUCT:karen_KarenApp.KarenApp::BUILDPHASE_0::14",
+              "platformFilters" : [
+
+              ],
+              "removeHeadersOnCopy" : "false"
             }
           ],
           "guid" : "PACKAGE-PRODUCT:karen_KarenApp.KarenApp::BUILDPHASE_0",
@@ -719,7 +744,7 @@
       "productTypeIdentifier" : "com.apple.product-type.tool",
       "type" : "standard"
     },
-    "signature" : "eb5d0088e405463166a9649319701d7c12f59922cf94c27926c6d94dbddb5b70",
+    "signature" : "8ded65b1877f03e93b6a4649a814c98f0b9ecec0d366a9ef432fcfc5175cdd16",
     "type" : "target"
   },
   {
@@ -988,6 +1013,15 @@
 
               ],
               "removeHeadersOnCopy" : "false"
+            },
+            {
+              "codeSignOnCopy" : "false",
+              "fileReference" : "PACKAGE:karen::MAINGROUP::REF_3::REF_14",
+              "guid" : "PACKAGE-TARGET:KarenApp--49EE5C99C24245E6-testable::BUILDPHASE_0::14",
+              "platformFilters" : [
+
+              ],
+              "removeHeadersOnCopy" : "false"
             }
           ],
           "guid" : "PACKAGE-TARGET:KarenApp--49EE5C99C24245E6-testable::BUILDPHASE_0",
@@ -1013,7 +1047,7 @@
       "productTypeIdentifier" : "org.swift.product-type.common.object",
       "type" : "standard"
     },
-    "signature" : "f256b36883b8a580b440c92cc7e3e3f603f6476e18769268f15382efd94cd544",
+    "signature" : "7b9e7bdc964e2401c808a085025c0bf2ba92ce19e3a0e46476e900c5f3799187",
     "type" : "target"
   },
   {
