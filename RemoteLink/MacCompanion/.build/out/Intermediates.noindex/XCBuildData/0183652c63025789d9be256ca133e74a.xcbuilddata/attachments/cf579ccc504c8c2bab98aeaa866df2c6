@@ -1,0 +1,29 @@
+{
+  "" : {
+    "diagnostics" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Debug/CompanionCoreTests-p.build/Objects-normal/arm64/CompanionCoreTests-primary.dia",
+    "emit-module-dependencies" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Debug/CompanionCoreTests-p.build/Objects-normal/arm64/CompanionCoreTests-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Debug/CompanionCoreTests-p.build/Objects-normal/arm64/CompanionCoreTests-primary-emit-module.dia",
+    "pch" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Debug/CompanionCoreTests-p.build/Objects-normal/arm64/CompanionCoreTests-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Debug/CompanionCoreTests-p.build/Objects-normal/arm64/CompanionCoreTests-primary.swiftdeps"
+  },
+  "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Debug/CompanionCoreTests-p.build/DerivedSources/test_entry_point.swift" : {
+    "const-values" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Debug/CompanionCoreTests-p.build/Objects-normal/arm64/test_entry_point.swiftconstvalues",
+    "dependencies" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Debug/CompanionCoreTests-p.build/Objects-normal/arm64/test_entry_point.d",
+    "diagnostics" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Debug/CompanionCoreTests-p.build/Objects-normal/arm64/test_entry_point.dia",
+    "index-unit-output-path" : "/KarenRemoteCompanion.build/Debug/CompanionCoreTests-p.build/Objects-normal/arm64/test_entry_point.o",
+    "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Debug/CompanionCoreTests-p.build/Objects-normal/arm64/test_entry_point.bc",
+    "object" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Debug/CompanionCoreTests-p.build/Objects-normal/arm64/test_entry_point.o",
+    "swift-dependencies" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Debug/CompanionCoreTests-p.build/Objects-normal/arm64/test_entry_point.swiftdeps",
+    "swiftmodule" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Debug/CompanionCoreTests-p.build/Objects-normal/arm64/test_entry_point~partial.swiftmodule"
+  },
+  "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/Tests/CompanionCoreTests/CompanionTests.swift" : {
+    "const-values" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Debug/CompanionCoreTests-p.build/Objects-normal/arm64/CompanionTests.swiftconstvalues",
+    "dependencies" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Debug/CompanionCoreTests-p.build/Objects-normal/arm64/CompanionTests.d",
+    "diagnostics" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Debug/CompanionCoreTests-p.build/Objects-normal/arm64/CompanionTests.dia",
+    "index-unit-output-path" : "/KarenRemoteCompanion.build/Debug/CompanionCoreTests-p.build/Objects-normal/arm64/CompanionTests.o",
+    "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Debug/CompanionCoreTests-p.build/Objects-normal/arm64/CompanionTests.bc",
+    "object" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Debug/CompanionCoreTests-p.build/Objects-normal/arm64/CompanionTests.o",
+    "swift-dependencies" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Debug/CompanionCoreTests-p.build/Objects-normal/arm64/CompanionTests.swiftdeps",
+    "swiftmodule" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Debug/CompanionCoreTests-p.build/Objects-normal/arm64/CompanionTests~partial.swiftmodule"
+  }
+}

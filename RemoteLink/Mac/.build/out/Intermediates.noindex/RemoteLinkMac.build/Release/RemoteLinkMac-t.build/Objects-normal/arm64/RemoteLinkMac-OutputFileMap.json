@@ -1,0 +1,21 @@
+{
+  "" : {
+    "const-values" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/Mac/.build/out/Intermediates.noindex/RemoteLinkMac.build/Release/RemoteLinkMac-t.build/Objects-normal/arm64/RemoteLinkMac-primary.swiftconstvalues",
+    "dependencies" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/Mac/.build/out/Intermediates.noindex/RemoteLinkMac.build/Release/RemoteLinkMac-t.build/Objects-normal/arm64/RemoteLinkMac-primary.d",
+    "diagnostics" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/Mac/.build/out/Intermediates.noindex/RemoteLinkMac.build/Release/RemoteLinkMac-t.build/Objects-normal/arm64/RemoteLinkMac-primary.dia",
+    "emit-module-dependencies" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/Mac/.build/out/Intermediates.noindex/RemoteLinkMac.build/Release/RemoteLinkMac-t.build/Objects-normal/arm64/RemoteLinkMac-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/Mac/.build/out/Intermediates.noindex/RemoteLinkMac.build/Release/RemoteLinkMac-t.build/Objects-normal/arm64/RemoteLinkMac-primary-emit-module.dia",
+    "pch" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/Mac/.build/out/Intermediates.noindex/RemoteLinkMac.build/Release/RemoteLinkMac-t.build/Objects-normal/arm64/RemoteLinkMac-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/Mac/.build/out/Intermediates.noindex/RemoteLinkMac.build/Release/RemoteLinkMac-t.build/Objects-normal/arm64/RemoteLinkMac-primary.swiftdeps"
+  },
+  "/Users/tarunraghav/VolumeE/karen/RemoteLink/Mac/Sources/RemoteLinkMac/RemoteLinkClient.swift" : {
+    "index-unit-output-path" : "/RemoteLinkMac.build/Release/RemoteLinkMac-t.build/Objects-normal/arm64/RemoteLinkClient.o",
+    "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/Mac/.build/out/Intermediates.noindex/RemoteLinkMac.build/Release/RemoteLinkMac-t.build/Objects-normal/arm64/RemoteLinkClient.bc",
+    "object" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/Mac/.build/out/Intermediates.noindex/RemoteLinkMac.build/Release/RemoteLinkMac-t.build/Objects-normal/arm64/RemoteLinkClient.o"
+  },
+  "/Users/tarunraghav/VolumeE/karen/RemoteLink/Mac/Sources/RemoteLinkMac/RemoteLinkModels.swift" : {
+    "index-unit-output-path" : "/RemoteLinkMac.build/Release/RemoteLinkMac-t.build/Objects-normal/arm64/RemoteLinkModels.o",
+    "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/Mac/.build/out/Intermediates.noindex/RemoteLinkMac.build/Release/RemoteLinkMac-t.build/Objects-normal/arm64/RemoteLinkModels.bc",
+    "object" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/Mac/.build/out/Intermediates.noindex/RemoteLinkMac.build/Release/RemoteLinkMac-t.build/Objects-normal/arm64/RemoteLinkModels.o"
+  }
+}

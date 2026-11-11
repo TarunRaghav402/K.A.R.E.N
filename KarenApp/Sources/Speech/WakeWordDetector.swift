@@ -11,7 +11,7 @@ import AVFoundation
 
 final class WakeWordDetector: NSObject {
     var onWake: (() -> Void)?
-    var onInterrupt: (() -> Void)?
+    var onInterrupt: ((String) -> Void)?
     var isBargeInMode: Bool = false
     var currentSpokenText: String = ""
     private var recognizer: SFSpeechRecognizer?
@@ -25,14 +25,14 @@ final class WakeWordDetector: NSObject {
     private let cooldown: TimeInterval = 2.0
 
     // Regex: matches "karen" or "hey karen" (case-insensitive)
-    private let wakePattern = try! NSRegularExpression(
+    let wakePattern = try! NSRegularExpression(
         pattern: #"(\bkaren\b|hey\s+karen)"#,
         options: .caseInsensitive
     )
 
     // Regex for barge-in interruption phrases while speaking
-    private let interruptPattern = try! NSRegularExpression(
-        pattern: #"(\bkaren\b|hey\s+karen|\bwait\b|\bstop\b|\bcancel\b|\bquiet\b|\bhold\s+on\b|\blisten\b|\bexcuse\s+me\b)"#,
+    let interruptPattern = try! NSRegularExpression(
+        pattern: #"(\bkaren\b|hey\s+karen|\bwait\b|\bstop\b|\bcancel\b|\bquiet\b|\bhold\s+on\b|\blisten\b|\bexcuse\s+me\b|\bshut\s+up\b|\bpause\b|\bstop\s+speaking\b)"#,
         options: .caseInsensitive
     )
 
@@ -67,29 +67,18 @@ final class WakeWordDetector: NSObject {
         do {
             let req = SFSpeechAudioBufferRecognitionRequest()
             req.shouldReportPartialResults = true
-            if let recognizer = recognizer, recognizer.supportsOnDeviceRecognition {
-                req.requiresOnDeviceRecognition = true
-            } else {
-                req.requiresOnDeviceRecognition = false
-            }
+            req.requiresOnDeviceRecognition = false
             self.request = req
             isRunning = true
 
             let inputNode = audioEngine.inputNode
-            // Enable hardware acoustic echo cancellation so speaker output is subtracted
-            do {
-                try inputNode.setVoiceProcessingEnabled(true)
-            } catch {
-                print("[WakeWordDetector] Voice processing unavailable: \(error.localizedDescription)")
-            }
-
             inputNode.removeTap(onBus: 0)
 
             let hwFormat = inputNode.outputFormat(forBus: 0)
             let fmt: AVAudioFormat
             if hwFormat.sampleRate > 0 && hwFormat.channelCount > 0 {
                 fmt = hwFormat
-            } else if let std = AVAudioFormat(standardFormatWithSampleRate: 44100, channels: 1) {
+            } else if let std = AVAudioFormat(standardFormatWithSampleRate: 48000, channels: 1) {
                 fmt = std
             } else {
                 fmt = hwFormat
@@ -108,22 +97,45 @@ final class WakeWordDetector: NSObject {
                     let range = NSRange(txt.startIndex..., in: txt)
 
                     if self.isBargeInMode {
-                        // In barge-in mode, check for interruption commands or new queries
+                        // In barge-in mode, check for interruption commands or wake phrase
                         let isCommandMatch = self.interruptPattern.firstMatch(in: txt, range: range) != nil
+                        let isWakeMatch = self.wakePattern.firstMatch(in: txt, range: range) != nil
                         let normalizedTxt = txt.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
-                        let normalizedSpoken = self.currentSpokenText.lowercased()
 
-                        // Check if the user is speaking something distinct from what K.A.R.E.N. is saying
-                        let isDistinctSpeech = !normalizedTxt.isEmpty &&
-                            !normalizedSpoken.contains(normalizedTxt) &&
-                            normalizedTxt.split(separator: " ").count >= 2
+                        // Split into words, stripping punctuation
+                        let punct = CharacterSet.punctuationCharacters
+                        let txtWords = normalizedTxt.components(separatedBy: .whitespacesAndNewlines)
+                            .map { $0.trimmingCharacters(in: punct) }
+                            .filter { !$0.isEmpty }
 
-                        if isCommandMatch || isDistinctSpeech {
+                        let spokenWords = Set(
+                            self.currentSpokenText.lowercased()
+                                .components(separatedBy: .whitespacesAndNewlines)
+                                .map { $0.trimmingCharacters(in: punct) }
+                                .filter { !$0.isEmpty }
+                        )
+
+                        let novelWordsCount = txtWords.filter { !spokenWords.contains($0) }.count
+                        let spokenTextLower = self.currentSpokenText.lowercased()
+                        // Echo prevention: ignore recognition if all words are identical to Karen's current speech,
+                        // or if the recognized phrase is a substring of Karen's current utterance.
+                        let isEcho = (novelWordsCount == 0 && !spokenWords.isEmpty) ||
+                                     (!spokenTextLower.isEmpty && spokenTextLower.contains(normalizedTxt))
+
+                        // Barge-in requires either an explicit stop command or a wake phrase with a question:
+                        // Arbitrary room sounds or speaker echoes that do not contain a command or wake word
+                        // must NEVER halt active speech readout!
+                        let shouldInterrupt = !isEcho && (isCommandMatch || isWakeMatch)
+
+                        print("[WakeWordDetector:Diag] Barge-in evaluation: txt='\(txt)', isCmd=\(isCommandMatch), isWake=\(isWakeMatch), isEcho=\(isEcho), shouldInterrupt=\(shouldInterrupt)")
+
+                        if shouldInterrupt {
                             let now = Date()
                             if now.timeIntervalSince(self.lastWake) > 1.0 {
                                 self.lastWake = now
+                                print("[WakeWordDetector:Diag] Barge-in threshold passed! Triggering onInterrupt with '\(txt)'")
                                 DispatchQueue.main.async {
-                                    self.onInterrupt?()
+                                    self.onInterrupt?(txt)
                                 }
                             }
                         }

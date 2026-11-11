@@ -1,0 +1,51 @@
+{
+  "" : {
+    "const-values" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Release/CompanionCore-t.build/Objects-normal/arm64/CompanionCore-primary.swiftconstvalues",
+    "dependencies" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Release/CompanionCore-t.build/Objects-normal/arm64/CompanionCore-primary.d",
+    "diagnostics" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Release/CompanionCore-t.build/Objects-normal/arm64/CompanionCore-primary.dia",
+    "emit-module-dependencies" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Release/CompanionCore-t.build/Objects-normal/arm64/CompanionCore-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Release/CompanionCore-t.build/Objects-normal/arm64/CompanionCore-primary-emit-module.dia",
+    "pch" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Release/CompanionCore-t.build/Objects-normal/arm64/CompanionCore-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Release/CompanionCore-t.build/Objects-normal/arm64/CompanionCore-primary.swiftdeps"
+  },
+  "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/Sources/CompanionCore/Engine/CompanionSyncEngine.swift" : {
+    "index-unit-output-path" : "/KarenRemoteCompanion.build/Release/CompanionCore-t.build/Objects-normal/arm64/CompanionSyncEngine.o",
+    "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Release/CompanionCore-t.build/Objects-normal/arm64/CompanionSyncEngine.bc",
+    "object" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Release/CompanionCore-t.build/Objects-normal/arm64/CompanionSyncEngine.o"
+  },
+  "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/Sources/CompanionCore/Lifecycle/LaunchAgentService.swift" : {
+    "index-unit-output-path" : "/KarenRemoteCompanion.build/Release/CompanionCore-t.build/Objects-normal/arm64/LaunchAgentService.o",
+    "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Release/CompanionCore-t.build/Objects-normal/arm64/LaunchAgentService.bc",
+    "object" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Release/CompanionCore-t.build/Objects-normal/arm64/LaunchAgentService.o"
+  },
+  "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/Sources/CompanionCore/Lifecycle/SleepWakeMonitor.swift" : {
+    "index-unit-output-path" : "/KarenRemoteCompanion.build/Release/CompanionCore-t.build/Objects-normal/arm64/SleepWakeMonitor.o",
+    "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Release/CompanionCore-t.build/Objects-normal/arm64/SleepWakeMonitor.bc",
+    "object" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Release/CompanionCore-t.build/Objects-normal/arm64/SleepWakeMonitor.o"
+  },
+  "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/Sources/CompanionCore/Models/Types.swift" : {
+    "index-unit-output-path" : "/KarenRemoteCompanion.build/Release/CompanionCore-t.build/Objects-normal/arm64/Types.o",
+    "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Release/CompanionCore-t.build/Objects-normal/arm64/Types.bc",
+    "object" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Release/CompanionCore-t.build/Objects-normal/arm64/Types.o"
+  },
+  "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/Sources/CompanionCore/Network/CloudAPIClient.swift" : {
+    "index-unit-output-path" : "/KarenRemoteCompanion.build/Release/CompanionCore-t.build/Objects-normal/arm64/CloudAPIClient.o",
+    "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Release/CompanionCore-t.build/Objects-normal/arm64/CloudAPIClient.bc",
+    "object" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Release/CompanionCore-t.build/Objects-normal/arm64/CloudAPIClient.o"
+  },
+  "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/Sources/CompanionCore/Network/NetworkMonitor.swift" : {
+    "index-unit-output-path" : "/KarenRemoteCompanion.build/Release/CompanionCore-t.build/Objects-normal/arm64/NetworkMonitor.o",
+    "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Release/CompanionCore-t.build/Objects-normal/arm64/NetworkMonitor.bc",
+    "object" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Release/CompanionCore-t.build/Objects-normal/arm64/NetworkMonitor.o"
+  },
+  "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/Sources/CompanionCore/Storage/ConfigStore.swift" : {
+    "index-unit-output-path" : "/KarenRemoteCompanion.build/Release/CompanionCore-t.build/Objects-normal/arm64/ConfigStore.o",
+    "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Release/CompanionCore-t.build/Objects-normal/arm64/ConfigStore.bc",
+    "object" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Release/CompanionCore-t.build/Objects-normal/arm64/ConfigStore.o"
+  },
+  "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/Sources/CompanionCore/Storage/ResponseJournal.swift" : {
+    "index-unit-output-path" : "/KarenRemoteCompanion.build/Release/CompanionCore-t.build/Objects-normal/arm64/ResponseJournal.o",
+    "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Release/CompanionCore-t.build/Objects-normal/arm64/ResponseJournal.bc",
+    "object" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Release/CompanionCore-t.build/Objects-normal/arm64/ResponseJournal.o"
+  }
+}

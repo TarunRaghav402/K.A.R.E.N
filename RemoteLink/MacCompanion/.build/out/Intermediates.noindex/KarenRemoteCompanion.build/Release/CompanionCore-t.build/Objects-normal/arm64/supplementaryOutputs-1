@@ -1,0 +1,12 @@
+{
+  "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/Sources/CompanionCore/Engine/CompanionSyncEngine.swift" : {
+    "abi-baseline-json" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Release/CompanionCore-t.build/Objects-normal/arm64/CompanionCore.abi.json",
+    "const-values" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Release/CompanionCore-t.build/Objects-normal/arm64/CompanionCore-primary.swiftconstvalues",
+    "dependencies" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Release/CompanionCore-t.build/Objects-normal/arm64/CompanionCore-primary.d",
+    "diagnostics" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Release/CompanionCore-t.build/Objects-normal/arm64/CompanionCore-primary.dia",
+    "objc-header" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Release/CompanionCore-t.build/Objects-normal/arm64/CompanionCore-Swift.h",
+    "swiftdoc" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Release/CompanionCore-t.build/Objects-normal/arm64/CompanionCore.swiftdoc",
+    "swiftmodule" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Release/CompanionCore-t.build/Objects-normal/arm64/CompanionCore.swiftmodule",
+    "swiftsourceinfo" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Release/CompanionCore-t.build/Objects-normal/arm64/CompanionCore.swiftsourceinfo"
+  }
+}

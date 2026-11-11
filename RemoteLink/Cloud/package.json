@@ -1,0 +1,22 @@
+{
+  "name": "karen-remotelink-cloud",
+  "version": "2.0.0",
+  "description": "K.A.R.E.N. Remote Link Cloudflare Worker API with D1 Durable Request Queue and FCM",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "d1:migrate:local": "wrangler d1 migrations apply karen-remote-d1 --local",
+    "d1:migrate:remote": "wrangler d1 migrations apply karen-remote-d1 --remote"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240512.0",
+    "typescript": "^5.4.5",
+    "vitest": "^1.6.0",
+    "wrangler": "^3.57.1"
+  }
+}
+

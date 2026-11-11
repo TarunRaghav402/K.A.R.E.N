@@ -107,6 +107,7 @@ printf 'APPL????' > "$APP_CONTENTS/PkgInfo"
 # and macOS can treat every rebuilt copy as a new app for privacy prompts.
 /usr/bin/codesign --force --deep --sign - \
     --options runtime \
+    --entitlements "$REPO_ROOT/KarenApp/Resources/KarenApp.entitlements" \
     --identifier com.karen.assistant \
     --requirements '=designated => identifier "com.karen.assistant"' \
     "$APP_BUNDLE"

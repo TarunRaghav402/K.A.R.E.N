@@ -28,6 +28,7 @@ struct OrbCanvasView: View {
 
                 drawStars(ctx: ctx, size: size, t: t, state: karen.orbState)
                 drawCoreGlow(ctx: ctx, size: size, t: t, speed: speed, state: karen.orbState,
+                             audioLevel: karen.audioLevel,
                              zoom: karen.orbZoom,
                              offsetX: offsetX, offsetY: offsetY)
                 drawCoreApproach(ctx: ctx, size: size, t: t, zoom: karen.orbZoom,
@@ -45,7 +46,9 @@ struct OrbCanvasView: View {
                           state: karen.orbState, audioLevel: karen.audioLevel,
                           zoom: karen.orbZoom, yaw: karen.orbYaw, pitch: karen.orbPitch,
                           offsetX: offsetX, offsetY: offsetY)
-                drawStateOverlay(ctx: ctx, size: size, t: t, state: karen.orbState)
+                drawStateOverlay(ctx: ctx, size: size, t: t, speed: speed,
+                                 state: karen.orbState, audioLevel: karen.audioLevel,
+                                 offsetX: offsetX, offsetY: offsetY)
             }
         }
     }
@@ -142,19 +145,35 @@ private func drawStars(ctx: GraphicsContext, size: CGSize, t: Double, state: Orb
 // ─── Core glow ────────────────────────────────────────────────────────────────
 
 private func drawCoreGlow(ctx: GraphicsContext, size: CGSize, t: Double, speed: Double,
-                          state: OrbState, zoom: Float, offsetX: Float, offsetY: Float) {
+                          state: OrbState, audioLevel: Float, zoom: Float, offsetX: Float, offsetY: Float) {
     let centerOffset = min(size.width, size.height) * 0.28
     let cx = size.width / 2 + CGFloat(offsetX) * centerOffset
     let cy = size.height / 2 - CGFloat(offsetY) * centerOffset
     var intensity: CGFloat = 0.55
     if state == .processing {
-        intensity *= CGFloat(0.97 + 0.03 * sin(t * 0.55 * speed))
+        // Deep rhythmic thinking breath
+        let thinkWave = CGFloat(0.5 + 0.5 * sin(t * 2.2 * speed))
+        intensity *= CGFloat(0.85 + 0.28 * thinkWave)
+    } else if state == .listening {
+        // Reacts dynamically to live microphone audio amplitude
+        let audioBoost = CGFloat(audioLevel) * 0.40
+        intensity *= CGFloat(1.0 + audioBoost)
+    } else if state == .speaking || state == .responding {
+        intensity *= CGFloat(0.92 + 0.08 * sin(t * 1.8 * speed))
+    } else if state == .interrupting {
+        intensity *= CGFloat(1.15 + 0.15 * sin(t * 8.0 * speed))
     } else if state == .error {
         intensity *= CGFloat(0.78 + 0.04 * sin(t * 0.45))
     }
     let approach = smoothZoomProgress(zoom, startsAt: 1.15, endsAt: 7.5)
     let accent = KarenTheme.accentRGB(for: state)
-    let radius = min(size.width, size.height) * (0.12 + approach * 0.09)
+    var radius = min(size.width, size.height) * (0.12 + approach * 0.09)
+    if state == .processing {
+        let thinkPulse = CGFloat(sin(t * 2.2 * speed)) * 0.016
+        radius *= (1.0 + thinkPulse)
+    } else if state == .listening {
+        radius *= (1.0 + CGFloat(audioLevel) * 0.18)
+    }
     intensity *= CGFloat(1.0 + approach * 0.55)
     ctx.fill(
         Path(ellipseIn: CGRect(x: cx - radius, y: cy - radius, width: radius*2, height: radius*2)),
@@ -250,12 +269,16 @@ private func drawFilamentShells(ctx: GraphicsContext, size: CGSize, t: Double, s
         case .listening:
             let equatorBias = 1.0 - abs(cos(phi)) * 0.38
             r *= equatorBias
-            r += Double(audioLevel) * 0.055
+            r += Double(audioLevel) * 0.075
         case .processing:
-            r *= 0.86 + sin(t * 0.48 * speed) * 0.015
-        case .speaking:
+            let wave = sin(phi * 4.0 + t * 2.4 * speed) * 0.022
+            r *= 0.88 + wave
+        case .speaking, .responding:
             let wave = sin(phi * 5.0 + t * 2.0 * speed) * 0.024 * (1.0 + Double(audioLevel) * 2.0)
             r += wave
+        case .interrupting:
+            let wave = sin(phi * 8.0 + t * 5.0 * speed) * 0.035
+            r *= 0.92 + wave
         case .permission:
             r = shellR + sin(t * 0.3) * 0.006
         case .error:
@@ -455,9 +478,14 @@ private func drawRings(ctx: GraphicsContext, size: CGSize, t: Double, speed: Dou
 
         switch state {
         case .listening:
-            R *= 0.82 + Double(audioLevel) * 0.28
+            R *= 0.82 + Double(audioLevel) * 0.30
         case .processing:
-            rotAngle = t * ring.rotSpeed * speed * 3.2
+            rotAngle = t * ring.rotSpeed * speed * 2.8
+            R *= 0.88 + 0.025 * sin(t * 2.2 * speed + Double(ring.rotSpeed))
+        case .speaking, .responding:
+            rotAngle = t * ring.rotSpeed * speed * 1.5
+        case .interrupting:
+            rotAngle = t * ring.rotSpeed * speed * 3.6
         case .permission:
             rotAngle = 0
         default:
@@ -513,20 +541,64 @@ private func drawRings(ctx: GraphicsContext, size: CGSize, t: Double, speed: Dou
 
 // ─── State overlay ────────────────────────────────────────────────────────────
 
-private func drawStateOverlay(ctx: GraphicsContext, size: CGSize, t: Double, state: OrbState) {
+private func drawStateOverlay(ctx: GraphicsContext, size: CGSize, t: Double, speed: Double,
+                              state: OrbState, audioLevel: Float, offsetX: Float, offsetY: Float) {
     // Only draw extra visual patterns for states that need them
-    let cx = size.width / 2
-    let cy = size.height / 2
+    let centerOffset = min(size.width, size.height) * 0.28
+    let cx = size.width / 2 + CGFloat(offsetX) * centerOffset
+    let cy = size.height / 2 - CGFloat(offsetY) * centerOffset
 
     switch state {
+    case .listening:
+        if audioLevel > 0.02 {
+            let accent = KarenTheme.accentRGB(for: state)
+            let baseR = min(size.width, size.height) * 0.28
+            let waveR = baseR * (1.0 + CGFloat(audioLevel) * 0.35)
+            var p = Path()
+            p.addEllipse(in: CGRect(x: cx - waveR, y: cy - waveR, width: waveR * 2, height: waveR * 2))
+            let alpha = min(0.40, Double(audioLevel) * 0.65)
+            ctx.stroke(p, with: .color(Color(red: accent.r, green: accent.g, blue: accent.b, opacity: alpha)),
+                       style: StrokeStyle(lineWidth: 1.2, dash: [4, 6]))
+        }
+    case .processing:
+        let accent = KarenTheme.accentRGB(for: state)
+        let thinkR = min(size.width, size.height) * 0.22
+        // Twin orbiting energy beads reflecting active neural computation
+        let angle1 = t * 1.8 * speed
+        let angle2 = angle1 + .pi
+        for angle in [angle1, angle2] {
+            let px = cx + CGFloat(cos(angle)) * thinkR
+            let py = cy + CGFloat(sin(angle)) * thinkR * 0.45
+            var dotPath = Path()
+            dotPath.addEllipse(in: CGRect(x: px - 2.5, y: py - 2.5, width: 5, height: 5))
+            ctx.fill(dotPath, with: .color(Color(red: accent.r, green: accent.g, blue: accent.b, opacity: 0.65)))
+        }
+    case .speaking, .responding:
+        if audioLevel > 0.02 {
+            let accent = KarenTheme.accentRGB(for: state)
+            let baseR = min(size.width, size.height) * 0.26
+            let waveR = baseR * (1.0 + CGFloat(audioLevel) * 0.25)
+            var p = Path()
+            p.addEllipse(in: CGRect(x: cx - waveR, y: cy - waveR, width: waveR * 2, height: waveR * 2))
+            let alpha = min(0.35, Double(audioLevel) * 0.5)
+            ctx.stroke(p, with: .color(Color(red: accent.r, green: accent.g, blue: accent.b, opacity: alpha)),
+                       style: StrokeStyle(lineWidth: 1.0))
+        }
+    case .interrupting:
+        let accent = KarenTheme.accentRGB(for: state)
+        let baseR = min(size.width, size.height) * 0.30
+        var p = Path()
+        p.addEllipse(in: CGRect(x: cx - baseR, y: cy - baseR, width: baseR * 2, height: baseR * 2))
+        ctx.stroke(p, with: .color(Color(red: accent.r, green: accent.g, blue: accent.b, opacity: 0.7)),
+                   style: StrokeStyle(lineWidth: 2.0, dash: [6, 4]))
     case .permission:
         // Lock icon visual (rings locked — drawn as concentric fixed circles)
         for r in [0.18, 0.22] {
             let radius = min(size.width, size.height) * r
             var p = Path()
             p.addEllipse(in: CGRect(x: cx-radius, y: cy-radius, width: radius*2, height: radius*2))
-        let accent = KarenTheme.accentRGB(for: state)
-        ctx.stroke(p, with: .color(Color(red: accent.r, green: accent.g, blue: accent.b, opacity: 0.3)),
+            let accent = KarenTheme.accentRGB(for: state)
+            ctx.stroke(p, with: .color(Color(red: accent.r, green: accent.g, blue: accent.b, opacity: 0.3)),
                        lineWidth: 1.5)
         }
     case .error:

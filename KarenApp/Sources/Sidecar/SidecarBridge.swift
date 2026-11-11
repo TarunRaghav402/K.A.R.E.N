@@ -35,6 +35,8 @@ final class SidecarBridge: NSObject {
     private var isStopped = false
     private var isConnecting = false
     private var isSocketReady = false
+    private var restartCount = 0
+    private let maxRestarts = 3
 
     private enum BridgeError: LocalizedError {
         case notConnected
@@ -89,8 +91,6 @@ final class SidecarBridge: NSObject {
             arguments = []
             workingDirectory = packagedSidecarDirectory
         } else if isOnefilePackage {
-            // GitHub releases contain a frozen Python sidecar, so users do not
-            // need Python, a checkout, or a virtual environment installed.
             executable = onefileExecutable
             arguments = []
             workingDirectory = resources
@@ -146,11 +146,21 @@ final class SidecarBridge: NSObject {
                 let reason = terminatedProcess.terminationReason == .uncaughtSignal ? "signal" : "exit"
                 let status = terminatedProcess.terminationStatus
                 print("[SidecarBridge] Sidecar ended by \(reason) with status \(status)")
-                self.onError?("", "K.A.R.E.N.’s local voice service stopped (\(reason) \(status)).")
+                if self.restartCount < self.maxRestarts {
+                    self.restartCount += 1
+                    print("[SidecarBridge] Attempting automatic sidecar recovery (attempt \(self.restartCount)/\(self.maxRestarts))...")
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+                        guard let self, !self.isStopped else { return }
+                        self.connect()
+                    }
+                } else {
+                    self.onError?("", "K.A.R.E.N.’s local voice service stopped (\(reason) \(status)).")
+                }
             }
         }
         pipe.fileHandleForReading.readabilityHandler = { fh in
-            if let line = String(data: fh.availableData, encoding: .utf8), !line.isEmpty {
+            let data = fh.availableData
+            if let line = String(data: data, encoding: .utf8), !line.isEmpty {
                 print("[sidecar] \(line.trimmingCharacters(in: .whitespacesAndNewlines))")
             }
         }
@@ -158,8 +168,10 @@ final class SidecarBridge: NSObject {
         do {
             try proc.run()
             self.process = proc
+            NSLog("[SidecarBridge] Sidecar PID: %d", proc.processIdentifier)
             print("[SidecarBridge] Sidecar PID: \(proc.processIdentifier)")
         } catch {
+            NSLog("[SidecarBridge] Failed to launch sidecar: %@", error.localizedDescription)
             print("[SidecarBridge] Failed to launch sidecar: \(error)")
             onError?("", "K.A.R.E.N.'s voice service couldn't start: \(error.localizedDescription)")
         }
@@ -271,6 +283,7 @@ final class SidecarBridge: NSObject {
             case "pong":
                 self.isConnecting = false
                 self.isSocketReady = true
+                self.restartCount = 0
                 break
             default:
                 print("[SidecarBridge] Unknown message type: \(type)")

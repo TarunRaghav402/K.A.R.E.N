@@ -4,6 +4,7 @@ import SwiftUI
 
 struct MenuBarContent: View {
     @EnvironmentObject var karen: KarenCore
+    @Environment(\.openWindow) private var openWindow
 
     var body: some View {
         Group {
@@ -50,12 +51,16 @@ struct MenuBarContent: View {
             Divider()
 
             Button("Open K.A.R.E.N.") {
+                openWindow(id: "main")
                 karen.showAssistantWindow()
             }
 
             Button("Quit") {
                 NSApp.terminate(nil)
             }
+        }
+        .onAppear {
+            karen.setWindowOpener { openWindow(id: "main") }
         }
     }
 }

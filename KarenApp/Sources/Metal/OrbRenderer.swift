@@ -114,12 +114,12 @@ final class OrbRenderer: NSObject, MTKViewDelegate {
 
         let stateInt: Int32
         switch core.orbState {
-        case .idle:       stateInt = 0
-        case .listening:  stateInt = 1
-        case .processing: stateInt = 2
-        case .speaking:   stateInt = 3
-        case .permission: stateInt = 4
-        case .error:      stateInt = 5
+        case .idle:                  stateInt = 0
+        case .listening:             stateInt = 1
+        case .processing:            stateInt = 2
+        case .speaking, .responding: stateInt = 3
+        case .permission:            stateInt = 4
+        case .error, .interrupting:  stateInt = 5
         }
 
         let uniforms = OrbUniforms(

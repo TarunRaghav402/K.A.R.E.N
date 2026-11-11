@@ -1,0 +1,29 @@
+{
+  "" : {
+    "diagnostics" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Debug/karen-companion-p.build/Objects-normal/arm64/karen-companion-primary.dia",
+    "emit-module-dependencies" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Debug/karen-companion-p.build/Objects-normal/arm64/karen-companion-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Debug/karen-companion-p.build/Objects-normal/arm64/karen-companion-primary-emit-module.dia",
+    "pch" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Debug/karen-companion-p.build/Objects-normal/arm64/karen-companion-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Debug/karen-companion-p.build/Objects-normal/arm64/karen-companion-primary.swiftdeps"
+  },
+  "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/Sources/CompanionApp/CompanionMenuBar.swift" : {
+    "const-values" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Debug/karen-companion-p.build/Objects-normal/arm64/CompanionMenuBar.swiftconstvalues",
+    "dependencies" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Debug/karen-companion-p.build/Objects-normal/arm64/CompanionMenuBar.d",
+    "diagnostics" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Debug/karen-companion-p.build/Objects-normal/arm64/CompanionMenuBar.dia",
+    "index-unit-output-path" : "/KarenRemoteCompanion.build/Debug/karen-companion-p.build/Objects-normal/arm64/CompanionMenuBar.o",
+    "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Debug/karen-companion-p.build/Objects-normal/arm64/CompanionMenuBar.bc",
+    "object" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Debug/karen-companion-p.build/Objects-normal/arm64/CompanionMenuBar.o",
+    "swift-dependencies" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Debug/karen-companion-p.build/Objects-normal/arm64/CompanionMenuBar.swiftdeps",
+    "swiftmodule" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Debug/karen-companion-p.build/Objects-normal/arm64/CompanionMenuBar~partial.swiftmodule"
+  },
+  "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/Sources/CompanionApp/main.swift" : {
+    "const-values" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Debug/karen-companion-p.build/Objects-normal/arm64/main.swiftconstvalues",
+    "dependencies" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Debug/karen-companion-p.build/Objects-normal/arm64/main.d",
+    "diagnostics" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Debug/karen-companion-p.build/Objects-normal/arm64/main.dia",
+    "index-unit-output-path" : "/KarenRemoteCompanion.build/Debug/karen-companion-p.build/Objects-normal/arm64/main.o",
+    "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Debug/karen-companion-p.build/Objects-normal/arm64/main.bc",
+    "object" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Debug/karen-companion-p.build/Objects-normal/arm64/main.o",
+    "swift-dependencies" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Debug/karen-companion-p.build/Objects-normal/arm64/main.swiftdeps",
+    "swiftmodule" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Debug/karen-companion-p.build/Objects-normal/arm64/main~partial.swiftmodule"
+  }
+}

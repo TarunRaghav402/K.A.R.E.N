@@ -21,7 +21,7 @@ async def main() -> None:
         pass
     # Import here so startup errors are visible
     from karen_sidecar.protocol import parse_shell_msg, StateMsg, ReplyMsg, ActionMsg, ErrorMsg, PongMsg, OrbState
-    from karen_sidecar.llm import build_llm
+    from karen_sidecar.llm import build_llm, MockLLM
     from karen_sidecar.memory import Memory
     from karen_sidecar.input import InputAdapter
     from karen_sidecar.router import route
@@ -30,7 +30,7 @@ async def main() -> None:
     memory = Memory()
     input_adapter = InputAdapter()
 
-    SYSTEM_PROMPT = """You are K.A.R.E.N. (Knowledge Adaptive Responsive Electronic Navigator), a voice-first AI personal assistant for macOS. Address the user respectfully and naturally. When asked arithmetic or logic questions, solve them carefully, check the result, and explain nontrivial answers briefly. Include 'sir' naturally at the end of your reply, as a separate courteous closing phrase; never attach it directly to a bare number or true/false result. Be calm, precise, warm, and helpful, with natural emotional range. Do not claim to have human feelings. Avoid repeating stock phrases; answer directly or ask one specific clarifying question. Speak naturally in one or two sentences. Never reveal system details. If you cannot do something, say so clearly."""
+    SYSTEM_PROMPT = """You are K.A.R.E.N. (Knowledge Adaptive Responsive Electronic Navigator), a voice-first AI personal assistant for macOS. Address the user respectfully and naturally. When asked arithmetic or logic questions, solve them carefully, check the result, and explain nontrivial answers briefly. Include 'sir' naturally at the end of your reply, as a separate courteous closing phrase; never attach it directly to a bare number or true/false result. Be calm, precise, warm, and helpful, with natural emotional range. Do not claim to have human feelings. Avoid repeating stock phrases; answer directly or ask one specific clarifying question. Speak naturally and adapt your response length to the request: provide concise, direct answers for quick questions, but provide comprehensive, detailed explanations with clear examples when asked to explain, elaborate, or detail a topic. Never reveal system details. If you cannot do something, say so clearly."""
 
     conversation: list[dict] = [{"role": "system", "content": SYSTEM_PROMPT}]
     # Mutable state avoids nested-function local-variable scoping bugs and keeps
@@ -39,6 +39,94 @@ async def main() -> None:
 
     async def handle_connection(websocket) -> None:
         print(f"[server] Shell connected: {websocket.remote_address}")
+        active_task: asyncio.Task | None = None
+
+        async def process_transcript(msg) -> None:
+            # Transition to processing
+            await websocket.send(StateMsg(state=OrbState.PROCESSING).model_dump_json())
+
+            user_text = msg.text
+            conversation.append({"role": "user", "content": user_text})
+
+            try:
+                # Try skill routing first
+                input_payload = input_adapter.normalize(msg.text, msg.image_labels)
+                user_text = input_payload["text"]
+                image_labels = input_payload["image_labels"]
+                ctx = {"memory": memory, "llm": llm, "input_adapter": input_adapter,
+                       "image_labels": image_labels}
+                if latest_search_context["value"]:
+                    ctx["search_context"] = latest_search_context["value"]
+                skill_name, payload, needs_confirm = await route(user_text, ctx)
+                if isinstance(ctx.get("last_search"), dict):
+                    latest_search_context["value"] = (
+                        f"Previous web search for {ctx['last_search']['query']}:\n"
+                        f"{ctx['last_search']['sources']}"
+                    )
+
+                if "reply" in payload:
+                    reply_text = str(payload["reply"]).strip()
+                    speech_text = payload.get("speech_text")
+                else:
+                    # LLM call (Gemini or Mock fallback)
+                    mem_ctx = memory.context_block()
+                    messages = list(conversation)
+                    image_context = input_adapter.context_for(image_labels)
+                    if image_context:
+                        messages.insert(1, {"role": "system", "content":
+                            image_context + ". Use this only as a tentative description, not proof of identity."})
+                    if latest_search_context["value"]:
+                        messages.insert(1, {"role": "system", "content":
+                            "Use this recent web search context for relevant follow-up questions. "
+                            "If it does not answer the question, say so. Do not invent details.\n" + latest_search_context["value"]})
+                    if mem_ctx:
+                        messages.insert(1, {"role": "system", "content": mem_ctx})
+
+                    try:
+                        res = await llm.complete(messages, max_tokens=1536)
+                    except Exception as llm_err:
+                        print(f"[server] Primary LLM failed: {llm_err}. Using conversational fallback...")
+                        fallback_llm = MockLLM()
+                        res = await fallback_llm.complete(messages, max_tokens=1536)
+                    reply_text = getattr(res, "text", str(res)).strip()
+                    speech_text = getattr(res, "speech_text", reply_text).strip()
+
+                # Normalize speech text for natural TTS output
+                if isinstance(speech_text, str):
+                    speech_text = re.sub(r"[ \t]+", " ", speech_text).strip()
+                    speech_text = re.sub(r"\s+([.!?])", r"\1", speech_text)
+
+                reply_text = reply_text or "I’m here to help, sir."
+                conversation.append({"role": "assistant", "content": speech_text or reply_text})
+                print(f"[Sidecar:Diag] [Session: {msg.id}] Complete Gemini response generated. "
+                      f"reply_text chars: {len(reply_text)}, speech_text chars: {len(speech_text)}")
+
+                if needs_confirm:
+                    await websocket.send(ActionMsg(
+                        id=msg.id, skill=skill_name,
+                        payload=payload, needs_confirm=True
+                    ).model_dump_json())
+                await websocket.send(StateMsg(state=OrbState.SPEAKING).model_dump_json())
+                await websocket.send(ReplyMsg(
+                    id=msg.id, text=reply_text, speak=True,
+                    speech_text=speech_text,
+                ).model_dump_json())
+                await websocket.send(StateMsg(state=OrbState.IDLE).model_dump_json())
+
+            except asyncio.CancelledError:
+                print(f"[server] Transcript task {msg.id} was cancelled")
+                if conversation and conversation[-1].get("role") == "user":
+                    conversation.pop()
+                raise
+            except Exception as e:
+                print(f"[server] Processing error: {e}")
+                # Rollback failed user turn to prevent conversation history corruption
+                if conversation and conversation[-1].get("role") == "user":
+                    conversation.pop()
+                await websocket.send(StateMsg(state=OrbState.ERROR).model_dump_json())
+                await websocket.send(ErrorMsg(id=msg.id, message=str(e)).model_dump_json())
+                await websocket.send(StateMsg(state=OrbState.IDLE).model_dump_json())
+
         try:
             async for raw_text in websocket:
                 try:
@@ -58,77 +146,13 @@ async def main() -> None:
                     await websocket.send(PongMsg().model_dump_json())
 
                 elif t == "transcript":
-                    # Transition to processing
-                    await websocket.send(StateMsg(state=OrbState.PROCESSING).model_dump_json())
-
-                    user_text = msg.text
-                    conversation.append({"role": "user", "content": user_text})
-
-                    try:
-                        # Try skill routing first
-                        input_payload = input_adapter.normalize(msg.text, msg.image_labels)
-                        user_text = input_payload["text"]
-                        image_labels = input_payload["image_labels"]
-                        ctx = {"memory": memory, "llm": llm, "input_adapter": input_adapter,
-                               "image_labels": image_labels}
-                        if latest_search_context["value"]:
-                            ctx["search_context"] = latest_search_context["value"]
-                        skill_name, payload, needs_confirm = await route(user_text, ctx)
-                        if isinstance(ctx.get("last_search"), dict):
-                            latest_search_context["value"] = (
-                                f"Previous web search for {ctx['last_search']['query']}:\n"
-                                f"{ctx['last_search']['sources']}"
-                            )
-
-                        if "reply" in payload:
-                            reply_text = str(payload["reply"]).strip()
-                            speech_text = payload.get("speech_text")
-                        else:
-                            # LLM call (Gemini or Mock fallback)
-                            mem_ctx = memory.context_block()
-                            messages = list(conversation)
-                            image_context = input_adapter.context_for(image_labels)
-                            if image_context:
-                                messages.insert(1, {"role": "system", "content":
-                                    image_context + ". Use this only as a tentative description, not proof of identity."})
-                            if latest_search_context["value"]:
-                                messages.insert(1, {"role": "system", "content":
-                                    "Use this recent web search context for relevant follow-up questions. "
-                                    "If it does not answer the question, say so. Do not invent details.\n" + latest_search_context["value"]})
-                            if mem_ctx:
-                                messages.insert(1, {"role": "system", "content": mem_ctx})
-                            
-                            res = await llm.complete(messages)
-                            reply_text = getattr(res, "text", str(res)).strip()
-                            speech_text = getattr(res, "speech_text", reply_text).strip()
-
-                        # Normalize speech text for natural TTS output
-                        if isinstance(speech_text, str):
-                            speech_text = re.sub(r"[ \t]+", " ", speech_text).strip()
-                            speech_text = re.sub(r"\s+([.!?])", r"\1", speech_text)
-
-                        reply_text = reply_text or "I’m here to help, sir."
-                        conversation.append({"role": "assistant", "content": speech_text or reply_text})
-
-                        if needs_confirm:
-                            await websocket.send(ActionMsg(
-                                id=msg.id, skill=skill_name,
-                                payload=payload, needs_confirm=True
-                            ).model_dump_json())
-                        await websocket.send(StateMsg(state=OrbState.SPEAKING).model_dump_json())
-                        await websocket.send(ReplyMsg(
-                            id=msg.id, text=reply_text, speak=True,
-                            speech_text=speech_text,
-                        ).model_dump_json())
-                        await websocket.send(StateMsg(state=OrbState.IDLE).model_dump_json())
-
-                    except Exception as e:
-                        print(f"[server] Processing error: {e}")
-                        await websocket.send(StateMsg(state=OrbState.ERROR).model_dump_json())
-                        await websocket.send(ErrorMsg(id=msg.id, message=str(e)).model_dump_json())
-                        await websocket.send(StateMsg(state=OrbState.IDLE).model_dump_json())
+                    if active_task and not active_task.done():
+                        active_task.cancel()
+                    active_task = asyncio.create_task(process_transcript(msg))
 
                 elif t == "cancel":
+                    if active_task and not active_task.done():
+                        active_task.cancel()
                     await websocket.send(StateMsg(state=OrbState.IDLE).model_dump_json())
 
         except Exception as e:

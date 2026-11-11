@@ -1,0 +1,14 @@
+Target dependency graph (5 targets)
+Target 'AllIncludingTests' in project 'Aggregate'
+➜ Explicit dependency on target 'CompanionCoreTests-product' in project 'KarenRemoteCompanion'
+➜ Dependency on target 'CompanionCoreTests-product' in project 'KarenRemoteCompanion' via transitive dependency through 'CompanionCoreTests-test-runner'
+➜ Explicit dependency on target 'CompanionCore-product' in project 'KarenRemoteCompanion'
+➜ Explicit dependency on target 'karen-companion-product' in project 'KarenRemoteCompanion'
+➜ Explicit dependency on target 'CompanionCore' in project 'KarenRemoteCompanion'
+Target 'karen-companion-product' in project 'KarenRemoteCompanion'
+➜ Explicit dependency on target 'CompanionCore' in project 'KarenRemoteCompanion'
+Target 'CompanionCore-product' in project 'KarenRemoteCompanion'
+➜ Explicit dependency on target 'CompanionCore' in project 'KarenRemoteCompanion'
+Target 'CompanionCoreTests-product' in project 'KarenRemoteCompanion'
+➜ Explicit dependency on target 'CompanionCore' in project 'KarenRemoteCompanion'
+Target 'CompanionCore' in project 'KarenRemoteCompanion' (no dependencies)

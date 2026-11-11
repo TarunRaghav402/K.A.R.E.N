@@ -14,6 +14,7 @@ final class SpeechEngine: NSObject {
     private(set) var isListening = false
     private var silenceTask: DispatchWorkItem?
     private var latestTranscript = ""
+    private var initialTranscriptSeed: String?
     private var estimatedNoiseFloor: Float = 0.012
     private var loudFrameCount = 0
     private var quietFrameCount = 0
@@ -31,11 +32,43 @@ final class SpeechEngine: NSObject {
         recognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))
         recognizer?.defaultTaskHint = .dictation
         super.init()
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleAudioEngineConfigurationChange),
+            name: .AVAudioEngineConfigurationChange,
+            object: audioEngine
+        )
     }
 
-    func startListening(onResult: @escaping (String, Bool) -> Void) {
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+
+    @objc private func handleAudioEngineConfigurationChange(notification: Notification) {
+        print("[SpeechEngine] Audio engine configuration changed (route or device update)")
+        if isListening {
+            guard let resultHandler = onResult else { return }
+            stopListening()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { [weak self] in
+                guard let self else { return }
+                self.startListening(onResult: resultHandler)
+            }
+        } else {
+            audioEngine.reset()
+        }
+    }
+
+    func startListening(initialTranscript: String? = nil, onResult: @escaping (String, Bool) -> Void) {
         self.onResult = onResult
+        self.initialTranscriptSeed = initialTranscript
         guard !isStarting, !isListening else { return }
+
+        let auth = SFSpeechRecognizer.authorizationStatus()
+        if auth == .authorized {
+            self.doStart()
+            return
+        }
+
         isStarting = true
         let begin: (SFSpeechRecognizerAuthorizationStatus) -> Void = { [weak self] status in
             guard let self else { return }
@@ -51,11 +84,10 @@ final class SpeechEngine: NSObject {
                 self.doStart()
             }
         }
-        switch SFSpeechRecognizer.authorizationStatus() {
-        case .authorized: begin(.authorized)
-        case .notDetermined: SFSpeechRecognizer.requestAuthorization(begin)
-        case .denied, .restricted: begin(SFSpeechRecognizer.authorizationStatus())
-        @unknown default: begin(.restricted)
+        if auth == .notDetermined {
+            SFSpeechRecognizer.requestAuthorization(begin)
+        } else {
+            begin(auth)
         }
     }
 
@@ -63,36 +95,30 @@ final class SpeechEngine: NSObject {
         guard !isListening else { return }
         silenceTask?.cancel()
         silenceTask = nil
-        latestTranscript = ""
+        let seed = initialTranscriptSeed?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        initialTranscriptSeed = nil
+        latestTranscript = seed
+        if !seed.isEmpty {
+            armSilenceTimer(for: seed)
+        }
 
         do {
             let req = SFSpeechAudioBufferRecognitionRequest()
             req.shouldReportPartialResults = true
-            // If on-device recognition is supported by this Mac's offline model, use it;
-            // otherwise allow network recognition to avoid throwing an immediate error.
-            if let recognizer = recognizer, recognizer.supportsOnDeviceRecognition {
-                req.requiresOnDeviceRecognition = true
-            } else {
-                req.requiresOnDeviceRecognition = false
+            if #available(macOS 13.0, *) {
+                req.addsPunctuation = true
             }
+            req.requiresOnDeviceRecognition = false
             self.request = req
 
             let inputNode = audioEngine.inputNode
-            // Enable macOS hardware acoustic echo cancellation & noise suppression
-            do {
-                try inputNode.setVoiceProcessingEnabled(true)
-            } catch {
-                print("[SpeechEngine] Voice processing unavailable: \(error.localizedDescription)")
-            }
-
-            // Ensure previous tap is cleared before installing a new one
             inputNode.removeTap(onBus: 0)
 
             let hwFormat = inputNode.outputFormat(forBus: 0)
             let format: AVAudioFormat
             if hwFormat.sampleRate > 0 && hwFormat.channelCount > 0 {
                 format = hwFormat
-            } else if let std = AVAudioFormat(standardFormatWithSampleRate: 44100, channels: 1) {
+            } else if let std = AVAudioFormat(standardFormatWithSampleRate: 48000, channels: 1) {
                 format = std
             } else {
                 format = hwFormat
@@ -105,7 +131,14 @@ final class SpeechEngine: NSObject {
             }
 
             audioEngine.prepare()
-            try audioEngine.start()
+            do {
+                try audioEngine.start()
+            } catch {
+                print("[SpeechEngine] First start failed: \(error), resetting engine and retrying...")
+                audioEngine.reset()
+                Thread.sleep(forTimeInterval: 0.08)
+                try audioEngine.start()
+            }
             isListening = true
 
             task = recognizer?.recognitionTask(with: req) { [weak self] result, err in
@@ -114,10 +147,12 @@ final class SpeechEngine: NSObject {
                     let text = r.bestTranscription.formattedString
                     let isFinal = r.isFinal
                     DispatchQueue.main.async {
+                        guard self.isListening else { return }
                         self.latestTranscript = text
                         if isFinal {
+                            let finalText = text
                             self.stopListening()
-                            self.onResult?(text, true)
+                            self.onResult?(finalText, true)
                         } else {
                             self.onResult?(text, false)
                             self.armSilenceTimer(for: text)
@@ -126,14 +161,20 @@ final class SpeechEngine: NSObject {
                 }
                 if let err {
                     DispatchQueue.main.async {
+                        guard self.isListening else { return }
+                        let nsErr = err as NSError
+                        // Ignore standard client cancellation errors (code 216 / 3072)
+                        let isCancelled = nsErr.code == 216 || nsErr.code == 3072 || nsErr.domain == "kAFAssistantErrorDomain" && nsErr.code == 216
+                        if isCancelled {
+                            self.stopListening()
+                            return
+                        }
                         print("[SpeechEngine] Recognition task ended: \(err.localizedDescription)")
                         let transcript = self.latestTranscript
-                        let wasListening = self.isListening
                         self.stopListening()
                         if !transcript.isEmpty {
                             self.onResult?(transcript, true)
-                        } else if wasListening {
-                            // If stopped without transcript, notify so caller resets UI
+                        } else {
                             self.onError?("Didn't catch any speech. Try speaking again.")
                         }
                     }
@@ -214,18 +255,23 @@ final class SpeechEngine: NSObject {
         silenceTask?.cancel()
         silenceTask = nil
         latestTranscript = ""
-        if audioEngine.isRunning { audioEngine.inputNode.removeTap(onBus: 0) }
-        audioEngine.stop()
-        request?.endAudio()
-        task?.cancel()
-        task = nil
-        request = nil
+        initialTranscriptSeed = nil
         isListening = false
         isStarting = false
         voiceActivityActive = false
         loudFrameCount = 0
         quietFrameCount = 0
         onAudioLevel?(0)
+
+        if audioEngine.isRunning {
+            audioEngine.inputNode.removeTap(onBus: 0)
+            audioEngine.stop()
+        }
+        request?.endAudio()
+        let activeTask = task
+        task = nil
+        request = nil
+        activeTask?.cancel()
     }
 }
 
@@ -233,14 +279,21 @@ final class SpeechEngine: NSObject {
 
 @MainActor
 final class TTSEngine: NSObject, AVSpeechSynthesizerDelegate {
-    private let synth = AVSpeechSynthesizer()
+    private var synth = AVSpeechSynthesizer()
     var voiceId: String = ""
     var rate:    Float  = 0.50
     var pitch:   Float  = 0.92
     var onFinish: (() -> Void)?
-    var isSpeaking: Bool { synth.isSpeaking }
+    var onSpeechStateChanged: ((Bool) -> Void)?
+    var onSpeechProgress: ((_ characterLocation: Int, _ totalLength: Int) -> Void)?
+    var isSpeaking: Bool { activeUtterance != nil }
     private var activeUtterance: AVSpeechUtterance?
     private var speechContinuation: CheckedContinuation<Void, Never>?
+    private var activeSessionId = UUID()
+    private var watchdogTask: Task<Void, Never>?
+    private var heartbeatTask: Task<Void, Never>?
+    private var lastProgressTime: Date = Date()
+    private var lastCharacterLocation: Int = 0
 
     override init() {
         super.init()
@@ -254,19 +307,143 @@ final class TTSEngine: NSObject, AVSpeechSynthesizerDelegate {
 
     func speak(_ text: String) async {
         stop()
-        await withCheckedContinuation { cont in
-            let utterance = makeUtterance(text)
-            activeUtterance = utterance
-            speechContinuation = cont
-            synth.speak(utterance)
+
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else {
+            onSpeechProgress?(text.count, text.count)
+            return
+        }
+
+        let sessionId = UUID()
+        activeSessionId = sessionId
+        onSpeechStateChanged?(true)
+        onSpeechProgress?(0, text.count)
+        lastProgressTime = Date()
+
+        // Calculate expected duration based on speech rate (approx 15-20 chars/sec at 0.50 rate)
+        let charsPerSec = max(8.0, Double(rate) * 35.0)
+        let estimatedSecs = Double(trimmed.count) / charsPerSec
+        let timeoutSecs = max(4.0, estimatedSecs * 2.2 + 5.0)
+        print("[TTSEngine:Diag] [Session: \(sessionId)] Utterance created for \(trimmed.count) chars. Estimated duration: \(String(format: "%.1f", estimatedSecs))s, watchdog timeout: \(String(format: "%.1f", timeoutSecs))s.")
+
+        startWatchdog(timeout: timeoutSecs, sessionId: sessionId, expectedChars: text.count)
+        startHeartbeat(sessionId: sessionId, expectedChars: text.count)
+
+        await withTaskCancellationHandler {
+            await withCheckedContinuation { cont in
+                guard self.activeSessionId == sessionId else {
+                    cont.resume()
+                    return
+                }
+                let utterance = self.makeUtterance(trimmed)
+                self.activeUtterance = utterance
+                self.speechContinuation = cont
+                self.synth.speak(utterance)
+            }
+        } onCancel: {
+            Task { @MainActor in
+                if self.activeSessionId == sessionId {
+                    self.stop()
+                }
+            }
         }
     }
 
     func speak(_ text: String) {
         stop()
-        let utterance = makeUtterance(text)
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else {
+            onSpeechProgress?(text.count, text.count)
+            return
+        }
+
+        let sessionId = UUID()
+        activeSessionId = sessionId
+        onSpeechStateChanged?(true)
+        onSpeechProgress?(0, text.count)
+        lastProgressTime = Date()
+
+        let charsPerSec = max(8.0, Double(rate) * 35.0)
+        let estimatedSecs = Double(trimmed.count) / charsPerSec
+        let timeoutSecs = max(4.0, estimatedSecs * 2.2 + 5.0)
+
+        startWatchdog(timeout: timeoutSecs, sessionId: sessionId, expectedChars: text.count)
+        startHeartbeat(sessionId: sessionId, expectedChars: text.count)
+
+        let utterance = makeUtterance(trimmed)
         activeUtterance = utterance
         synth.speak(utterance)
+    }
+
+    private func startWatchdog(timeout: TimeInterval, sessionId: UUID, expectedChars: Int) {
+        watchdogTask?.cancel()
+        watchdogTask = Task { @MainActor [weak self] in
+            let nanos = UInt64(timeout * 1_000_000_000)
+            try? await Task.sleep(nanoseconds: nanos)
+            guard !Task.isCancelled, let self, self.activeSessionId == sessionId else { return }
+
+            // If progress was made recently, extend the watchdog
+            let elapsedSinceProgress = Date().timeIntervalSince(self.lastProgressTime)
+            if elapsedSinceProgress < 3.0 && self.isSpeaking {
+                print("[TTSEngine:Diag] [Session: \(sessionId)] Speech actively progressing (last word \(String(format: "%.1f", elapsedSinceProgress))s ago), extending watchdog...")
+                self.startWatchdog(timeout: 4.0, sessionId: sessionId, expectedChars: expectedChars)
+                return
+            }
+
+            print("[TTSEngine:Diag] [Session: \(sessionId)] Watchdog timeout reached (\(timeout)s). Forcing completion to prevent speech hang.")
+            self.completeSpeech(sessionId: sessionId, textCount: expectedChars, forceReset: true)
+        }
+    }
+
+    private func startHeartbeat(sessionId: UUID, expectedChars: Int) {
+        heartbeatTask?.cancel()
+        heartbeatTask = Task { @MainActor [weak self] in
+            // Heartbeat safely monitors end-of-speech:
+            // It only intervenes if all words have completed being spoken
+            // and audio playback is finished, but didFinish was not delivered by AVFoundation.
+            while !Task.isCancelled {
+                try? await Task.sleep(nanoseconds: 500_000_000)
+                guard !Task.isCancelled, let self, self.activeSessionId == sessionId else { return }
+
+                let lastCharLoc = self.lastCharacterLocation
+                let hasReachedEnd = expectedChars > 0 && lastCharLoc >= Int(Double(expectedChars) * 0.95)
+
+                if hasReachedEnd && !self.synth.isSpeaking && self.activeUtterance != nil {
+                    let quietTime = Date().timeIntervalSince(self.lastProgressTime)
+                    if quietTime > 2.0 {
+                        print("[TTSEngine:Diag] [Session: \(sessionId)] All words spoken (\(lastCharLoc)/\(expectedChars)) and audio finished; completing speech.")
+                        self.completeSpeech(sessionId: sessionId, textCount: expectedChars, forceReset: false)
+                        return
+                    }
+                }
+            }
+        }
+    }
+
+    private func completeSpeech(sessionId: UUID, textCount: Int, forceReset: Bool) {
+        guard activeSessionId == sessionId else { return }
+        watchdogTask?.cancel()
+        watchdogTask = nil
+        heartbeatTask?.cancel()
+        heartbeatTask = nil
+
+        onSpeechProgress?(textCount, textCount)
+        activeUtterance = nil
+
+        if forceReset {
+            synth.stopSpeaking(at: .immediate)
+            synth = AVSpeechSynthesizer()
+            synth.delegate = self
+        }
+
+        if let continuation = speechContinuation {
+            speechContinuation = nil
+            continuation.resume()
+        }
+        let finishBlock = onFinish
+        onFinish = nil
+        finishBlock?()
+        onSpeechStateChanged?(false)
     }
 
     private func makeUtterance(_ text: String) -> AVSpeechUtterance {
@@ -279,40 +456,70 @@ final class TTSEngine: NSObject, AVSpeechSynthesizerDelegate {
         return utterance
     }
 
-    func stop() {
+    func stop(reason: String = "Explicit stop") {
+        activeSessionId = UUID() // Invalidate any in-flight session
+        watchdogTask?.cancel()
+        watchdogTask = nil
+        heartbeatTask?.cancel()
+        heartbeatTask = nil
+
+        let wasActive = activeUtterance != nil || synth.isSpeaking
+        print("[TTSEngine:Diag] stop() called. Reason: \(reason). wasActive: \(wasActive), isSpeaking: \(synth.isSpeaking).")
         activeUtterance = nil
+        lastCharacterLocation = 0
         if let continuation = speechContinuation {
             speechContinuation = nil
             continuation.resume()
         }
         synth.stopSpeaking(at: .immediate)
+        if wasActive {
+            onSpeechStateChanged?(false)
+        }
+    }
+
+    nonisolated func speechSynthesizer(
+        _ synthesizer: AVSpeechSynthesizer,
+        willSpeakRangeOfSpeechString characterRange: NSRange,
+        utterance: AVSpeechUtterance
+    ) {
+        Task { @MainActor in
+            guard self.activeUtterance === utterance else { return }
+            self.lastProgressTime = Date()
+            let progress = min(utterance.speechString.count, characterRange.location + characterRange.length)
+            self.lastCharacterLocation = progress
+            let word = (utterance.speechString as NSString).substring(with: characterRange)
+            print("[TTSEngine:Diag] [Session: \(self.activeSessionId)] Word boundary: [\(word)] at \(characterRange.location)..\(characterRange.location + characterRange.length) of \(utterance.speechString.count).")
+            self.onSpeechProgress?(progress, utterance.speechString.count)
+        }
     }
 
     nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer,
                                         didFinish utterance: AVSpeechUtterance) {
         Task { @MainActor in
-            guard activeUtterance === utterance else { return }
-            activeUtterance = nil
-            if let continuation = speechContinuation {
-                speechContinuation = nil
-                continuation.resume()
-            }
-            onFinish?()
-            onFinish = nil
+            print("[TTSEngine:Diag] [Session: \(self.activeSessionId)] didFinish received for utterance (\(utterance.speechString.count) chars). activeUtterance matches: \(self.activeUtterance === utterance)")
+            guard self.activeUtterance === utterance else { return }
+            self.completeSpeech(sessionId: self.activeSessionId, textCount: utterance.speechString.count, forceReset: false)
         }
     }
 
     nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer,
                                         didCancel utterance: AVSpeechUtterance) {
         Task { @MainActor in
-            guard activeUtterance === utterance else { return }
-            activeUtterance = nil
-            if let continuation = speechContinuation {
-                speechContinuation = nil
+            print("[TTSEngine:Diag] [Session: \(self.activeSessionId)] didCancel received for utterance. activeUtterance matches: \(self.activeUtterance === utterance)")
+            guard self.activeUtterance === utterance else { return }
+            self.watchdogTask?.cancel()
+            self.watchdogTask = nil
+            self.heartbeatTask?.cancel()
+            self.heartbeatTask = nil
+            self.activeUtterance = nil
+            if let continuation = self.speechContinuation {
+                self.speechContinuation = nil
                 continuation.resume()
             }
-            onFinish?()
-            onFinish = nil
+            let finishBlock = self.onFinish
+            self.onFinish = nil
+            finishBlock?()
+            self.onSpeechStateChanged?(false)
         }
     }
 }

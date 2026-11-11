@@ -41,14 +41,14 @@ class LLMResponse(str):
 
 class BaseLLM(ABC):
     @abstractmethod
-    async def complete(self, messages: list[dict[str, Any]], *, max_tokens: int = 512) -> LLMResponse:
+    async def complete(self, messages: list[dict[str, Any]], *, max_tokens: int = 1536) -> LLMResponse:
         ...
 
 
 class MockLLM(BaseLLM):
     """Useful offline conversational fallback that never makes a network call."""
 
-    async def complete(self, messages: list[dict[str, Any]], *, max_tokens: int = 512) -> LLMResponse:
+    async def complete(self, messages: list[dict[str, Any]], *, max_tokens: int = 1536) -> LLMResponse:
         await asyncio.sleep(0.05)
         user_text = next((m.get("content", "") for m in reversed(messages)
                           if m.get("role") == "user"), "")
@@ -64,6 +64,8 @@ class MockLLM(BaseLLM):
             reply = "Goodbye! I'll be here when you need me."
         elif "weather" in lowered:
             reply = "I can't check live weather while offline. Add a Gemini API key in Settings to enable live web queries."
+        elif any(token in lowered for token in ("artificial intelligence", "what is ai", "explain ai", "about ai")):
+            reply = "Artificial intelligence refers to computer systems designed to emulate human cognitive functions, such as learning, pattern recognition, problem-solving, and natural language understanding. For example, machine learning models analyze large datasets to forecast trends, computer vision enables facial recognition and medical imaging analysis, and deep neural networks power voice assistants and autonomous driving systems, sir."
         else:
             reply = "I can help with common questions and commands offline. Add a Gemini API key in Settings for full online assistance."
         return LLMResponse(reply, speech_text=reply)
@@ -135,7 +137,7 @@ class GeminiLLM(BaseLLM):
 
         return system_instruction, consolidated
 
-    async def complete(self, messages: list[dict[str, Any]], *, max_tokens: int = 512) -> LLMResponse:
+    async def complete(self, messages: list[dict[str, Any]], *, max_tokens: int = 1536) -> LLMResponse:
         system_instruction, contents = self._convert_messages(messages)
         if not contents:
             return LLMResponse("How can I assist you, sir?", speech_text="How can I assist you, sir?")

@@ -29,6 +29,11 @@ let package = Package(
                 .define("CANVAS_RENDERER"),
             ]
         ),
+        .testTarget(
+            name: "KarenAppTests",
+            dependencies: ["KarenApp"],
+            path: "KarenApp/Tests"
+        ),
     ],
     // The app uses callback-based Apple audio/network APIs that predate strict
     // Swift 6 isolation checking. Keep the Swift 6 toolchain but compile sources

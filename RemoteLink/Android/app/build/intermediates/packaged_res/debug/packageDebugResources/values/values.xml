@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="karen_bg">#0A0D14</color>
+    <color name="karen_cyan">#00E5FF</color>
+    <color name="karen_green">#00E676</color>
+    <color name="karen_indigo">#5C6BC0</color>
+    <color name="karen_red">#FF1744</color>
+    <color name="karen_surface">#121824</color>
+    <string name="app_name">K.A.R.E.N. Remote</string>
+    <string name="channel_description">Interactive notifications for K.A.R.E.N. decisions and approvals</string>
+    <string name="channel_name">K.A.R.E.N. Requests</string>
+    <string name="gcm_defaultSenderId" translatable="false">916209823816</string>
+    <string name="google_api_key" translatable="false">AIzaSyA85N50kF2OFMsZVToGB7ic7-vWa5oR4Jg</string>
+    <string name="google_app_id" translatable="false">1:916209823816:android:25ea7c22aa57f55182287d</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyA85N50kF2OFMsZVToGB7ic7-vWa5oR4Jg</string>
+    <string name="google_storage_bucket" translatable="false">karen-remote.firebasestorage.app</string>
+    <string name="project_id" translatable="false">karen-remote</string>
+</resources>

@@ -1,0 +1,4 @@
+Target dependency graph (2 targets)
+Target 'karen-remote-cli-product' in project 'RemoteLinkMac'
+➜ Explicit dependency on target 'RemoteLinkMac' in project 'RemoteLinkMac'
+Target 'RemoteLinkMac' in project 'RemoteLinkMac' (no dependencies)

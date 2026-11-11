@@ -1,0 +1,10 @@
+Target dependency graph (4 targets)
+Target 'AllExcludingTests' in project 'Aggregate'
+➜ Explicit dependency on target 'RemoteLinkMac-product' in project 'RemoteLinkMac'
+➜ Explicit dependency on target 'karen-remote-cli-product' in project 'RemoteLinkMac'
+➜ Explicit dependency on target 'RemoteLinkMac' in project 'RemoteLinkMac'
+Target 'karen-remote-cli-product' in project 'RemoteLinkMac'
+➜ Explicit dependency on target 'RemoteLinkMac' in project 'RemoteLinkMac'
+Target 'RemoteLinkMac-product' in project 'RemoteLinkMac'
+➜ Explicit dependency on target 'RemoteLinkMac' in project 'RemoteLinkMac'
+Target 'RemoteLinkMac' in project 'RemoteLinkMac' (no dependencies)

@@ -1,0 +1,10 @@
+Target dependency graph (4 targets)
+Target 'AllExcludingTests' in project 'Aggregate'
+➜ Explicit dependency on target 'CompanionCore-product' in project 'KarenRemoteCompanion'
+➜ Explicit dependency on target 'karen-companion-product' in project 'KarenRemoteCompanion'
+➜ Explicit dependency on target 'CompanionCore' in project 'KarenRemoteCompanion'
+Target 'karen-companion-product' in project 'KarenRemoteCompanion'
+➜ Explicit dependency on target 'CompanionCore' in project 'KarenRemoteCompanion'
+Target 'CompanionCore-product' in project 'KarenRemoteCompanion'
+➜ Explicit dependency on target 'CompanionCore' in project 'KarenRemoteCompanion'
+Target 'CompanionCore' in project 'KarenRemoteCompanion' (no dependencies)

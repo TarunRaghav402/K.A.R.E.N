@@ -1,0 +1,18 @@
+R_DEF: Internal format may change without notice
+local
+color karen_bg
+color karen_cyan
+color karen_green
+color karen_indigo
+color karen_red
+color karen_surface
+drawable ic_karen_orb
+string app_name
+string channel_description
+string channel_name
+string gcm_defaultSenderId
+string google_api_key
+string google_app_id
+string google_crash_reporting_api_key
+string google_storage_bucket
+string project_id

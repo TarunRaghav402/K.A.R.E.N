@@ -151,23 +151,27 @@ struct OrbStateIndicator: View {
 
     var icon: String {
         switch state {
-        case .idle:       return "sparkle"
-        case .listening:  return "mic.fill"
-        case .processing: return "circle.dotted"
-        case .speaking:   return "waveform"
-        case .permission: return "lock.fill"
-        case .error:      return "exclamationmark.triangle.fill"
+        case .idle:         return "sparkle"
+        case .listening:    return "mic.fill"
+        case .processing:   return "circle.dotted"
+        case .speaking:     return "waveform"
+        case .responding:   return "sparkles"
+        case .interrupting: return "bolt.fill"
+        case .permission:   return "lock.fill"
+        case .error:        return "exclamationmark.triangle.fill"
         }
     }
 
     var label: String {
         switch state {
-        case .idle:       return "Idle"
-        case .listening:  return "Listening…"
-        case .processing: return "Thinking…"
-        case .speaking:   return "Speaking"
-        case .permission: return "Permission needed"
-        case .error:      return "Error"
+        case .idle:         return "Idle"
+        case .listening:    return "Listening…"
+        case .processing:   return "Thinking…"
+        case .speaking:     return "Speaking"
+        case .responding:   return "Responding…"
+        case .interrupting: return "Interrupting…"
+        case .permission:   return "Permission needed"
+        case .error:        return "Error"
         }
     }
 

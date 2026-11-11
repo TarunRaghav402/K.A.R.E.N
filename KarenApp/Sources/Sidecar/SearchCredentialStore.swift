@@ -1,47 +1,82 @@
 import Foundation
 import Security
 
-/// Secure Keychain store for Google Gemini API credentials on macOS.
+/// Secure Keychain & local store for Google Gemini API credentials on macOS.
 enum SearchCredentialStore {
     private static let service = "com.karen.assistant.gemini"
     private static let account = "gemini-api-key"
 
-    // MARK: - Gemini API Key (macOS Keychain)
+    private static var fallbackFileURL: URL {
+        let dir = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent(".karen", isDirectory: true)
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true, attributes: [.posixPermissions: 0o700])
+        return dir.appendingPathComponent("gemini_key")
+    }
+
+    // MARK: - Gemini API Key (macOS Keychain with local secure fallback)
 
     static func loadGeminiKey() -> String? {
+        // 1. Try environment variables
+        if let envKey = ProcessInfo.processInfo.environment["KAREN_GEMINI_KEY"] ??
+                        ProcessInfo.processInfo.environment["KAREN_LLM_KEY"] ??
+                        ProcessInfo.processInfo.environment["GEMINI_API_KEY"],
+           !envKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return envKey.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+
+        // 2. Try macOS Keychain without blocking UI dialogs
         var query = baseQuery
         query[kSecReturnData as String] = true
         query[kSecMatchLimit as String] = kSecMatchLimitOne
+        query[kSecUseAuthenticationUI as String] = kSecUseAuthenticationUIFail
 
         var result: CFTypeRef?
-        guard SecItemCopyMatching(query as CFDictionary, &result) == errSecSuccess,
-              let data = result as? Data,
-              let value = String(data: data, encoding: .utf8),
-              !value.isEmpty else { return nil }
-        return value
+        let status = SecItemCopyMatching(query as CFDictionary, &result)
+        if status == errSecSuccess,
+           let data = result as? Data,
+           let value = String(data: data, encoding: .utf8),
+           !value.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return value.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+
+        // 3. Fallback to user credentials file (~/.karen/gemini_key)
+        let fileURL = fallbackFileURL
+        if let content = try? String(contentsOf: fileURL, encoding: .utf8) {
+            let key = content.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !key.isEmpty { return key }
+        }
+
+        return nil
     }
 
     @discardableResult
     static func saveGeminiKey(_ value: String) -> Bool {
         let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return removeGeminiKey() }
         let data = Data(trimmed.utf8)
-        guard !data.isEmpty else { return removeGeminiKey() }
 
+        // Save to Keychain
         let query = baseQuery
         let status = SecItemUpdate(query as CFDictionary, [kSecValueData as String: data] as CFDictionary)
         if status == errSecItemNotFound {
             var item = query
             item[kSecValueData as String] = data
             item[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlock
-            return SecItemAdd(item as CFDictionary, nil) == errSecSuccess
+            _ = SecItemAdd(item as CFDictionary, nil)
         }
-        return status == errSecSuccess
+
+        // Also save to user config file with owner-only permissions (0600)
+        let fileURL = fallbackFileURL
+        try? trimmed.write(to: fileURL, atomically: true, encoding: .utf8)
+        try? FileManager.default.setAttributes([.posixPermissions: 0o600], ofItemAtPath: fileURL.path)
+
+        return true
     }
 
     @discardableResult
     static func removeGeminiKey() -> Bool {
-        let status = SecItemDelete(baseQuery as CFDictionary)
-        return status == errSecSuccess || status == errSecItemNotFound
+        _ = SecItemDelete(baseQuery as CFDictionary)
+        try? FileManager.default.removeItem(at: fallbackFileURL)
+        return true
     }
 
     // MARK: - Live Key Validation

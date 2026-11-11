@@ -21,6 +21,25 @@ final class GestureProcessor: NSObject {
     private var videoOutput: AVCaptureVideoDataOutput?
     private let queue = DispatchQueue(label: "karen.gesture", qos: .userInteractive)
 
+    private(set) var isRunning: Bool = false
+    var onError: ((String) -> Void)?
+
+    nonisolated private let pausedLock = NSLock()
+    nonisolated(unsafe) private var _isPaused: Bool = false
+
+    nonisolated var isPaused: Bool {
+        get {
+            pausedLock.lock()
+            defer { pausedLock.unlock() }
+            return _isPaused
+        }
+        set {
+            pausedLock.lock()
+            _isPaused = newValue
+            pausedLock.unlock()
+        }
+    }
+
     // Smoothing
     private var prevIndexSpan: Float?
     private var smoothedIndexSpan: Float?
@@ -38,23 +57,46 @@ final class GestureProcessor: NSObject {
     }
 
     @MainActor func start() {
+        guard session == nil else { return } // Prevent multiple camera sessions
         setupCamera()
     }
 
     @MainActor func stop() {
         session?.stopRunning()
         session = nil
+        videoOutput = nil
+        isRunning = false
+        isPaused = false
+        clearGestureHistory()
+    }
+
+    @MainActor func pause() {
+        guard !isPaused else { return }
+        isPaused = true
+        videoOutput?.connection(with: .video)?.isEnabled = false
+        clearGestureHistory()
+    }
+
+    @MainActor func resume() {
+        guard isPaused else { return }
+        clearGestureHistory()
+        isPaused = false
+        videoOutput?.connection(with: .video)?.isEnabled = true
     }
 
     // MARK: - Camera setup
 
     @MainActor private func setupCamera() {
+        guard session == nil else { return }
+
         let s = AVCaptureSession()
         s.sessionPreset = .high
 
         guard let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front)
                         ?? AVCaptureDevice.default(for: .video) else {
             print("[GestureProcessor] No camera available")
+            isRunning = false
+            onError?("No camera is available on this Mac.")
             return
         }
 
@@ -70,15 +112,22 @@ final class GestureProcessor: NSObject {
             self.session  = s
             self.videoOutput = output
             s.startRunning()
+            self.isRunning = s.isRunning
+            self.isPaused = false
             print("[GestureProcessor] Camera started")
         } catch {
             print("[GestureProcessor] Camera error: \(error)")
+            self.session = nil
+            self.videoOutput = nil
+            self.isRunning = false
+            onError?("Camera unavailable: \(error.localizedDescription)")
         }
     }
 
     // MARK: - Vision request
 
     nonisolated private func processFrame(_ buffer: CMSampleBuffer) {
+        guard !isPaused else { return }
         guard let pixelBuffer = CMSampleBufferGetImageBuffer(buffer) else { return }
 
         let request = VNDetectHumanHandPoseRequest()
@@ -93,33 +142,41 @@ final class GestureProcessor: NSObject {
             return
         }
 
+        guard !isPaused else { return }
+
         guard let observations = request.results, !observations.isEmpty else {
             Task { @MainActor [weak self] in
-                if let self, self.closedFistFrameCount > 0 {
+                guard let self, !self.isPaused else { return }
+                if self.closedFistFrameCount > 0 {
                     self.fistReleaseFrameCount += 1
                     if self.fistReleaseFrameCount >= 3 {
                         self.closedFistFrameCount = 0
                         self.fistReleaseFrameCount = 0
                     }
                 }
-                self?.prevIndexSpan = nil
-                self?.smoothedIndexSpan = nil
-                self?.prevPalmCenter = nil
-                self?.smoothedPalmCenter = nil
-                self?.prevPinchCenter = nil
-                self?.smoothedPinchCenter = nil
-                self?.previousTwoHandAngle = nil
+                self.prevIndexSpan = nil
+                self.smoothedIndexSpan = nil
+                self.prevPalmCenter = nil
+                self.smoothedPalmCenter = nil
+                self.prevPinchCenter = nil
+                self.smoothedPinchCenter = nil
+                self.previousTwoHandAngle = nil
             }
             return
         }
 
         Task { @MainActor [weak self] in
-            self?.dispatchGestures(observations: observations)
+            guard let self, !self.isPaused else { return }
+            self.dispatchGestures(observations: observations)
         }
     }
 
     @MainActor
     private func dispatchGestures(observations: [VNHumanHandPoseObservation]) {
+        guard !isPaused, let core = core, !core.isVoiceInteractionActive else {
+            clearGestureHistory()
+            return
+        }
         let closedFistDetected = observations.contains(where: isClosedFist)
         if closedFistDetected {
             closedFistFrameCount = min(closedFistFrameCount + 1, 2)
@@ -341,6 +398,8 @@ final class GestureProcessor: NSObject {
         prevPinchCenter = nil
         smoothedPinchCenter = nil
         previousTwoHandAngle = nil
+        closedFistFrameCount = 0
+        fistReleaseFrameCount = 0
     }
 }
 
@@ -350,6 +409,7 @@ extension GestureProcessor: AVCaptureVideoDataOutputSampleBufferDelegate {
     nonisolated func captureOutput(_ output: AVCaptureOutput,
                                     didOutput sampleBuffer: CMSampleBuffer,
                                     from connection: AVCaptureConnection) {
+        guard !isPaused else { return }
         processFrame(sampleBuffer)
     }
 }

@@ -1,0 +1,69 @@
+{
+  "" : {
+    "diagnostics" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/KarenAppTests-primary.dia",
+    "emit-module-dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/KarenAppTests-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/KarenAppTests-primary-emit-module.dia",
+    "pch" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/KarenAppTests-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/KarenAppTests-primary.swiftdeps"
+  },
+  "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/DerivedSources/test_entry_point.swift" : {
+    "const-values" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/test_entry_point.swiftconstvalues",
+    "dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/test_entry_point.d",
+    "diagnostics" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/test_entry_point.dia",
+    "index-unit-output-path" : "/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/test_entry_point.o",
+    "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/test_entry_point.bc",
+    "object" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/test_entry_point.o",
+    "swift-dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/test_entry_point.swiftdeps",
+    "swiftmodule" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/test_entry_point~partial.swiftmodule"
+  },
+  "/Users/tarunraghav/VolumeE/karen/KarenApp/Tests/BugInvestigationAndQATests.swift" : {
+    "const-values" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/BugInvestigationAndQATests.swiftconstvalues",
+    "dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/BugInvestigationAndQATests.d",
+    "diagnostics" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/BugInvestigationAndQATests.dia",
+    "index-unit-output-path" : "/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/BugInvestigationAndQATests.o",
+    "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/BugInvestigationAndQATests.bc",
+    "object" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/BugInvestigationAndQATests.o",
+    "swift-dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/BugInvestigationAndQATests.swiftdeps",
+    "swiftmodule" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/BugInvestigationAndQATests~partial.swiftmodule"
+  },
+  "/Users/tarunraghav/VolumeE/karen/KarenApp/Tests/Phase3GestureCoordinationTests.swift" : {
+    "const-values" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/Phase3GestureCoordinationTests.swiftconstvalues",
+    "dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/Phase3GestureCoordinationTests.d",
+    "diagnostics" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/Phase3GestureCoordinationTests.dia",
+    "index-unit-output-path" : "/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/Phase3GestureCoordinationTests.o",
+    "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/Phase3GestureCoordinationTests.bc",
+    "object" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/Phase3GestureCoordinationTests.o",
+    "swift-dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/Phase3GestureCoordinationTests.swiftdeps",
+    "swiftmodule" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/Phase3GestureCoordinationTests~partial.swiftmodule"
+  },
+  "/Users/tarunraghav/VolumeE/karen/KarenApp/Tests/Phase5ResponseAnimationAndTTSTests.swift" : {
+    "const-values" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/Phase5ResponseAnimationAndTTSTests.swiftconstvalues",
+    "dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/Phase5ResponseAnimationAndTTSTests.d",
+    "diagnostics" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/Phase5ResponseAnimationAndTTSTests.dia",
+    "index-unit-output-path" : "/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/Phase5ResponseAnimationAndTTSTests.o",
+    "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/Phase5ResponseAnimationAndTTSTests.bc",
+    "object" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/Phase5ResponseAnimationAndTTSTests.o",
+    "swift-dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/Phase5ResponseAnimationAndTTSTests.swiftdeps",
+    "swiftmodule" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/Phase5ResponseAnimationAndTTSTests~partial.swiftmodule"
+  },
+  "/Users/tarunraghav/VolumeE/karen/KarenApp/Tests/Phase6AuthoritativeInteractionStateMachineTests.swift" : {
+    "const-values" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/Phase6AuthoritativeInteractionStateMachineTests.swiftconstvalues",
+    "dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/Phase6AuthoritativeInteractionStateMachineTests.d",
+    "diagnostics" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/Phase6AuthoritativeInteractionStateMachineTests.dia",
+    "index-unit-output-path" : "/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/Phase6AuthoritativeInteractionStateMachineTests.o",
+    "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/Phase6AuthoritativeInteractionStateMachineTests.bc",
+    "object" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/Phase6AuthoritativeInteractionStateMachineTests.o",
+    "swift-dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/Phase6AuthoritativeInteractionStateMachineTests.swiftdeps",
+    "swiftmodule" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/Phase6AuthoritativeInteractionStateMachineTests~partial.swiftmodule"
+  },
+  "/Users/tarunraghav/VolumeE/karen/KarenApp/Tests/Phase7LifecyclePreservationTests.swift" : {
+    "const-values" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/Phase7LifecyclePreservationTests.swiftconstvalues",
+    "dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/Phase7LifecyclePreservationTests.d",
+    "diagnostics" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/Phase7LifecyclePreservationTests.dia",
+    "index-unit-output-path" : "/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/Phase7LifecyclePreservationTests.o",
+    "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/Phase7LifecyclePreservationTests.bc",
+    "object" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/Phase7LifecyclePreservationTests.o",
+    "swift-dependencies" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/Phase7LifecyclePreservationTests.swiftdeps",
+    "swiftmodule" : "/Users/tarunraghav/VolumeE/karen/.build/out/Intermediates.noindex/KarenApp.build/Debug/KarenAppTests-p.build/Objects-normal/arm64/Phase7LifecyclePreservationTests~partial.swiftmodule"
+  }
+}

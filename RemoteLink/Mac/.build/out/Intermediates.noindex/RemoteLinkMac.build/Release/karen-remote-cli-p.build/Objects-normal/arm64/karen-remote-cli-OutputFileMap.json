@@ -1,0 +1,16 @@
+{
+  "" : {
+    "const-values" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/Mac/.build/out/Intermediates.noindex/RemoteLinkMac.build/Release/karen-remote-cli-p.build/Objects-normal/arm64/karen-remote-cli-primary.swiftconstvalues",
+    "dependencies" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/Mac/.build/out/Intermediates.noindex/RemoteLinkMac.build/Release/karen-remote-cli-p.build/Objects-normal/arm64/karen-remote-cli-primary.d",
+    "diagnostics" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/Mac/.build/out/Intermediates.noindex/RemoteLinkMac.build/Release/karen-remote-cli-p.build/Objects-normal/arm64/karen-remote-cli-primary.dia",
+    "emit-module-dependencies" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/Mac/.build/out/Intermediates.noindex/RemoteLinkMac.build/Release/karen-remote-cli-p.build/Objects-normal/arm64/karen-remote-cli-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/Mac/.build/out/Intermediates.noindex/RemoteLinkMac.build/Release/karen-remote-cli-p.build/Objects-normal/arm64/karen-remote-cli-primary-emit-module.dia",
+    "pch" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/Mac/.build/out/Intermediates.noindex/RemoteLinkMac.build/Release/karen-remote-cli-p.build/Objects-normal/arm64/karen-remote-cli-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/Mac/.build/out/Intermediates.noindex/RemoteLinkMac.build/Release/karen-remote-cli-p.build/Objects-normal/arm64/karen-remote-cli-primary.swiftdeps"
+  },
+  "/Users/tarunraghav/VolumeE/karen/RemoteLink/Mac/Sources/RemoteLinkCLI/main.swift" : {
+    "index-unit-output-path" : "/RemoteLinkMac.build/Release/karen-remote-cli-p.build/Objects-normal/arm64/main.o",
+    "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/Mac/.build/out/Intermediates.noindex/RemoteLinkMac.build/Release/karen-remote-cli-p.build/Objects-normal/arm64/main.bc",
+    "object" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/Mac/.build/out/Intermediates.noindex/RemoteLinkMac.build/Release/karen-remote-cli-p.build/Objects-normal/arm64/main.o"
+  }
+}

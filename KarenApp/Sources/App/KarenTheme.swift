@@ -6,10 +6,14 @@ enum KarenTheme {
         switch state {
         case .listening, .processing:
             return (0.12, 0.92, 0.48)   // green: hearing and handling a voice request
-        case .speaking, .error:
-            return (1.00, 0.20, 0.27)   // red: voice output / attention
+        case .speaking, .responding:
+            return (1.00, 0.20, 0.27)   // coral/red: voice output / attention
+        case .interrupting:
+            return (1.00, 0.84, 0.00)   // gold/amber: instant barge-in acknowledgment
         case .permission:
             return (1.00, 0.64, 0.20)
+        case .error:
+            return (1.00, 0.20, 0.27)
         case .idle:
             return (0.22, 0.52, 1.00)   // blue: ready and thinking
         }

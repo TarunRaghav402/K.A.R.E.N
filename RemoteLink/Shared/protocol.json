@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "KAREN_RemoteLink_Protocol",
+  "version": "1.0.0",
+  "description": "Standard protocol for K.A.R.E.N. Remote Link phone connection and notification system",
+  "lifecycle_states": [
+    "CREATED",
+    "SENT",
+    "DELIVERED",
+    "WAITING",
+    "RESPONDED",
+    "EXPIRED",
+    "CANCELLED",
+    "DELIVERY_FAILED"
+  ],
+  "outcomes": [
+    "APPROVED",
+    "DENIED",
+    "REPLIED",
+    "EXPIRED",
+    "CANCELLED",
+    "DELIVERY_FAILED"
+  ],
+  "notification_types": {
+    "TYPE_A_APPROVAL": {
+      "name": "approval",
+      "default_actions": ["APPROVE", "DENY"]
+    },
+    "TYPE_B_QUESTION": {
+      "name": "question",
+      "default_actions": ["YES", "NO", "REPLY"]
+    },
+    "TYPE_C_TEXT_RESPONSE": {
+      "name": "text_response",
+      "default_actions": ["REPLY"]
+    }
+  },
+  "endpoints": {
+    "pairing_create": "/api/v1/pairing/session",
+    "pairing_status": "/api/v1/pairing/status/{session_id}",
+    "pairing_pair": "/api/v1/pairing/pair",
+    "requests_create": "/api/v1/requests",
+    "requests_get": "/api/v1/requests/{request_id}",
+    "requests_pending": "/api/v1/requests/pending",
+    "requests_delivered": "/api/v1/requests/{request_id}/delivered",
+    "requests_respond": "/api/v1/requests/{request_id}/respond",
+    "requests_cancel": "/api/v1/requests/{request_id}/cancel",
+    "device_revoke": "/api/v1/devices/revoke",
+    "mac_websocket": "/api/v1/ws/mac",
+    "phone_websocket": "/api/v1/ws/phone"
+  }
+}
+

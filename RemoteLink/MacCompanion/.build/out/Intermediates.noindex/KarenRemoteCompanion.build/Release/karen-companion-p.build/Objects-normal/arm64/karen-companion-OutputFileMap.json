@@ -1,0 +1,21 @@
+{
+  "" : {
+    "const-values" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Release/karen-companion-p.build/Objects-normal/arm64/karen-companion-primary.swiftconstvalues",
+    "dependencies" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Release/karen-companion-p.build/Objects-normal/arm64/karen-companion-primary.d",
+    "diagnostics" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Release/karen-companion-p.build/Objects-normal/arm64/karen-companion-primary.dia",
+    "emit-module-dependencies" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Release/karen-companion-p.build/Objects-normal/arm64/karen-companion-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Release/karen-companion-p.build/Objects-normal/arm64/karen-companion-primary-emit-module.dia",
+    "pch" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Release/karen-companion-p.build/Objects-normal/arm64/karen-companion-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Release/karen-companion-p.build/Objects-normal/arm64/karen-companion-primary.swiftdeps"
+  },
+  "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/Sources/CompanionApp/CompanionMenuBar.swift" : {
+    "index-unit-output-path" : "/KarenRemoteCompanion.build/Release/karen-companion-p.build/Objects-normal/arm64/CompanionMenuBar.o",
+    "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Release/karen-companion-p.build/Objects-normal/arm64/CompanionMenuBar.bc",
+    "object" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Release/karen-companion-p.build/Objects-normal/arm64/CompanionMenuBar.o"
+  },
+  "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/Sources/CompanionApp/main.swift" : {
+    "index-unit-output-path" : "/KarenRemoteCompanion.build/Release/karen-companion-p.build/Objects-normal/arm64/main.o",
+    "llvm-bc" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Release/karen-companion-p.build/Objects-normal/arm64/main.bc",
+    "object" : "/Users/tarunraghav/VolumeE/karen/RemoteLink/MacCompanion/.build/out/Intermediates.noindex/KarenRemoteCompanion.build/Release/karen-companion-p.build/Objects-normal/arm64/main.o"
+  }
+}

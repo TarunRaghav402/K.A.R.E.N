@@ -1,0 +1,17 @@
+name = "karen-remotelink"
+main = "src/index.ts"
+compatibility_date = "2024-05-12"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+ENVIRONMENT = "production"
+DEFAULT_TIMEOUT_SECONDS = "120"
+PAIRING_EXPIRY_SECONDS = "300"
+LEASE_DURATION_SECONDS = "60"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "karen-remote-d1"
+database_id = "9713c560-3ee3-490c-9586-b268a3a94ef1"
+migrations_dir = "migrations"
+

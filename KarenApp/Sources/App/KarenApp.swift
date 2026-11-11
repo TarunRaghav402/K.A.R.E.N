@@ -4,7 +4,7 @@ import AppKit
 @main
 struct KarenApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var delegate
-    @StateObject private var karen = KarenCore()
+    @StateObject private var karen = KarenCore.shared
 
     var body: some Scene {
         Window("K.A.R.E.N.", id: "main") {
@@ -45,11 +45,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         false // run as background agent
     }
     func applicationDidFinishLaunching(_ notification: Notification) {
+        NSLog("[KarenApp] applicationDidFinishLaunching entered")
         NSApp.setActivationPolicy(.accessory)
+        // Eagerly activate KarenCore so background wake-word listening and sidecar are alive
+        _ = KarenCore.shared
+        NSLog("[KarenApp] KarenCore.shared activated")
         // Launch as a menu-bar assistant. The window is opened again on a
         // wake-word request or from the menu bar's Open command.
         DispatchQueue.main.async {
-            NSApp.windows.first(where: { $0.title == "K.A.R.E.N." && $0.isVisible })?.close()
+            NSApp.windows
+                .filter { $0.title == "K.A.R.E.N." }
+                .forEach { $0.close() }
         }
     }
 
