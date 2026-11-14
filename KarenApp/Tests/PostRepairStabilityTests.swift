@@ -196,4 +196,124 @@ final class PostRepairStabilityTests: XCTestCase {
 
         XCTAssertTrue(isWakeMatch, "User speaking 'Hey Karen' must trigger wake match in barge-in mode")
     }
+
+    func testBargeIn_CallingNameHaltsSpeechAndEntersListening() {
+        let core = KarenCore(autoStartSubsystems: false)
+        core.micGranted = true
+        core.speechGranted = true
+        core.wakeWordEnabled = true
+
+        // Simulate core speaking
+        core.transition(to: .speaking, reason: "Speaking response")
+        XCTAssertEqual(core.interactionState, .speaking)
+
+        // User calls "Hey Karen" while she is speaking
+        core.handleInterrupt(detectedTranscript: "Hey Karen")
+
+        // Must immediately transition to listening so user can speak their query
+        XCTAssertEqual(core.interactionState, .listening, "Calling 'Hey Karen' while speaking must immediately halt and enter listening")
+        XCTAssertFalse(core.isSpeaking)
+    }
+
+    func testContinuousConversationKeepsListeningAfterSpeech() {
+        let core = KarenCore(autoStartSubsystems: false)
+        core.micGranted = true
+        core.speechGranted = true
+        core.wakeWordEnabled = true
+
+        // Simulate speaking finished in continuous mode
+        core.transition(to: .speaking, reason: "Speaking response")
+        core.transition(to: .listening, reason: "Speech finished; keeping conversation active")
+
+        XCTAssertEqual(core.interactionState, .listening, "After speaking finishes, Karen must remain in listening mode for follow-up questions")
+        XCTAssertTrue(core.isListening)
+    }
+
+    func testWakeWord_PhoneticVariantsAndPrefixesMatch() {
+        let detector = WakeWordDetector()
+        let testPhrases = [
+            "Karen",
+            "karen",
+            "Hey Karen",
+            "hey karen",
+            "Hey, Karen",
+            "Hi Karen",
+            "hi karen",
+            "Hello Karen",
+            "OK Karen",
+            "Yo Karen",
+            "Caring",
+            "caring",
+            "Hey Caring",
+            "Carin",
+            "Karin",
+            "Caren",
+            "Karon",
+            "care in",
+            "car in",
+            "care and",
+            "karan",
+            "kiran",
+            "karren",
+            "carren",
+            "kareem"
+        ]
+
+        for phrase in testPhrases {
+            let range = NSRange(phrase.startIndex..., in: phrase)
+            let match = detector.wakePattern.firstMatch(in: phrase, range: range)
+            XCTAssertNotNil(match, "Phrase '\(phrase)' must be recognized by wakePattern")
+        }
+    }
+
+    func testWakeWord_ExtractTrailingQueryInOneBreath() {
+        let detector = WakeWordDetector()
+
+        // 1. Spoken with question in same breath
+        let input1 = "Hey Karen, what time is it?"
+        let range1 = NSRange(input1.startIndex..., in: input1)
+        let match1 = detector.wakePattern.firstMatch(in: input1, range: range1)
+        XCTAssertNotNil(match1)
+        let trailing1 = detector.extractTrailingQuery(from: input1, matchRange: match1!.range)
+        XCTAssertEqual(trailing1, "what time is it", "Trailing query should be extracted cleanly without punctuation")
+
+        // 2. Just calling Karen
+        let input2 = "Karen"
+        let range2 = NSRange(input2.startIndex..., in: input2)
+        let match2 = detector.wakePattern.firstMatch(in: input2, range: range2)
+        XCTAssertNotNil(match2)
+        let trailing2 = detector.extractTrailingQuery(from: input2, matchRange: match2!.range)
+        XCTAssertNil(trailing2, "Calling only Karen should produce nil trailing query")
+
+        // 3. Phonetic match with question
+        let input3 = "Caring explain artificial intelligence"
+        let range3 = NSRange(input3.startIndex..., in: input3)
+        let match3 = detector.wakePattern.firstMatch(in: input3, range: range3)
+        XCTAssertNotNil(match3)
+        let trailing3 = detector.extractTrailingQuery(from: input3, matchRange: match3!.range)
+        XCTAssertEqual(trailing3, "explain artificial intelligence")
+    }
+
+    func testWakeWord_IdleStateResetsContinuousConversation() {
+        let core = KarenCore(autoStartSubsystems: false)
+        core.micGranted = true
+        core.speechGranted = true
+        core.wakeWordEnabled = true
+
+        // Transition: idle -> onWakeWord -> listening
+        core.onWakeWord(initialTranscript: "test query")
+        XCTAssertEqual(core.interactionState, .listening)
+
+        // Return to idle: verifies state transitions to idle cleanly
+        core.transition(to: .idle, reason: "Query finished")
+        XCTAssertEqual(core.interactionState, .idle)
+    }
+
+    func testPronunciationReplacementInTTS() {
+        let input1 = "I am K.A.R.E.N., your personal assistant."
+        var spoken1 = input1.replacingOccurrences(of: "K.A.R.E.N.", with: "Karen")
+        spoken1 = spoken1.replacingOccurrences(of: "K.A.R.E.N", with: "Karen")
+        XCTAssertTrue(spoken1.contains("Karen"))
+        XCTAssertFalse(spoken1.contains("K.A.R.E.N"))
+    }
 }

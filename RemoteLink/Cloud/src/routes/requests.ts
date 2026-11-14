@@ -23,7 +23,7 @@ export async function handleCreateRequest(
   const timeoutSeconds = Number(body.timeout_seconds || env.DEFAULT_TIMEOUT_SECONDS || "120");
 
   const record = await createQueueRequest(env, {
-    requestId: body.request_id,
+    requestId: body.request_id || body.id,
     idempotencyKey: body.idempotency_key,
     type: body.type || "approval",
     title: body.title || "K.A.R.E.N. Request",
@@ -33,7 +33,10 @@ export async function handleCreateRequest(
     timeoutSeconds: timeoutSeconds,
   });
 
-  return Response.json(record);
+  return Response.json({
+    ...record,
+    id: record.request_id,
+  });
 }
 
 export async function handleGetPendingRequests(env: Env): Promise<Response> {
@@ -49,7 +52,10 @@ export async function handleGetRequest(
   if (!record) {
     return Response.json({ detail: "Request not found." }, { status: 404 });
   }
-  return Response.json(record);
+  return Response.json({
+    ...record,
+    id: record.request_id,
+  });
 }
 
 export async function handleAcknowledgeDelivery(
@@ -77,11 +83,15 @@ export async function handleRespondToRequest(
   }
 
   const body = (await request.json()) as any;
-  const outcome = body.outcome;
+  let outcome = body.outcome;
   const replyText = body.reply_text || null;
 
   if (!outcome) {
     return Response.json({ detail: "Missing outcome." }, { status: 400 });
+  }
+
+  if (typeof outcome === "string" && (outcome.toUpperCase() === "REJECT" || outcome.toUpperCase() === "REJECTED")) {
+    outcome = "DENIED";
   }
 
   const result = await submitQueueResponse(

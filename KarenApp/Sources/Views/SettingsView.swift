@@ -25,10 +25,11 @@ struct SettingsView: View {
 
     private var femaleVoices: [AVSpeechSynthesisVoice] {
         AVSpeechSynthesisVoice.speechVoices()
-            .filter { $0.language.hasPrefix("en") }
+            .filter { $0.language.hasPrefix("en") || $0.language.hasPrefix("ta") }
             .filter { $0.name.contains("Samantha") || $0.name.contains("Ava") ||
                       $0.name.contains("Karen") || $0.name.contains("Moira") ||
-                      $0.name.contains("Fiona") || $0.gender == .female }
+                      $0.name.contains("Fiona") || $0.name.contains("Vani") ||
+                      $0.language.hasPrefix("ta") || $0.gender == .female }
     }
 
     var body: some View {
@@ -54,7 +55,7 @@ struct SettingsView: View {
                                 .settingsLabel()
                             Picker("Voice", selection: $selectedVoiceId) {
                                 ForEach(femaleVoices, id: \.identifier) { v in
-                                    Text(v.name).tag(v.identifier)
+                                    Text("\(v.name) (\(v.language))").tag(v.identifier)
                                 }
                             }
                             .labelsHidden()

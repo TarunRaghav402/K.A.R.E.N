@@ -15,7 +15,14 @@ enum SearchCredentialStore {
     // MARK: - Gemini API Key (macOS Keychain with local secure fallback)
 
     static func loadGeminiKey() -> String? {
-        // 1. Try environment variables
+        // 1. Try user credentials file (~/.karen/gemini_key) first for fast, non-blocking lookup
+        let fileURL = fallbackFileURL
+        if let content = try? String(contentsOf: fileURL, encoding: .utf8) {
+            let key = content.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !key.isEmpty { return key }
+        }
+
+        // 2. Try environment variables
         if let envKey = ProcessInfo.processInfo.environment["KAREN_GEMINI_KEY"] ??
                         ProcessInfo.processInfo.environment["KAREN_LLM_KEY"] ??
                         ProcessInfo.processInfo.environment["GEMINI_API_KEY"],
@@ -23,7 +30,7 @@ enum SearchCredentialStore {
             return envKey.trimmingCharacters(in: .whitespacesAndNewlines)
         }
 
-        // 2. Try macOS Keychain without blocking UI dialogs
+        // 3. Try macOS Keychain
         var query = baseQuery
         query[kSecReturnData as String] = true
         query[kSecMatchLimit as String] = kSecMatchLimitOne
@@ -36,13 +43,6 @@ enum SearchCredentialStore {
            let value = String(data: data, encoding: .utf8),
            !value.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             return value.trimmingCharacters(in: .whitespacesAndNewlines)
-        }
-
-        // 3. Fallback to user credentials file (~/.karen/gemini_key)
-        let fileURL = fallbackFileURL
-        if let content = try? String(contentsOf: fileURL, encoding: .utf8) {
-            let key = content.trimmingCharacters(in: .whitespacesAndNewlines)
-            if !key.isEmpty { return key }
         }
 
         return nil

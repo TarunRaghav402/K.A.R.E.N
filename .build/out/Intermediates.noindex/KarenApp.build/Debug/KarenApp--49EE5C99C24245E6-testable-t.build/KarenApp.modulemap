@@ -1,4 +1,0 @@
-module KarenApp {
-header "KarenApp-Swift.h"
-export *
-}

@@ -56,3 +56,36 @@ async def test_general_knowledge_question_uses_web_search(monkeypatch):
     assert skill_name == "web_search"
     assert "laptop" in payload["reply"].lower()
     assert needs_confirm is False
+
+
+@pytest.mark.asyncio
+async def test_route_tamil_greeting():
+    skill_name, payload, _ = await route("வணக்கம்", {})
+    assert skill_name == "offline_reply_catalog"
+    assert "வணக்கம்" in payload["reply"]
+    assert "தருண்" in payload["reply"]
+    assert "ஐயா" not in payload["reply"]
+
+
+@pytest.mark.asyncio
+async def test_route_tamil_tanglish_greeting():
+    skill_name, payload, _ = await route("vanakkam karen", {})
+    assert skill_name == "offline_reply_catalog"
+    assert "வணக்கம்" in payload["reply"]
+    assert "ஐயா" not in payload["reply"]
+
+
+@pytest.mark.asyncio
+async def test_route_tamil_time():
+    skill_name, payload, _ = await route("இப்போ மணி என்ன", {})
+    assert skill_name == "time"
+    assert "இப்போ நேரம்" in payload["reply"]
+    assert "ஐயா" not in payload["reply"]
+
+
+@pytest.mark.asyncio
+async def test_route_tamil_identity():
+    skill_name, payload, _ = await route("நீங்க யாரு", {})
+    assert skill_name == "offline_reply_catalog"
+    assert "கேரன்" in payload["reply"]
+    assert "ஐயா" not in payload["reply"]

@@ -1,4 +1,0 @@
-module RemoteLinkMac {
-header "RemoteLinkMac-Swift.h"
-export *
-}

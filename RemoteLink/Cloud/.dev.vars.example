@@ -1,0 +1,8 @@
+# Example Cloudflare Worker Secrets for Local Development (wrangler dev)
+# DO NOT commit real keys here. Copy this file to .dev.vars and add your real credentials.
+
+FCM_PROJECT_ID="your-firebase-project-id"
+FCM_CLIENT_EMAIL="firebase-adminsdk-xxxxx@your-firebase-project-id.iam.gserviceaccount.com"
+FCM_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nYOUR_RSA_PRIVATE_KEY_HERE\n-----END PRIVATE KEY-----\n"
+MAC_API_KEY=""
+

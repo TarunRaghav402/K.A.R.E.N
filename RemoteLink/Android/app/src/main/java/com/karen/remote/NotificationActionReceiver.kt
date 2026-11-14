@@ -33,9 +33,9 @@ class NotificationActionReceiver : BroadcastReceiver() {
         val outcome: RequestOutcome = when {
             inlineReplyText != null -> RequestOutcome.REPLIED
             outcomeStr == "APPROVE" || outcomeStr == "YES" -> RequestOutcome.APPROVED
-            outcomeStr == "DENY" || outcomeStr == "NO" -> RequestOutcome.DENIED
+            outcomeStr == "DENY" || outcomeStr == "NO" || outcomeStr == "REJECT" || outcomeStr == "REJECTED" -> RequestOutcome.DENIED
             outcomeStr == "REPLY" -> RequestOutcome.REPLIED
-            else -> RequestOutcome.APPROVED
+            else -> RequestOutcome.DENIED
         }
 
         val prefs = PreferencesManager(context)

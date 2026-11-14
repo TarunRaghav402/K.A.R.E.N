@@ -1,4 +1,0 @@
-module CompanionCore {
-header "CompanionCore-Swift.h"
-export *
-}

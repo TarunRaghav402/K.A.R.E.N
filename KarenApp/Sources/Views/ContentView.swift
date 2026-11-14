@@ -16,7 +16,7 @@ struct ContentView: View {
             let currentScale: CGFloat = 1.0 - (karen.orbTopProgress * 0.56) // 1.0 -> 0.44
 
             ZStack {
-                // Deep space and its distant light source follow the active theme.
+                // 1. Deep space and its distant light source — ALWAYS STATIC (never moves)
                 LinearGradient(colors: KarenTheme.backdrop(for: karen.orbState),
                                startPoint: .topLeading, endPoint: .bottomTrailing)
                     .ignoresSafeArea()
@@ -27,7 +27,13 @@ struct ContentView: View {
                     .blendMode(.screen)
                     .animation(.easeInOut(duration: 0.7), value: karen.orbState)
 
-                // Orb renderer (Metal when Xcode build, Canvas when swift build)
+                // 2. Fixed background starfield & galaxy band — ALWAYS STATIC (never moves)
+                StaticStarfieldCanvasView()
+                    .ignoresSafeArea()
+                    .allowsHitTesting(false)
+                    .accessibilityHidden(true)
+
+                // 3. Neural Orb visualization — ONLY the orb glides up and scales down!
                 OrbView()
                     .ignoresSafeArea()
                     .scaleEffect(currentScale, anchor: .center)
@@ -49,33 +55,37 @@ struct ContentView: View {
                         guard !karen.isVoiceInteractionActive else { return }
                         karen.applyZoom(Float(1.0 + delta.y * 0.02))
                     }
-                    .animation(.spring(response: 0.54, dampingFraction: 0.78), value: karen.orbTopProgress)
+                    .animation(.spring(response: 0.60, dampingFraction: 0.82), value: karen.orbTopProgress)
                     .animation(.easeInOut(duration: 0.7), value: karen.orbState)
 
-                // Coordinated Response Hierarchy: Connector + Dynamic Response Panel
+                // 4. Coordinated Response Hierarchy: Connector + Dynamic Response Panel (Smooth Pop-up)
                 VStack(spacing: 0) {
                     Spacer().frame(height: max(32, topTargetY + 54))
 
                     if karen.showConnector {
                         GlowingOrbConnector()
                             .transition(.asymmetric(
-                                insertion: .opacity.combined(with: .scale(scale: 0.75, anchor: .top)),
-                                removal: .opacity
+                                insertion: .opacity.combined(with: .scale(scale: 0.50, anchor: .top)),
+                                removal: .opacity.combined(with: .scale(scale: 0.80, anchor: .top))
                             ))
                     }
 
                     if karen.showResponsePanel {
                         DynamicResponsePanel()
                             .transition(.asymmetric(
-                                insertion: .opacity.combined(with: .scale(scale: 0.90, anchor: .top)).combined(with: .offset(y: -12)),
-                                removal: .opacity.combined(with: .scale(scale: 0.92, anchor: .top))
+                                insertion: .opacity
+                                    .combined(with: .scale(scale: 0.88, anchor: .top))
+                                    .combined(with: .offset(y: -14)),
+                                removal: .opacity
+                                    .combined(with: .scale(scale: 0.90, anchor: .top))
+                                    .combined(with: .offset(y: -8))
                             ))
                     }
 
                     Spacer().frame(minHeight: 90)
                 }
-                .animation(.spring(response: 0.50, dampingFraction: 0.82), value: karen.showResponsePanel)
-                .animation(.easeOut(duration: 0.22), value: karen.showConnector)
+                .animation(.spring(response: 0.54, dampingFraction: 0.80), value: karen.showResponsePanel)
+                .animation(.spring(response: 0.42, dampingFraction: 0.82), value: karen.showConnector)
 
                 // Thinking feedback while processing in center
                 if karen.orbState == .processing && !karen.showResponsePanel {
@@ -284,7 +294,7 @@ struct HUDBar: View {
 
             // Settings
             HUDButton(icon: "gear", label: "Settings", active: false, tint: .white) {
-                karen.showSettings = true
+                karen.requestOpenSettings()
             }
         }
         .padding(.horizontal, 24)

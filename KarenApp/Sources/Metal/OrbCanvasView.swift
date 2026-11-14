@@ -14,6 +14,23 @@ import Foundation
 //   4. Orbiting rings — 3 tilted ellipses
 //   5. State overlay — distinct icon+pattern for each state
 
+// ─── StaticStarfieldCanvasView — Fixed, stationary background starfield ──────────
+
+struct StaticStarfieldCanvasView: View {
+    @EnvironmentObject var karen: KarenCore
+
+    var body: some View {
+        TimelineView(.animation(minimumInterval: 1.0/30.0, paused: false)) { tl in
+            Canvas { ctx, size in
+                let t = tl.date.timeIntervalSinceReferenceDate
+                drawStars(ctx: ctx, size: size, t: t, state: karen.orbState)
+            }
+        }
+    }
+}
+
+// ─── OrbCanvasView — Independent glowing neural orb (moves & scales smoothly) ───
+
 struct OrbCanvasView: View {
     @EnvironmentObject var karen: KarenCore
 
@@ -26,7 +43,8 @@ struct OrbCanvasView: View {
                 let offsetX = karen.orbOffsetX
                 let offsetY = karen.orbOffsetY
 
-                drawStars(ctx: ctx, size: size, t: t, state: karen.orbState)
+                // Note: Background starfield is rendered independently in StaticStarfieldCanvasView
+                // so the background stays completely still while only the orb glides up.
                 drawCoreGlow(ctx: ctx, size: size, t: t, speed: speed, state: karen.orbState,
                              audioLevel: karen.audioLevel,
                              zoom: karen.orbZoom,

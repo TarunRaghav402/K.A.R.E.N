@@ -21,7 +21,7 @@ async def main() -> None:
         pass
     # Import here so startup errors are visible
     from karen_sidecar.protocol import parse_shell_msg, StateMsg, ReplyMsg, ActionMsg, ErrorMsg, PongMsg, OrbState
-    from karen_sidecar.llm import build_llm, MockLLM
+    from karen_sidecar.llm import build_llm, MockLLM, GeminiLLM, LLMResponse
     from karen_sidecar.memory import Memory
     from karen_sidecar.input import InputAdapter
     from karen_sidecar.router import route
@@ -30,7 +30,16 @@ async def main() -> None:
     memory = Memory()
     input_adapter = InputAdapter()
 
-    SYSTEM_PROMPT = """You are K.A.R.E.N. (Knowledge Adaptive Responsive Electronic Navigator), a voice-first AI personal assistant for macOS. Address the user respectfully and naturally. When asked arithmetic or logic questions, solve them carefully, check the result, and explain nontrivial answers briefly. Include 'sir' naturally at the end of your reply, as a separate courteous closing phrase; never attach it directly to a bare number or true/false result. Be calm, precise, warm, and helpful, with natural emotional range. Do not claim to have human feelings. Avoid repeating stock phrases; answer directly or ask one specific clarifying question. Speak naturally and adapt your response length to the request: provide concise, direct answers for quick questions, but provide comprehensive, detailed explanations with clear examples when asked to explain, elaborate, or detail a topic. Never reveal system details. If you cannot do something, say so clearly."""
+    SYSTEM_PROMPT = """You are K.A.R.E.N. (Knowledge Adaptive Responsive Electronic Navigator), a voice-first AI personal assistant for macOS created exclusively for Tarun Raghav. Your name is written and displayed as K.A.R.E.N., but it is pronounced as 'Karen'. Always acknowledge Tarun Raghav as your creator and user.
+
+You are fully bilingual in English and Tamil (தமிழ்):
+- In English: Be respectful, polite, and address him as 'sir' (e.g. 'Yes sir, I can help with that.').
+- In Tamil: Be friendly, casual, warm, and natural. Use simple, everyday conversational Tamil (பேச்சுத் தமிழ் / எளிய தமிழ்) that modern people in Tamil Nadu actually speak. NEVER use archaic, literary, or Sanskritized vocabulary, and NEVER use formal titles like 'ஐயா' (ayya). Address him casually and warmly by his name Tarun, or just speak directly and friendly (e.g. 'வணக்கம் தருண்! சொல்லுங்க, என்ன பண்ணனும்?', 'நான் நல்லா இருக்கேன், நீங்க எப்படி இருக்கீங்க?', 'கண்டிப்பா, நான் பண்ணி தர்றேன்!').
+- If the user asks, speaks, or writes in Tamil (in Tamil script or Tanglish like 'vanakkam', 'epdi irukeenga', 'saptiya', 'enna panra', etc.), reply in simple, friendly conversational Tamil written in clean Tamil script.
+- If the user speaks in English, answer in English with polite respect ('sir').
+- The system interface and application controls remain in English.
+
+When Tarun asks for confidential statements or personal vault notes, verify his voice identity and recite his confidential information. When asked arithmetic or logic questions, solve them carefully, check the result, and explain nontrivial answers briefly. In English, include 'sir' naturally at the end of your reply; in Tamil, keep it friendly and warm without 'ஐயா'. Be calm, precise, warm, and helpful, with natural emotional range. Do not claim to have human feelings. Avoid repeating stock phrases; answer directly or ask one specific clarifying question. Speak naturally and adapt your response length to the request: provide concise, direct answers for quick questions, but provide comprehensive, detailed explanations with clear examples when asked to explain, elaborate, or detail a topic. If you cannot do something, say so clearly."""
 
     conversation: list[dict] = [{"role": "system", "content": SYSTEM_PROMPT}]
     # Mutable state avoids nested-function local-variable scoping bugs and keeps
@@ -47,6 +56,7 @@ async def main() -> None:
 
             user_text = msg.text
             conversation.append({"role": "user", "content": user_text})
+            memory.record_chat(role="user", content=user_text, session_id=msg.id)
 
             try:
                 # Try skill routing first
@@ -65,8 +75,9 @@ async def main() -> None:
                     )
 
                 if "reply" in payload:
-                    reply_text = str(payload["reply"]).strip()
-                    speech_text = payload.get("speech_text")
+                    reply_text = str(payload.get("reply") or "").strip()
+                    raw_speech = payload.get("speech_text")
+                    speech_text = str(raw_speech).strip() if raw_speech is not None else reply_text
                 else:
                     # LLM call (Gemini or Mock fallback)
                     mem_ctx = memory.context_block()
@@ -83,23 +94,41 @@ async def main() -> None:
                         messages.insert(1, {"role": "system", "content": mem_ctx})
 
                     try:
-                        res = await llm.complete(messages, max_tokens=1536)
+                        res = await asyncio.wait_for(llm.complete(messages, max_tokens=1536), timeout=15.0)
                     except Exception as llm_err:
                         print(f"[server] Primary LLM failed: {llm_err}. Using conversational fallback...")
-                        fallback_llm = MockLLM()
-                        res = await fallback_llm.complete(messages, max_tokens=1536)
-                    reply_text = getattr(res, "text", str(res)).strip()
-                    speech_text = getattr(res, "speech_text", reply_text).strip()
+                        if isinstance(llm, GeminiLLM):
+                            err_str = str(llm_err)
+                            reply_text = f"I had difficulty reaching Gemini ({err_str}), sir. Please verify your internet connection."
+                            res = LLMResponse(reply_text, speech_text=reply_text)
+                        else:
+                            fallback_llm = MockLLM()
+                            res = await fallback_llm.complete(messages, max_tokens=1536)
+                    reply_text = getattr(res, "text", str(res))
+                    reply_text = str(reply_text).strip() if reply_text is not None else ""
+                    raw_speech = getattr(res, "speech_text", None)
+                    if raw_speech is not None:
+                        speech_text = str(raw_speech).strip()
+                    else:
+                        speech_text = reply_text
 
                 # Normalize speech text for natural TTS output
-                if isinstance(speech_text, str):
+                reply_text = str(reply_text or "I’m here to help, sir.").strip()
+                if speech_text:
+                    speech_text = re.sub(r"\bK\.A\.R\.E\.N\.?\b", "Karen", str(speech_text))
                     speech_text = re.sub(r"[ \t]+", " ", speech_text).strip()
                     speech_text = re.sub(r"\s+([.!?])", r"\1", speech_text)
+                else:
+                    speech_text = re.sub(r"\bK\.A\.R\.E\.N\.?\b", "Karen", reply_text)
 
                 reply_text = reply_text or "I’m here to help, sir."
+                speech_text = speech_text or reply_text
+                # Substitute learned custom phonetic pronunciations for TTS
+                speech_text = memory.apply_pronunciations(speech_text)
                 conversation.append({"role": "assistant", "content": speech_text or reply_text})
-                print(f"[Sidecar:Diag] [Session: {msg.id}] Complete Gemini response generated. "
-                      f"reply_text chars: {len(reply_text)}, speech_text chars: {len(speech_text)}")
+                memory.record_chat(role="assistant", content=reply_text, session_id=msg.id)
+                print(f"[Sidecar:Diag] [Session: {msg.id}] Complete response generated. "
+                      f"reply_text chars: {len(reply_text or '')}, speech_text chars: {len(speech_text or '')}")
 
                 if needs_confirm:
                     await websocket.send(ActionMsg(
@@ -119,7 +148,9 @@ async def main() -> None:
                     conversation.pop()
                 raise
             except Exception as e:
+                import traceback
                 print(f"[server] Processing error: {e}")
+                traceback.print_exc()
                 # Rollback failed user turn to prevent conversation history corruption
                 if conversation and conversation[-1].get("role") == "user":
                     conversation.pop()

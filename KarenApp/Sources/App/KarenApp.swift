@@ -27,7 +27,7 @@ struct KarenApp: App {
                 Divider()
                 Button("Permissions Center") { karen.showPermissions = true }
                     .keyboardShortcut("p", modifiers: [.command, .shift])
-                Button("Settings") { karen.showSettings = true }
+                Button("Settings") { karen.requestOpenSettings() }
                     .keyboardShortcut(",", modifiers: .command)
             }
         }
@@ -50,12 +50,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // Eagerly activate KarenCore so background wake-word listening and sidecar are alive
         _ = KarenCore.shared
         NSLog("[KarenApp] KarenCore.shared activated")
-        // Launch as a menu-bar assistant. The window is opened again on a
+        // Launch as a menu-bar assistant. The window is ordered out until a
         // wake-word request or from the menu bar's Open command.
         DispatchQueue.main.async {
             NSApp.windows
                 .filter { $0.title == "K.A.R.E.N." }
-                .forEach { $0.close() }
+                .forEach { window in
+                    window.isReleasedWhenClosed = false
+                    window.orderOut(nil)
+                }
         }
     }
 

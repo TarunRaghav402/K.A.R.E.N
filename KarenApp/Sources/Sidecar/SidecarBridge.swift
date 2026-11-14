@@ -124,10 +124,22 @@ final class SidecarBridge: NSObject {
             environment["KAREN_LLM_PROVIDER"] = "gemini"
             environment["KAREN_GEMINI_KEY"] = geminiKey
             environment["KAREN_LLM_KEY"] = geminiKey
+            if environment["KAREN_GEMINI_MODEL"] == nil {
+                environment["KAREN_GEMINI_MODEL"] = "gemini-3.1-flash-lite"
+            }
+            if environment["KAREN_GEMINI_GROUNDING"] == nil {
+                environment["KAREN_GEMINI_GROUNDING"] = "false"
+            }
         } else if let envKey = environment["KAREN_GEMINI_KEY"] ?? environment["KAREN_LLM_KEY"] ?? environment["GEMINI_API_KEY"], !envKey.isEmpty {
             environment["KAREN_LLM_PROVIDER"] = "gemini"
             environment["KAREN_GEMINI_KEY"] = envKey
             environment["KAREN_LLM_KEY"] = envKey
+            if environment["KAREN_GEMINI_MODEL"] == nil {
+                environment["KAREN_GEMINI_MODEL"] = "gemini-3.1-flash-lite"
+            }
+            if environment["KAREN_GEMINI_GROUNDING"] == nil {
+                environment["KAREN_GEMINI_GROUNDING"] = "false"
+            }
         } else if environment["KAREN_LLM_PROVIDER"] == nil {
             environment["KAREN_LLM_PROVIDER"] = "mock"
         }
@@ -178,6 +190,11 @@ final class SidecarBridge: NSObject {
     }
 
     private func findRepoRoot() -> String? {
+        if let envRoot = ProcessInfo.processInfo.environment["KAREN_PROJECT_ROOT"],
+           isKarenProjectRoot(envRoot) {
+            return envRoot
+        }
+
         // The installed app lives in ~/Applications, so its bundle is no longer
         // inside the checkout. The launcher records the active checkout in Info.plist.
         if let configuredRoot = Bundle.main.object(forInfoDictionaryKey: "KARENProjectRoot") as? String,
@@ -194,9 +211,18 @@ final class SidecarBridge: NSObject {
             url.deleteLastPathComponent()
         }
 
-        // Last-known default project location for older bundles.
-        let volumeProject = NSHomeDirectory() + "/VolumeE/Karen"
-        return isKarenProjectRoot(volumeProject) ? volumeProject : nil
+        // Common user locations
+        let candidates = [
+            NSHomeDirectory() + "/VolumeE/karen",
+            NSHomeDirectory() + "/VolumeE/Karen",
+            "/Users/tarunraghav/VolumeE/karen"
+        ]
+        for candidate in candidates {
+            if isKarenProjectRoot(candidate) {
+                return candidate
+            }
+        }
+        return nil
     }
 
     private func isKarenProjectRoot(_ path: String) -> Bool {

@@ -146,10 +146,6 @@ export async function sendFCMNotification(
   const payload = {
     message: {
       token: fcmToken,
-      notification: {
-        title: title,
-        body: message,
-      },
       data: {
         request_id: requestId,
         type: reqType,
@@ -161,11 +157,6 @@ export async function sendFCMNotification(
       },
       android: {
         priority: "high",
-        notification: {
-          channel_id: "karen_requests",
-          click_action: "KAREN_NOTIFICATION_CLICK",
-          notification_priority: "PRIORITY_MAX",
-        },
       },
     },
   };

@@ -153,5 +153,36 @@ final class BugInvestigationAndQATests: XCTestCase {
             XCTAssertFalse(core.isSpeaking)
         }
     }
+
+    // MARK: - 6. Barge-in Wake Word & Echo Prevention Tests
+
+    func testBargeIn_WakeWordDetectorEvaluation() {
+        let detector = WakeWordDetector()
+        detector.currentSpokenText = "Hello! I am Karen, your personal assistant. The weather today in San Francisco is sunny."
+
+        // 1. "Hey Karen" must interrupt, even though Karen's own text has "Karen"
+        XCTAssertTrue(detector.evaluateBargeIn(recognizedText: "Hey Karen"))
+        XCTAssertTrue(detector.evaluateBargeIn(recognizedText: "hey karen"))
+        XCTAssertTrue(detector.evaluateBargeIn(recognizedText: "Hey Karen, what is the time?"))
+        XCTAssertTrue(detector.evaluateBargeIn(recognizedText: "Hi Karen"))
+        XCTAssertTrue(detector.evaluateBargeIn(recognizedText: "OK Karen"))
+
+        // 2. Stop commands must interrupt
+        XCTAssertTrue(detector.evaluateBargeIn(recognizedText: "stop"))
+        XCTAssertTrue(detector.evaluateBargeIn(recognizedText: "karen stop"))
+        XCTAssertTrue(detector.evaluateBargeIn(recognizedText: "shut up"))
+        XCTAssertTrue(detector.evaluateBargeIn(recognizedText: "be quiet"))
+        XCTAssertTrue(detector.evaluateBargeIn(recognizedText: "போதும்"))
+        XCTAssertTrue(detector.evaluateBargeIn(recognizedText: "நிறுத்து"))
+
+        // 3. Tamil wake phrases must interrupt
+        XCTAssertTrue(detector.evaluateBargeIn(recognizedText: "வணக்கம் கரேன்"))
+        XCTAssertTrue(detector.evaluateBargeIn(recognizedText: "ஹே கரேன்"))
+
+        // 4. Verbatim echo of Karen's current utterance must NOT interrupt, allowing her to finish
+        XCTAssertFalse(detector.evaluateBargeIn(recognizedText: "The weather today in San Francisco is sunny."))
+        XCTAssertFalse(detector.evaluateBargeIn(recognizedText: "personal assistant"))
+        XCTAssertFalse(detector.evaluateBargeIn(recognizedText: "I am Karen, your personal assistant."))
+    }
 }
 

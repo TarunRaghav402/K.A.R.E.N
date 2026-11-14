@@ -189,13 +189,13 @@ async def test_gemini_429_quota_fallback_to_next_model():
 
     async def handler(request: httpx.Request) -> httpx.Response:
         calls.append(str(request.url))
-        if "gemini-3.8-flash" in str(request.url):
+        if "gemini-3.1-flash-lite" in str(request.url):
             return httpx.Response(429, json={"error": {"message": "Generate content requests per day limit exceeded"}})
-        if "gemini-3.6-flash" in str(request.url):
+        if "gemini-3.5-flash-lite" in str(request.url):
             return httpx.Response(200, json={
                 "candidates": [
                     {
-                        "content": {"parts": [{"text": "Hello from 3.6 after 3.8 quota limit!"}], "role": "model"},
+                        "content": {"parts": [{"text": "Hello from 3.5 after 3.1 quota limit!"}], "role": "model"},
                         "finishReason": "STOP",
                     }
                 ]
@@ -206,10 +206,10 @@ async def test_gemini_429_quota_fallback_to_next_model():
     async with httpx.AsyncClient(transport=transport) as client:
         llm = GeminiLLM(api_key="test-key", client=client, grounding=False)
         res = await llm.complete([{"role": "user", "content": "Hello!"}])
-        assert "Hello from 3.6 after 3.8 quota limit!" in res.text
+        assert "Hello from 3.5 after 3.1 quota limit!" in res.text
         assert len(calls) == 2
-        assert "gemini-3.8-flash" in calls[0]
-        assert "gemini-3.6-flash" in calls[1]
+        assert "gemini-3.1-flash-lite" in calls[0]
+        assert "gemini-3.5-flash-lite" in calls[1]
 
 
 @pytest.mark.asyncio
@@ -230,13 +230,13 @@ async def test_gemini_503_fallback_to_next_model():
 
     async def handler(request: httpx.Request) -> httpx.Response:
         calls.append(str(request.url))
-        if "gemini-3.8-flash" in str(request.url):
+        if "gemini-3.1-flash-lite" in str(request.url):
             return httpx.Response(503, json={"error": {"message": "High demand"}})
-        if "gemini-3.6-flash" in str(request.url):
+        if "gemini-3.5-flash-lite" in str(request.url):
             return httpx.Response(200, json={
                 "candidates": [
                     {
-                        "content": {"parts": [{"text": "Hello from 3.6 fallback!"}], "role": "model"},
+                        "content": {"parts": [{"text": "Hello from 3.5 fallback!"}], "role": "model"},
                         "finishReason": "STOP",
                     }
                 ]
@@ -247,10 +247,10 @@ async def test_gemini_503_fallback_to_next_model():
     async with httpx.AsyncClient(transport=transport) as client:
         llm = GeminiLLM(api_key="test-key", client=client)
         res = await llm.complete([{"role": "user", "content": "Hello!"}])
-        assert "Hello from 3.6 fallback!" in res.text
+        assert "Hello from 3.5 fallback!" in res.text
         assert len(calls) == 2
-        assert "gemini-3.8-flash" in calls[0]
-        assert "gemini-3.6-flash" in calls[1]
+        assert "gemini-3.1-flash-lite" in calls[0]
+        assert "gemini-3.5-flash-lite" in calls[1]
 
 
 @pytest.mark.asyncio
@@ -259,13 +259,13 @@ async def test_gemini_timeout_fallback_to_next_model():
 
     async def handler(request: httpx.Request) -> httpx.Response:
         calls.append(str(request.url))
-        if "gemini-3.8-flash" in str(request.url):
-            raise httpx.ReadTimeout("Timeout connecting to 3.8")
-        if "gemini-3.6-flash" in str(request.url):
+        if "gemini-3.1-flash-lite" in str(request.url):
+            raise httpx.ReadTimeout("Timeout connecting to 3.1")
+        if "gemini-3.5-flash-lite" in str(request.url):
             return httpx.Response(200, json={
                 "candidates": [
                     {
-                        "content": {"parts": [{"text": "Hello from 3.6 after 3.8 timeout!"}], "role": "model"},
+                        "content": {"parts": [{"text": "Hello from 3.5 after 3.1 timeout!"}], "role": "model"},
                         "finishReason": "STOP",
                     }
                 ]
@@ -276,10 +276,10 @@ async def test_gemini_timeout_fallback_to_next_model():
     async with httpx.AsyncClient(transport=transport) as client:
         llm = GeminiLLM(api_key="test-key", client=client)
         res = await llm.complete([{"role": "user", "content": "Hello!"}])
-        assert "Hello from 3.6 after 3.8 timeout!" in res.text
+        assert "Hello from 3.5 after 3.1 timeout!" in res.text
         assert len(calls) == 2
-        assert "gemini-3.8-flash" in calls[0]
-        assert "gemini-3.6-flash" in calls[1]
+        assert "gemini-3.1-flash-lite" in calls[0]
+        assert "gemini-3.5-flash-lite" in calls[1]
 
 
 @pytest.mark.asyncio
@@ -326,7 +326,7 @@ def test_build_llm_factory(monkeypatch):
     llm2 = build_llm()
     assert isinstance(llm2, GeminiLLM)
     assert llm2.api_key == "real-gemini-key"
-    assert llm2.model == "gemini-3.8-flash"
+    assert llm2.model == "gemini-3.1-flash-lite"
 
     # Verify that requesting gemini with empty key raises RuntimeError, never silently falling back
     monkeypatch.delenv("KAREN_GEMINI_KEY", raising=False)

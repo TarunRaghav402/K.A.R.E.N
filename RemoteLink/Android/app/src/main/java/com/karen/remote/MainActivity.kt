@@ -58,6 +58,7 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(prefs: PreferencesManager, api: RemoteLinkApi) {
+    val context = androidx.compose.ui.platform.LocalContext.current
     val scope = rememberCoroutineScope()
     var isPaired by remember { mutableStateOf(prefs.isPaired) }
     var isConnected by remember { mutableStateOf(false) }
@@ -67,6 +68,7 @@ fun MainScreen(prefs: PreferencesManager, api: RemoteLinkApi) {
     var showReplyDialogFor by remember { mutableStateOf<NotificationRequest?>(null) }
     var replyInputText by remember { mutableStateOf("") }
     var isSubmitting by remember { mutableStateOf(false) }
+    val notifiedRequestIds = remember { mutableSetOf<String>() }
 
     // Request notification permissions on Android 13+
     val permissionLauncher = rememberLauncherForActivityResult(
@@ -100,6 +102,12 @@ fun MainScreen(prefs: PreferencesManager, api: RemoteLinkApi) {
             scope.launch {
                 api.getPendingRequests().onSuccess { list ->
                     pendingRequests = list
+                    for (req in list) {
+                        if (!notifiedRequestIds.contains(req.requestId)) {
+                            notifiedRequestIds.add(req.requestId)
+                            KarenFirebaseMessagingService.showInteractiveNotification(context, req)
+                        }
+                    }
                 }
                 history = prefs.getRequestHistory()
             }
@@ -145,7 +153,7 @@ fun MainScreen(prefs: PreferencesManager, api: RemoteLinkApi) {
                         )
                         Spacer(modifier = Modifier.width(10.dp))
                         Text(
-                            "K.A.R.E.N. Remote",
+                            "K.A.R.E.N.",
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
                             color = KarenTextPrimary
@@ -556,7 +564,7 @@ fun PendingRequestCard(
                                 Text(action, color = KarenDarkBg, fontWeight = FontWeight.Bold, fontSize = 13.sp)
                             }
                         }
-                        "DENY", "NO" -> {
+                        "DENY", "NO", "REJECT" -> {
                             Button(
                                 onClick = { onRespond(req, RequestOutcome.DENIED, null) },
                                 colors = ButtonDefaults.buttonColors(containerColor = KarenRed),
@@ -576,7 +584,7 @@ fun PendingRequestCard(
                         }
                         else -> {
                             Button(
-                                onClick = { onRespond(req, RequestOutcome.APPROVED, null) },
+                                onClick = { onRespond(req, RequestOutcome.DENIED, null) },
                                 colors = ButtonDefaults.buttonColors(containerColor = KarenIndigo),
                                 modifier = Modifier.weight(1f)
                             ) {

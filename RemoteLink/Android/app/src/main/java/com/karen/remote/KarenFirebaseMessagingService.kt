@@ -4,6 +4,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
 import androidx.core.app.NotificationCompat
 import androidx.core.app.RemoteInput
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -94,8 +95,19 @@ class KarenFirebaseMessagingService : FirebaseMessagingService() {
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
 
+            val largeIconBitmap = try {
+                BitmapFactory.decodeResource(context.resources, R.mipmap.ic_launcher)
+            } catch (e: Exception) {
+                null
+            }
+
             val builder = NotificationCompat.Builder(context, KarenApp.CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_karen_orb)
+                .apply {
+                    if (largeIconBitmap != null) {
+                        setLargeIcon(largeIconBitmap)
+                    }
+                }
                 .setContentTitle(req.title)
                 .setContentText(req.message)
                 .setStyle(NotificationCompat.BigTextStyle().bigText("${req.message}\n${req.details.orEmpty()}".trim()))
@@ -103,6 +115,9 @@ class KarenFirebaseMessagingService : FirebaseMessagingService() {
                 .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setCategory(NotificationCompat.CATEGORY_CALL)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setDefaults(NotificationCompat.DEFAULT_ALL)
+                .setVibrate(longArrayOf(0, 300, 150, 300))
                 .setColor(0xFF00E5FF.toInt())
 
             // Add interactive action buttons based on available actions
@@ -149,7 +164,7 @@ class KarenFirebaseMessagingService : FirebaseMessagingService() {
 
                     val actionIcon = when (actionUpper) {
                         "APPROVE", "YES" -> android.R.drawable.checkbox_on_background
-                        "DENY", "NO" -> android.R.drawable.ic_menu_close_clear_cancel
+                        "DENY", "NO", "REJECT" -> android.R.drawable.ic_menu_close_clear_cancel
                         else -> android.R.drawable.ic_dialog_info
                     }
 

@@ -12,8 +12,8 @@ from abc import ABC, abstractmethod
 import httpx
 
 
-DEFAULT_GEMINI_MODEL = "gemini-3.8-flash"
-FALLBACK_GEMINI_MODELS = ["gemini-3.6-flash", "gemini-3.5-flash"]
+DEFAULT_GEMINI_MODEL = "gemini-3.1-flash-lite"
+FALLBACK_GEMINI_MODELS = ["gemini-3.5-flash-lite", "gemini-3.1-flash-lite-preview", "gemini-flash-lite-latest", "gemini-2.5-flash-lite"]
 
 
 class LLMResponse(str):
@@ -164,7 +164,7 @@ class GeminiLLM(BaseLLM):
         }
 
         owns_client = self._client is None
-        client = self._client or httpx.AsyncClient(http2=True, timeout=httpx.Timeout(45.0, connect=8.0))
+        client = self._client or httpx.AsyncClient(http2=False, timeout=httpx.Timeout(10.0, connect=3.0))
 
         # Models to try: primary model first, followed by fallbacks if high demand occurs
         models_to_try = [self.model]
@@ -185,21 +185,21 @@ class GeminiLLM(BaseLLM):
                         headers=headers,
                         params={"key": self.api_key},
                         json=body,
-                        timeout=30.0,
+                        timeout=8.0,
                     )
 
                     # If Google Search grounding specifically hits rate limits / quota (429),
                     # retry the request without grounding so the user still receives an answer.
                     if resp.status_code == 429 and "tools" in body:
                         print(f"[GeminiLLM] Grounding quota exceeded; retrying {current_model} without search tool...")
-                        unaugmented_body = dict(body)
-                        unaugmented_body.pop("tools", None)
+                        self.grounding = False
+                        body.pop("tools", None)
                         resp = await client.post(
                             url,
                             headers=headers,
                             params={"key": self.api_key},
-                            json=unaugmented_body,
-                            timeout=30.0,
+                            json=body,
+                            timeout=8.0,
                         )
 
                 except httpx.TimeoutException:
@@ -325,8 +325,8 @@ def build_llm() -> BaseLLM:
                 "Gemini provider was selected, but no API key was found in Keychain or environment."
             )
         model = os.environ.get("KAREN_GEMINI_MODEL", DEFAULT_GEMINI_MODEL).strip()
-        grounding_str = os.environ.get("KAREN_GEMINI_GROUNDING", "true").strip().lower()
-        grounding = grounding_str not in ("false", "0", "no")
+        grounding_str = os.environ.get("KAREN_GEMINI_GROUNDING", "false").strip().lower()
+        grounding = grounding_str in ("true", "1", "yes")
         print(f"[llm] Initialized GeminiLLM with model='{model}', grounding={grounding}")
         return GeminiLLM(api_key=api_key, model=model, grounding=grounding)
 

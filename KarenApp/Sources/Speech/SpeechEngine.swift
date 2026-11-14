@@ -29,7 +29,12 @@ final class SpeechEngine: NSObject {
     private let silenceTimeout: TimeInterval = 1.3
 
     override init() {
-        recognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))
+        let indianLocale = Locale(identifier: "en-IN")
+        if SFSpeechRecognizer.supportedLocales().contains(indianLocale) {
+            recognizer = SFSpeechRecognizer(locale: indianLocale)
+        } else {
+            recognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))
+        }
         recognizer?.defaultTaskHint = .dictation
         super.init()
         NotificationCenter.default.addObserver(
@@ -319,6 +324,7 @@ final class TTSEngine: NSObject, AVSpeechSynthesizerDelegate {
         onSpeechStateChanged?(true)
         onSpeechProgress?(0, text.count)
         lastProgressTime = Date()
+        lastCharacterLocation = 0
 
         // Calculate expected duration based on speech rate (approx 15-20 chars/sec at 0.50 rate)
         let charsPerSec = max(8.0, Double(rate) * 35.0)
@@ -362,6 +368,7 @@ final class TTSEngine: NSObject, AVSpeechSynthesizerDelegate {
         onSpeechStateChanged?(true)
         onSpeechProgress?(0, text.count)
         lastProgressTime = Date()
+        lastCharacterLocation = 0
 
         let charsPerSec = max(8.0, Double(rate) * 35.0)
         let estimatedSecs = Double(trimmed.count) / charsPerSec
@@ -382,11 +389,10 @@ final class TTSEngine: NSObject, AVSpeechSynthesizerDelegate {
             try? await Task.sleep(nanoseconds: nanos)
             guard !Task.isCancelled, let self, self.activeSessionId == sessionId else { return }
 
-            // If progress was made recently, extend the watchdog
-            let elapsedSinceProgress = Date().timeIntervalSince(self.lastProgressTime)
-            if elapsedSinceProgress < 3.0 && self.isSpeaking {
-                print("[TTSEngine:Diag] [Session: \(sessionId)] Speech actively progressing (last word \(String(format: "%.1f", elapsedSinceProgress))s ago), extending watchdog...")
-                self.startWatchdog(timeout: 4.0, sessionId: sessionId, expectedChars: expectedChars)
+            // If speech is actively playing or synthesizer is speaking, NEVER abort healthy speech!
+            if self.synth.isSpeaking || self.isSpeaking {
+                print("[TTSEngine:Diag] [Session: \(sessionId)] Speech is still actively playing in synthesizer; extending watchdog...")
+                self.startWatchdog(timeout: 10.0, sessionId: sessionId, expectedChars: expectedChars)
                 return
             }
 
@@ -406,11 +412,11 @@ final class TTSEngine: NSObject, AVSpeechSynthesizerDelegate {
                 guard !Task.isCancelled, let self, self.activeSessionId == sessionId else { return }
 
                 let lastCharLoc = self.lastCharacterLocation
-                let hasReachedEnd = expectedChars > 0 && lastCharLoc >= Int(Double(expectedChars) * 0.95)
+                let hasReachedEnd = expectedChars > 0 && lastCharLoc >= expectedChars
 
                 if hasReachedEnd && !self.synth.isSpeaking && self.activeUtterance != nil {
                     let quietTime = Date().timeIntervalSince(self.lastProgressTime)
-                    if quietTime > 2.0 {
+                    if quietTime > 3.0 {
                         print("[TTSEngine:Diag] [Session: \(sessionId)] All words spoken (\(lastCharLoc)/\(expectedChars)) and audio finished; completing speech.")
                         self.completeSpeech(sessionId: sessionId, textCount: expectedChars, forceReset: false)
                         return
@@ -447,10 +453,27 @@ final class TTSEngine: NSObject, AVSpeechSynthesizerDelegate {
     }
 
     private func makeUtterance(_ text: String) -> AVSpeechUtterance {
-        let utterance = AVSpeechUtterance(string: text)
-        utterance.voice = voiceId.isEmpty ? AVSpeechSynthesisVoice(language: "en-US")
-                                          : AVSpeechSynthesisVoice(identifier: voiceId)
-        utterance.rate = rate
+        var spoken = text
+        spoken = spoken.replacingOccurrences(of: "K.A.R.E.N.", with: "Karen")
+        spoken = spoken.replacingOccurrences(of: "K.A.R.E.N", with: "Karen")
+        let utterance = AVSpeechUtterance(string: spoken)
+
+        let hasTamil = spoken.unicodeScalars.contains { $0.value >= 0x0B80 && $0.value <= 0x0BFF }
+        if hasTamil {
+            // Select native Indian Tamil voice (Vani / ta-IN)
+            if let tamilVoice = AVSpeechSynthesisVoice(language: "ta-IN")
+                ?? AVSpeechSynthesisVoice.speechVoices().first(where: { $0.language == "ta-IN" || $0.language.hasPrefix("ta") }) {
+                utterance.voice = tamilVoice
+            } else {
+                utterance.voice = voiceId.isEmpty ? AVSpeechSynthesisVoice(language: "en-US")
+                                                  : AVSpeechSynthesisVoice(identifier: voiceId)
+            }
+            utterance.rate = min(rate, 0.48) // Natural Indian Tamil pacing
+        } else {
+            utterance.voice = voiceId.isEmpty ? AVSpeechSynthesisVoice(language: "en-US")
+                                              : AVSpeechSynthesisVoice(identifier: voiceId)
+            utterance.rate = rate
+        }
         utterance.volume = 1.0
         utterance.pitchMultiplier = pitch
         return utterance

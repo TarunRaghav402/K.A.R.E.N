@@ -133,6 +133,8 @@ final class KarenCore: ObservableObject {
     @Published var showPermissions: Bool  = false
     @Published var showMemory: Bool       = false
     @Published var pendingConfirm: ConfirmRequest? = nil
+    @Published var isRemoteApprovalPending: Bool = false
+    private var activeRemoteApprovalTask: Task<Void, Never>? = nil
 
     // Permissions observed state
     @Published var micGranted: Bool      = false
@@ -176,11 +178,13 @@ final class KarenCore: ObservableObject {
     }
 
     func showAssistantWindow() {
-        if let window = NSApp.windows.first(where: { $0.title == "K.A.R.E.N." }) {
+        let app = NSApplication.shared
+        if let window = app.windows.first(where: { $0.title == "K.A.R.E.N." }) {
+            window.isReleasedWhenClosed = false
             window.makeKeyAndOrderFront(nil)
         }
         windowOpener?()
-        NSApp.activate(ignoringOtherApps: true)
+        app.activate(ignoringOtherApps: true)
     }
 
     func setWindowOpener(_ opener: @escaping () -> Void) {
@@ -190,9 +194,13 @@ final class KarenCore: ObservableObject {
     func hideAssistantWindow() {
         stopSpeaking()
         dismissResponsePanel()
-        NSApp.windows
+        let app = NSApplication.shared
+        app.windows
             .filter { $0.title == "K.A.R.E.N." && $0.isVisible }
-            .forEach { $0.close() }
+            .forEach {
+                $0.isReleasedWhenClosed = false
+                $0.orderOut(nil)
+            }
     }
 
     // Sub-systems (initialised lazily after permission grants)
@@ -321,6 +329,10 @@ final class KarenCore: ObservableObject {
         sidecarBridge?.onAction = { [weak self] id, skill, payload in
             Task { @MainActor in
                 guard let self else { return }
+                if skill == "karen_settings" || payload["action"] as? String == "open_settings" {
+                    self.requestOpenSettings()
+                    return
+                }
                 guard skill == "open_application",
                       let applicationName = payload["application_name"] as? String,
                       !applicationName.isEmpty else {
@@ -365,6 +377,7 @@ final class KarenCore: ObservableObject {
             isSpeaking = false
             isLocalSpeechActive = false
             isInterrupting = false
+            continuousConversation = false
             liveTranscription = ""
             speechEngine?.stopListening()
             ttsEngine?.stop()
@@ -479,26 +492,25 @@ final class KarenCore: ObservableObject {
 
         // STEP 1 & 2: Smoothly shrink central orb (scale 1.0 -> 0.44) and travel to top-centre
         self.responsePhase = .movingOrb
-        withAnimation(.spring(response: 0.54, dampingFraction: 0.78)) {
+        withAnimation(.spring(response: 0.60, dampingFraction: 0.82)) {
             self.orbTopProgress = 1.0
             self.orbScaleProgress = 0.44
-            self.orbOffsetY = 0.48
         }
 
         // STEP 3 & 4: Settle orb at top-centre & illuminate subtle glowing connector
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.26) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.22) { [weak self] in
             guard let self, self.activeResponseId == responseId else { return }
             self.responsePhase = .orbSettled
-            withAnimation(.easeOut(duration: 0.18)) {
+            withAnimation(.spring(response: 0.42, dampingFraction: 0.82)) {
                 self.showConnector = true
                 self.responsePhase = .connectorLit
             }
 
-            // STEP 5: Response panel emerges directly beneath orb and expands into final size
+            // STEP 5: Response panel emerges directly beneath orb with a smooth spring pop-up
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) { [weak self] in
                 guard let self, self.activeResponseId == responseId else { return }
                 self.responsePhase = .panelEmerging
-                withAnimation(.spring(response: 0.50, dampingFraction: 0.82)) {
+                withAnimation(.spring(response: 0.54, dampingFraction: 0.80)) {
                     self.showResponsePanel = true
                 }
 
@@ -526,11 +538,24 @@ final class KarenCore: ObservableObject {
                 await self.ttsEngine?.speak(textToSpeak)
                 print("[KarenCore:Diag] [Session: \(self.activeResponseId)] ttsEngine.speak completed or returned.")
 
+                guard !Task.isCancelled, self.interactionState == .speaking else {
+                    print("[KarenCore:Diag] Speech task cancelled or state changed (\(self.interactionState)); ignoring completion flow.")
+                    return
+                }
+
                 self.wakeWordDetector?.isBargeInMode = false
                 self.wakeWordDetector?.stop()
                 self.responseTextRevealedCount = self.replyText.count
                 if self.interactionState == .speaking {
-                    self.transition(to: .idle, reason: "TTS finished speaking")
+                    print("[KarenCore] Speech finished; keeping conversation active in listening mode...")
+                    self.continuousConversation = true
+                    if self.autoStartSubsystems {
+                        try? await Task.sleep(nanoseconds: 120_000_000)
+                        guard self.interactionState == .speaking else { return }
+                        self.startListening()
+                    } else {
+                        self.transition(to: .listening, reason: "Speech finished; keeping conversation active")
+                    }
                 }
             }
         } else {
@@ -688,11 +713,14 @@ final class KarenCore: ObservableObject {
 
     func handleInterrupt(detectedTranscript: String? = nil) {
         print("[KarenCore:Diag] handleInterrupt() invoked. detectedTranscript: '\(detectedTranscript ?? "")'. Current state: \(interactionState), isSpeaking: \(isSpeaking), isLocalSpeechActive: \(isLocalSpeechActive)")
-        guard isSpeaking || interactionState == .speaking || interactionState == .responding || isLocalSpeechActive else { return }
+        guard isSpeaking || interactionState == .speaking || interactionState == .responding || interactionState == .processing || isLocalSpeechActive else { return }
         print("[KarenCore] Interruption detected! Transcript: '\(detectedTranscript ?? "")'")
 
         let raw = (detectedTranscript ?? "").trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-        let stopPhrases = ["stop", "stop speaking", "pause", "shut up", "be quiet", "wait", "cancel", "hold on", "hold it"]
+        let stopPhrases = [
+            "stop", "stop speaking", "pause", "shut up", "be quiet", "wait", "cancel", "hold on", "hold it",
+            "போதும்", "நில்", "நிறுத்து", "பேசாதே"
+        ]
         let isExplicitStop = stopPhrases.contains { phrase in
             raw == phrase || raw.hasPrefix(phrase + " ") || raw.hasSuffix(" " + phrase) || raw.contains(" " + phrase + " ")
         }
@@ -704,6 +732,10 @@ final class KarenCore: ObservableObject {
         }
 
         print("[KarenCore] Halting speech output for new query barge-in...")
+        if !currentRequestId.isEmpty {
+            sidecarBridge?.sendCancel(id: currentRequestId)
+            currentRequestId = ""
+        }
         transition(to: .interrupting, reason: "User interrupted")
         ttsEngine?.stop()
         speechTask?.cancel()
@@ -711,22 +743,33 @@ final class KarenCore: ObservableObject {
         wakeWordDetector?.isBargeInMode = false
         wakeWordDetector?.stop()
 
-        // Strip wake phrase prefix if present so user's query isn't prefixed with "hey karen"
-        var cleanTranscript = raw
-        for prefix in ["hey karen", "karen"] {
-            if cleanTranscript.hasPrefix(prefix) {
-                cleanTranscript = String(cleanTranscript.dropFirst(prefix.count))
+        // Extract trailing query: if user said "Hey Karen, what time is it?"
+        var cleanTranscript: String? = nil
+        if let detector = wakeWordDetector {
+            let range = NSRange(raw.startIndex..., in: raw)
+            if let match = detector.wakePattern.firstMatch(in: raw, range: range) {
+                cleanTranscript = detector.extractTrailingQuery(from: raw, matchRange: match.range)
             }
         }
-        let leadingPunctuation = CharacterSet.whitespacesAndNewlines.union(CharacterSet(charactersIn: ",:;- "))
-        while let first = cleanTranscript.unicodeScalars.first, leadingPunctuation.contains(first) {
-            cleanTranscript.removeFirst()
+        if cleanTranscript == nil {
+            var trimmed = raw
+            for prefix in [
+                "hey karen", "hi karen", "hello karen", "ok karen", "okay karen", "karen", "caring", "carin",
+                "வணக்கம் கரேன்", "ஹே கரேன்", "கரேன்"
+            ] {
+                if trimmed.hasPrefix(prefix) {
+                    trimmed = String(trimmed.dropFirst(prefix.count))
+                }
+            }
+            trimmed = trimmed.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines.union(CharacterSet(charactersIn: ",:;- ")))
+            cleanTranscript = trimmed.isEmpty ? nil : trimmed
         }
-        cleanTranscript = cleanTranscript.trimmingCharacters(in: .whitespacesAndNewlines)
 
-        startListening(initialTranscript: cleanTranscript.isEmpty ? nil : cleanTranscript)
-        if !cleanTranscript.isEmpty {
-            self.liveTranscription = cleanTranscript
+        startListening(initialTranscript: cleanTranscript)
+        if let query = cleanTranscript, !query.isEmpty {
+            self.liveTranscription = query
+        } else {
+            self.liveTranscription = "Listening..."
         }
     }
 
@@ -778,8 +821,77 @@ final class KarenCore: ObservableObject {
         }
     }
 
+    func requestOpenSettings() {
+        guard !isRemoteApprovalPending else {
+            presentResponse(
+                text: "A remote approval request for Settings is already pending on your phone, sir.",
+                speechText: "A remote approval request for Settings is already pending on your phone, sir.",
+                speak: true
+            )
+            return
+        }
+
+        if showSettings { return }
+
+        isRemoteApprovalPending = true
+        transition(to: .processing, reason: "Awaiting remote approval for Settings")
+
+        presentResponse(
+            text: "Request sent to your phone. Waiting for your approval to open Settings, sir.",
+            speechText: "Request sent to your phone. Waiting for your approval to open Settings, sir.",
+            speak: true
+        )
+
+        activeRemoteApprovalTask = Task { @MainActor in
+            let result = await RemoteApprovalClient.shared.requestSettingsApproval(timeoutSeconds: 86400.0)
+            guard self.isRemoteApprovalPending else { return }
+            self.isRemoteApprovalPending = false
+            self.activeRemoteApprovalTask = nil
+
+            switch result {
+            case .approved:
+                self.transition(to: .speaking, reason: "Remote approval granted")
+                self.showSettings = true
+                self.presentResponse(
+                    text: "Remote approval granted. Opening Settings, sir.",
+                    speechText: "Remote approval granted. Opening Settings, sir.",
+                    speak: true
+                )
+            case .rejected:
+                self.transition(to: .idle, reason: "Remote approval denied")
+                self.showSettings = false
+                self.presentResponse(
+                    text: "Remote access denied: Request was rejected from your phone, sir.",
+                    speechText: "Remote access denied: Request was rejected from your phone, sir.",
+                    speak: true
+                )
+            case .expired:
+                self.transition(to: .idle, reason: "Remote approval expired")
+                self.showSettings = false
+                self.presentResponse(
+                    text: "Remote approval expired. Settings remains locked, sir.",
+                    speechText: "Remote approval expired. Settings remains locked, sir.",
+                    speak: true
+                )
+            case .failed(let err):
+                NSLog("[KarenCore] Remote approval error: %@", err)
+                self.transition(to: .error, reason: "Remote approval error: \(err)")
+                self.showSettings = false
+                self.presentResponse(
+                    text: "Remote approval error: \(err). Settings remains locked, sir.",
+                    speechText: "Remote approval error: \(err), sir.",
+                    speak: true
+                )
+            }
+        }
+    }
+
     private func openApplication(named name: String) {
-        let normalized = name.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
+        let normalized = name.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current).trimmingCharacters(in: .whitespacesAndNewlines)
+        if normalized == "settings" || normalized == "karen settings" || normalized == "preferences" {
+            requestOpenSettings()
+            return
+        }
         let aliases = ["chrome": "google chrome", "edge": "microsoft edge"]
         let launchName = aliases[normalized] ?? name
         let process = Process()
@@ -968,6 +1080,13 @@ final class KarenCore: ObservableObject {
                     self.isListening = false
                     self.liveTranscription = ""
                     self.orbState = .idle
+                    if self.continuousConversation && errMsg.contains("Didn't catch any speech") {
+                        // User naturally paused / finished speaking in continuous mode; return to idle cleanly
+                        self.continuousConversation = false
+                        self.transition(to: .idle, reason: "Continuous listening ended with silence")
+                        self.resumeWakeWordIfNeeded()
+                        return
+                    }
                     self.presentResponse(text: errMsg, speechText: "", speak: false)
                     self.resumeWakeWordIfNeeded()
                 }
@@ -976,8 +1095,8 @@ final class KarenCore: ObservableObject {
         }
 
         if wakeWordDetector == nil {
-            let detector = WakeWordDetector(onWake: { [weak self] in
-                Task { @MainActor in self?.onWakeWord() }
+            let detector = WakeWordDetector(onWakeWithTranscript: { [weak self] transcript in
+                Task { @MainActor in self?.onWakeWord(initialTranscript: transcript) }
             })
             detector.onInterrupt = { [weak self] transcript in
                 Task { @MainActor in self?.handleInterrupt(detectedTranscript: transcript) }
@@ -1011,18 +1130,20 @@ final class KarenCore: ObservableObject {
         applyZoom(previous / max(orbZoom, 0.3))
     }
 
-    func onWakeWord() {
+    func onWakeWord(initialTranscript: String? = nil) {
         guard interactionState != .listening else { return }
+        print("[KarenCore] onWakeWord triggered. initialTranscript: '\(initialTranscript ?? "")'")
         showAssistantWindow()
-        NSApp.activate(ignoringOtherApps: true)
+        NSApplication.shared.activate(ignoringOtherApps: true)
         wakeWordDetector?.stop()
-        continuousConversation = true
+        continuousConversation = false
         conversationGeneration += 1
-        startListening()
+        startListening(initialTranscript: initialTranscript)
     }
 
     private func resumeWakeWordIfNeeded() {
-        guard wakeWordEnabled, speechGranted, !isListening, !continuousConversation else { return }
+        guard wakeWordEnabled, speechGranted, !isListening else { return }
+        print("[KarenCore] Resuming wake word detector...")
         wakeWordDetector?.start()
     }
 
